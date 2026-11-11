@@ -12,6 +12,7 @@ import { z } from "zod";
 
 export const LANGUAGES = {
   en: "English",
+  es: "Español",
   ta: "தமிழ்",
   ml: "മലയാളം",
   mr: "मराठी",
