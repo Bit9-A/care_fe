@@ -11,6 +11,8 @@ export default function useSidebarState() {
       return value === "true";
     }
 
-    return false;
+    // Default to expanded so navigation labels are visible on desktop;
+    // the only SidebarTrigger lives inside the mobile header.
+    return true;
   }, []);
 }
