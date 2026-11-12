@@ -6886,5 +6886,8 @@
  "upload_headings__consultation": "Subir nuevo archivo de consulta",
  "upload_headings__patient": "Subir nuevo archivo del paciente",
  "upload_headings__sample_report": "Subir informe de muestra",
- "upload_headings__supporting_info": "Subir información complementaria"
+ "upload_headings__supporting_info": "Subir información complementaria",
+ "rbac": "Control de acceso",
+ "governance": "Gobernanza",
+ "apps": "Aplicaciones"
 }

@@ -210,7 +210,7 @@ export default function UserDashboard() {
                     : "text-gray-500"
                 }`}
               >
-                {tab}
+                {t(tab.toLowerCase())}
               </button>
             ))}
           </div>
