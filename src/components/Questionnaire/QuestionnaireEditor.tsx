@@ -1080,7 +1080,9 @@ export default function QuestionnaireEditor({
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="unique-identifier-for-questionnaire"
+                                  placeholder={t(
+                                    "unique_identifier_for_questionnaire",
+                                  )}
                                   {...field}
                                   onChange={(e) =>
                                     handleValidatedChange(

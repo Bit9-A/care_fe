@@ -105,7 +105,7 @@ function ListContent({
             >
               <Checkbox
                 checked={selectedValues.length === options.length}
-                aria-label="Select all options"
+                aria-label={t("select_all_options")}
                 className="data-[state=checked]:text-white"
               />
               <span className="font-medium">{t("select_all")}</span>

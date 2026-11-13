@@ -161,7 +161,7 @@ export function LandingPage() {
             <div className="mb-2">
               <img
                 src={stateLogo.dark}
-                alt="Logo"
+                alt={t("logo")}
                 className="h-20 md:h-28 w-auto"
               />
             </div>
@@ -171,7 +171,7 @@ export function LandingPage() {
             <div className="mb-4 md:mb-8">
               <img
                 src={customLogo?.dark ?? mainLogo?.dark}
-                alt="Logo"
+                alt={t("logo")}
                 className="h-16 md:h-20 w-auto"
               />
             </div>

@@ -266,7 +266,7 @@ export default function CameraCaptureDialog(props: CameraCaptureDialogProps) {
                 loading="lazy"
                 decoding="async"
                 src={previewImage}
-                alt="Camera preview"
+                alt={t("camera_preview")}
               />
 
               <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center mb-4 h-20">
@@ -340,7 +340,7 @@ const CameraPermissionDenied = () => {
         <div>
           <img
             src="/images/camera_block.svg"
-            alt="Camera blocked"
+            alt={t("camera_blocked")}
             className="w-60 object-contain"
           />
         </div>

@@ -194,7 +194,7 @@ export default function UserDashboard() {
           <div
             className="flex border-b border-gray-200 overflow-auto"
             role="tablist"
-            aria-label="Dashboard Sections"
+            aria-label={t("dashboard_sections")}
           >
             {availableTabs.map((tab) => (
               <button

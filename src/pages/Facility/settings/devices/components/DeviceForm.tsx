@@ -542,7 +542,7 @@ export default function DeviceForm({ facilityId, device, onSuccess }: Props) {
           <ErrorBoundary
             fallback={
               <div className="p-4 rounded-md border border-red-200 bg-red-50 text-red-700">
-                <p className="font-medium">Oops, something went wrong</p>
+                <p className="font-medium">{t("oops_something_went_wrong")}</p>
                 <p className="text-sm mt-1">
                   Failed to render the {careType} configure form
                 </p>

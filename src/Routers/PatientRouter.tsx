@@ -1,5 +1,6 @@
 import careConfig from "@careConfig";
 import { useRoutes } from "raviger";
+import { useTranslation } from "react-i18next";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar, SidebarFor } from "@/components/ui/sidebar/app-sidebar";
@@ -82,6 +83,7 @@ const AppointmentRoutes = {
 };
 
 export default function PatientRouter() {
+  const { t } = useTranslation();
   const pages = useRoutes(DashboardRoutes);
 
   const appointmentPages = useRoutes(AppointmentRoutes);
@@ -115,7 +117,7 @@ export default function PatientRouter() {
               <img
                 className="h-8 w-auto"
                 src={careConfig.mainLogo?.dark}
-                alt="care logo"
+                alt={t("care_logo_alt")}
               />
             </a>
           </div>

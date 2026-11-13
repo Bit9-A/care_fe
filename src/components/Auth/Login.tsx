@@ -337,7 +337,7 @@ const Login = (props: LoginProps) => {
                     <img
                       src={logo.dark}
                       className="h-14 rounded-lg py-3"
-                      alt="state logo"
+                      alt={t("state_logo_alt")}
                     />
                   </div>
                 ) : null,
@@ -352,7 +352,7 @@ const Login = (props: LoginProps) => {
                   <img
                     src={customLogoAlt?.light ?? "/images/ohc_logo_light.svg"}
                     className="h-8"
-                    alt="Open Healthcare Network logo"
+                    alt={t("open_healthcare_network_logo_alt")}
                   />
                 </a>
               )}

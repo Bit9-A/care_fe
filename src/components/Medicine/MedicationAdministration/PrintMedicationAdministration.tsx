@@ -338,7 +338,7 @@ export const PrintMedicationAdministration = (props: {
             </div>
             <img
               src={careConfig.mainLogo?.dark}
-              alt="Logo"
+              alt={t("logo")}
               className="h-12 w-auto object-contain"
             />
           </div>

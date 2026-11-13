@@ -229,7 +229,7 @@ export default function CreateScheduleExceptionSheet({
                       <FormLabel aria-required>{t("reason")}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g. Holiday Leave, Conference, etc."
+                          placeholder={t("exception_reason_placeholder")}
                           {...field}
                         />
                       </FormControl>
@@ -300,7 +300,7 @@ export default function CreateScheduleExceptionSheet({
                     name="start_time"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel aria-required>From</FormLabel>
+                        <FormLabel aria-required>{t("from_label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="time"

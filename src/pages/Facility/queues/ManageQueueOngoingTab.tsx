@@ -470,7 +470,7 @@ function InServiceColumnOptions({
               </RadioGroup>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
-          {/* <DropdownMenuItem>Transfer all</DropdownMenuItem> */}
+          {/* <DropdownMenuItem>{t("transfer_all")}</DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

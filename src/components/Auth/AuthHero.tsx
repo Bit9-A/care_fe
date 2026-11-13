@@ -22,7 +22,7 @@ export const AuthHero = () => {
                 <img
                   src={logo.light}
                   className="h-16 rounded-lg py-3"
-                  alt="state logo"
+                  alt={t("state_logo_alt")}
                 />
               </div>
             ) : null,
@@ -37,7 +37,7 @@ export const AuthHero = () => {
               <img
                 src={customLogoAlt?.light ?? "/images/ohc_logo_light.svg"}
                 className="h-8"
-                alt="Open Healthcare Network logo"
+                alt={t("open_healthcare_network_logo_alt")}
               />
             </a>
           )}
@@ -73,7 +73,7 @@ export const AuthHero = () => {
               <img
                 src="https://cdn.ohc.network/dpg-logo.svg"
                 className="h-12"
-                alt="Logo of Digital Public Goods Alliance"
+                alt={t("digital_public_goods_logo_alt")}
               />
             </a>
             <div className="ml-2 h-8 w-px rounded-full bg-white/50" />
@@ -81,7 +81,7 @@ export const AuthHero = () => {
               <img
                 src="/images/ohc_logo_light.svg"
                 className="inline-block h-10"
-                alt="Open Healthcare Network logo"
+                alt={t("open_healthcare_network_logo_alt")}
               />
             </a>
           </div>

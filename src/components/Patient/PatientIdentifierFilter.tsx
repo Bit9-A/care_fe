@@ -218,7 +218,7 @@ function PatientSearchSelector({
               size="icon"
               className="absolute right-5 top-1/2 -translate-y-1/2 size-6 text-gray-400 hover:bg-transparent"
               onClick={() => setSearchTerm("")}
-              aria-label="Clear search input"
+              aria-label={t("clear_search")}
             >
               <X className="size-4" />
             </Button>

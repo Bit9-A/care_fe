@@ -336,10 +336,10 @@ export const ObservationVisualizer = ({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Values</TableHead>
-                      <TableHead>Entered By</TableHead>
-                      <TableHead>Notes</TableHead>
+                      <TableHead>{t("time")}</TableHead>
+                      <TableHead>{t("values")}</TableHead>
+                      <TableHead>{t("entered_by")}</TableHead>
+                      <TableHead>{t("ENCOUNTER_TAB__notes")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

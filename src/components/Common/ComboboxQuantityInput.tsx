@@ -34,7 +34,7 @@ export function ComboboxQuantityInput({
   quantity,
   onChange,
   disabled,
-  placeholder = "Enter a number...",
+  placeholder,
   autoFocus,
   units = DOSAGE_UNITS_CODES,
   className,
@@ -108,7 +108,7 @@ export function ComboboxQuantityInput({
         type="text"
         inputMode="decimal"
         pattern="\d*\.?\d*"
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("enter_a_number")}
         disabled={disabled}
         autoFocus={autoFocus}
         onKeyDown={handleKeyDown}

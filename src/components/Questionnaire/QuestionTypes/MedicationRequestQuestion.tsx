@@ -1316,7 +1316,7 @@ export function MedicationRequestQuestion({
                                           }}
                                           disabled={isInactive || disabled}
                                           className="size-10 p-4 border border-gray-400 bg-white shadow text-destructive"
-                                          aria-label="Remove medication"
+                                          aria-label={t("remove_medication")}
                                         >
                                           <MinusCircledIcon className="size-5" />
                                         </Button>

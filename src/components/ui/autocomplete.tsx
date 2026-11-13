@@ -66,7 +66,7 @@ export default function Autocomplete({
   value,
   onChange,
   onSearch,
-  placeholder = "Select...",
+  placeholder,
   inputPlaceholder = "Search option...",
   noOptionsMessage = "No options found",
   disabled,
@@ -102,11 +102,13 @@ export default function Autocomplete({
   }, [value, options]);
 
   // Determine what text to display on the button.
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("select_placeholder");
   const displayText = freeInput
-    ? inputValue || placeholder
+    ? inputValue || resolvedPlaceholder
     : selectedOption
       ? selectedOption.label
-      : placeholder;
+      : resolvedPlaceholder;
 
   // Handle changes in the CommandInput.
   const handleInputChange = (newValue: string) => {
@@ -142,7 +144,6 @@ export default function Autocomplete({
 
     setOpen(false);
   };
-  const { t } = useTranslation();
   const commandContent = (
     <>
       <CommandInput
@@ -225,7 +226,7 @@ export default function Autocomplete({
                   ? freeInput
                     ? inputValue || value
                     : selectedOption?.label
-                  : placeholder}
+                  : resolvedPlaceholder}
               </span>
             </Button>
           </DrawerTrigger>

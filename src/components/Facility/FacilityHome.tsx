@@ -226,7 +226,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
                         variant="outline"
                         size="sm"
                         className="cursor-pointer font-semibold"
-                        aria-label="More Options"
+                        aria-label={t("more_options")}
                         type="button"
                       >
                         {t("configurations")}

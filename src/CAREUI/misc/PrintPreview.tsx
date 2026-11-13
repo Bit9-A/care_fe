@@ -322,6 +322,7 @@ function FacilityPrintLayout({
   hideFacilityHeader?: boolean;
   footer?: ReactNode;
 }) {
+  const { t } = useTranslation();
   if (!facility) {
     return (
       <>
@@ -346,7 +347,7 @@ function FacilityPrintLayout({
         <div className="flex justify-between items-start mb-2 pb-2">
           <img
             src={headerImage.url}
-            alt="Custom Header"
+            alt={t("custom_header")}
             className="flex-1 h-auto object-contain max-w-3xl"
             style={
               headerImage.height
@@ -382,7 +383,7 @@ function FacilityPrintLayout({
         <div className="mt-auto pt-2">
           <img
             src={footerImage.url}
-            alt="Footer"
+            alt={t("footer")}
             className="w-full h-auto object-contain"
             style={
               footerImage.height

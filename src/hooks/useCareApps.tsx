@@ -45,7 +45,7 @@ const withSuspense = <T extends object>(
           <div className="flex items-center justify-center gap-2 py-6">
             <CableIcon
               role="status"
-              aria-label="Error"
+              aria-label={t("error")}
               className="size-4 text-red-500"
             />
             <p className="text-sm text-gray-600">
@@ -59,7 +59,7 @@ const withSuspense = <T extends object>(
             <div className="flex items-center justify-center gap-2">
               <Loader2Icon
                 role="status"
-                aria-label="Loading"
+                aria-label={t("loading")}
                 className="size-4 animate-spin"
               />
               <p className="text-sm text-gray-600">{t("loading")}</p>

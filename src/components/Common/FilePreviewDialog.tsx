@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import { ReactNode, Suspense, lazy, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -307,7 +308,7 @@ export default function FilePreviewDialog(props: FilePreviewProps) {
                   variant="primary"
                   onClick={() => handleNext(index - 1)}
                   disabled={index <= 0}
-                  aria-label="Previous file"
+                  aria-label={t("previous_file")}
                 >
                   <CareIcon icon="l-arrow-left" className="size-4" />
                 </Button>

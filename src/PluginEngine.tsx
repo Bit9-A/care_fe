@@ -203,7 +203,7 @@ export function PLUGIN_Component(props: PluginComponentProps) {
                 <div className="flex items-center justify-center gap-2">
                   <Loader2Icon
                     role="status"
-                    aria-label="Loading"
+                    aria-label={t("loading")}
                     className="size-4 animate-spin"
                   />
                   <p className="text-sm text-gray-600">{t("loading")}</p>

@@ -717,7 +717,7 @@ export function NoteManager({
                             setMessage={setNewMessage}
                           />
                           <Button
-                            aria-label="send message"
+                            aria-label={t("send_message")}
                             type="submit"
                             size="icon"
                             disabled={

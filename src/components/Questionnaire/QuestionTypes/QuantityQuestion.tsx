@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,6 +34,7 @@ export const QuantityQuestion = memo(function QuantityQuestion({
   clearError,
   index = 0,
 }: QuantityQuestionProps) {
+  const { t } = useTranslation();
   const currentValue = questionnaireResponse.values[index]?.value as
     number | undefined;
   const currentUnit = questionnaireResponse.values[index]?.unit;
@@ -94,7 +96,9 @@ export const QuantityQuestion = memo(function QuantityQuestion({
     <div className="flex flex-col sm:flex-row gap-4 sm:flex-wrap">
       {question.answer_value_set && (
         <div className="space-y-2">
-          <Label htmlFor={`${question.id}-coding`}>Type</Label>
+          <Label htmlFor={`${question.id}-coding`}>
+            {t("supplied_item_type")}
+          </Label>
           <div className="w-full sm:w-[200px]">
             <ValueSetSelect
               system={question.answer_value_set}
@@ -105,7 +109,7 @@ export const QuantityQuestion = memo(function QuantityQuestion({
         </div>
       )}
       <div className="space-y-2">
-        <Label htmlFor={`${question.id}-value`}>Value</Label>
+        <Label htmlFor={`${question.id}-value`}>{t("value")}</Label>
         <Input
           id={`${question.id}-value`}
           type="number"
@@ -119,7 +123,9 @@ export const QuantityQuestion = memo(function QuantityQuestion({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor={`${question.id}-unit`}>Unit</Label>
+        <Label htmlFor={`${question.id}-unit`}>
+          {t("investigations__unit")}
+        </Label>
         <div className="w-[200px]">
           <ValueSetSelect
             system="system-ucum-units"

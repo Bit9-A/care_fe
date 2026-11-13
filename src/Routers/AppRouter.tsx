@@ -1,5 +1,6 @@
 import careConfig from "@careConfig";
 import { Redirect, usePath, useRedirect, useRoutes } from "raviger";
+import { useTranslation } from "react-i18next";
 
 import IconIndex from "@/CAREUI/icons/Index";
 
@@ -99,6 +100,7 @@ const publicRedirects = Object.fromEntries(
 );
 
 export default function AppRouter() {
+  const { t } = useTranslation();
   const pluginRoutes = usePluginRoutes();
   const organizationRoutes = useOrganizationRoutes();
   let routes = Routes;
@@ -160,7 +162,7 @@ export default function AppRouter() {
               <img
                 className="w-auto h-8"
                 src={careConfig.mainLogo?.dark}
-                alt="care logo"
+                alt={t("care_logo_alt")}
               />
             </a>
           </div>

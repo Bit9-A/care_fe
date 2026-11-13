@@ -142,7 +142,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
             <button
               onClick={handleStartRecording}
               className="inline-flex aspect-square w-32 items-center justify-center rounded-full bg-white/10 text-6xl text-white hover:bg-white/20"
-              aria-label="Start Recording"
+              aria-label={t("start_recording")}
             >
               <CareIcon icon="l-microphone" />
             </button>
@@ -165,7 +165,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
               onClick={handleStopRecording}
               id="stop-recording"
               className="inline-flex aspect-square w-32 animate-pulse items-center justify-center rounded-full bg-red-500/20 text-2xl text-red-500 hover:bg-red-500/30"
-              aria-label="Stop Recording"
+              aria-label={t("stop_recording")}
             >
               {timer.time}
             </button>

@@ -44,7 +44,7 @@ export default function ValueSetSelect({
   system,
   value,
   onSelect,
-  placeholder = "Search...",
+  placeholder,
   count = 10,
   searchPostFix = "",
   hideTrigger = false,
@@ -56,6 +56,7 @@ export default function ValueSetSelect({
   ...props
 }: Props & ButtonProps) {
   const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("search_placeholder");
   const [internalOpen, setInternalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const isMobile = useBreakpoints({ default: true, sm: false });
@@ -95,7 +96,7 @@ export default function ValueSetSelect({
               {...props}
             >
               <span>
-                {value?.display || placeholder}
+                {value?.display || resolvedPlaceholder}
                 {value?.display && showCode && (
                   <span className="text-xs ml-1">({value?.code})</span>
                 )}
@@ -118,7 +119,7 @@ export default function ValueSetSelect({
                 inputRef.current?.focus();
               }
             }}
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             count={count}
             searchPostFix={searchPostFix}
             showCode={showCode}
@@ -149,7 +150,7 @@ export default function ValueSetSelect({
         search={search}
         onSearchChange={setSearch}
         title={title}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
       />
     );
   }
@@ -173,7 +174,7 @@ export default function ValueSetSelect({
             {...props}
           >
             <span className="truncate">
-              {value?.display || placeholder}
+              {value?.display || resolvedPlaceholder}
               {value?.display && showCode && (
                 <span className="text-xs ml-1">({value?.code})</span>
               )}
@@ -192,7 +193,7 @@ export default function ValueSetSelect({
                 inputRef.current?.focus();
               }
             }}
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             count={count}
             searchPostFix={searchPostFix}
             showCode={showCode}

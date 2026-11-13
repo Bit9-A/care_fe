@@ -147,7 +147,7 @@ export const CodingField = ({
         )}
       />
       <Button
-        aria-label="Verify code"
+        aria-label={t("verify_code")}
         type="button"
         variant="outline"
         size="icon"

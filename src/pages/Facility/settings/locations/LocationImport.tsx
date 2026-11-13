@@ -1,6 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { AlertCircle, ChevronDown, ChevronRight, Upload } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -115,6 +116,7 @@ const processRowLocations = (data: string[][]) => {
 };
 
 export default function LocationImport({ facilityId }: LocationImportProps) {
+  const { t } = useTranslation();
   const [processedLocations, setProcessedLocations] = useState<
     LocationImportT[]
   >([]);
@@ -273,7 +275,7 @@ Main Building,building,Main hospital building,Reception,room,Main reception area
     <div className="max-w-7xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Location Import Wizard</CardTitle>
+          <CardTitle>{t("location_import_wizard")}</CardTitle>
           <CardDescription>
             Review and validate locations before importing
           </CardDescription>
@@ -283,7 +285,9 @@ Main Building,building,Main hospital building,Reception,room,Main reception area
         </CardHeader>
         <CardContent>
           <div>
-            <h3 className="text-lg font-semibold mb-4">Review All Locations</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              {t("review_all_locations")}
+            </h3>
             <HierarchicalLocationPreview locations={processedLocations} />
           </div>
           <div className="flex justify-end">
@@ -305,6 +309,7 @@ const HierarchicalLocationPreview = ({
 }: {
   locations: LocationImportT[];
 }) => {
+  const { t } = useTranslation();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const toggleExpanded = (locationId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -416,7 +421,7 @@ const HierarchicalLocationPreview = ({
   if (locations.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>No locations to preview</p>
+        <p>{t("no_locations_to_preview")}</p>
       </div>
     );
   }
@@ -424,7 +429,9 @@ const HierarchicalLocationPreview = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-medium">Location Hierarchy Preview</h4>
+        <h4 className="text-lg font-medium">
+          {t("location_hierarchy_preview")}
+        </h4>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"

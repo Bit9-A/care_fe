@@ -93,7 +93,7 @@ export const ClinicalHistoryOverview = (props: React.ComponentProps<"div">) => {
           >
             <img
               src="/images/icons/clinical_history.svg"
-              alt="Clinical History"
+              alt={t("clinical_history")}
               className="size-4"
             />
             {t("see_clinical_history")}

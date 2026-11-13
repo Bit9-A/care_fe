@@ -71,7 +71,7 @@ export default function MedicationValueSetSelect({
   onSelect,
   onProductSelect,
   disabled,
-  placeholder = "Search...",
+  placeholder,
   title,
   value,
   hideTrigger = false,
@@ -79,6 +79,7 @@ export default function MedicationValueSetSelect({
   mobileTrigger,
 }: Props) {
   const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("search");
   const { facilityId } = useCurrentFacilitySilently();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>(
@@ -211,7 +212,7 @@ export default function MedicationValueSetSelect({
               )}
               disabled={disabled}
             >
-              <span>{value?.display || placeholder}</span>
+              <span>{value?.display || resolvedPlaceholder}</span>
               <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
             </Button>
           )}
@@ -269,7 +270,9 @@ export default function MedicationValueSetSelect({
           )}
           disabled={disabled}
         >
-          <span className="truncate">{value?.display || placeholder}</span>
+          <span className="truncate">
+            {value?.display || resolvedPlaceholder}
+          </span>
           <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

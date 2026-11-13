@@ -1033,7 +1033,7 @@ export function QuestionnaireForm({
                   disabled={isPending}
                 >
                   <CareIcon icon="l-times-circle" />
-                  <span>Remove</span>
+                  <span>{t("remove")}</span>
                 </Button>
               )}
             </div>

@@ -147,7 +147,7 @@ export default function FileUploadDialog({
                     <div className="flex items-center justify-center mt-2 md:mt-0 rounded-lg border border-gray-300 shadow-md overflow-hidden">
                       <img
                         src={previewUrls[index]}
-                        alt="Preview"
+                        alt={t("preview")}
                         className="w-20 h-15 md:w-22 md:h-24 object-fit"
                       />
                     </div>

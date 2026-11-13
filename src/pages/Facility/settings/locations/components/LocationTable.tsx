@@ -252,7 +252,7 @@ export function LocationTable({
                         {/* Edit button or spacer */}
                         {onEdit ? (
                           <Button
-                            title="Edit Location"
+                            title={t("edit_location")}
                             variant="ghost"
                             size="icon"
                             onClick={() => onEdit(location)}

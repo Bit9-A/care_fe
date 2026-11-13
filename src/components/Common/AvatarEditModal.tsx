@@ -286,7 +286,7 @@ export default function AvatarEditModal({
                           {croppedPreview ? (
                             <img
                               src={croppedPreview || "/placeholder.svg"}
-                              alt="Cropped preview"
+                              alt={t("cropped_preview")}
                               loading="lazy"
                               decoding="async"
                               className={cn(

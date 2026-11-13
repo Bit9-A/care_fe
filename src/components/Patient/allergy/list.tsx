@@ -8,7 +8,7 @@ import {
   LeafIcon,
 } from "lucide-react";
 import { Link, usePath } from "raviger";
-import { ReactNode } from "react";
+import { ElementType, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -48,13 +48,24 @@ interface GroupedAllergies {
   };
 }
 
+const CategoryIcon = ({
+  icon: Icon,
+  labelKey,
+}: {
+  icon: ElementType;
+  labelKey: string;
+}) => {
+  const { t } = useTranslation();
+  return <Icon className="size-4" aria-label={t(labelKey)} />;
+};
+
 export const CATEGORY_ICONS: Record<AllergyCategory, ReactNode> = {
-  food: <CookingPotIcon className="size-4" aria-label="Food allergy" />,
-  medication: <BeakerIcon className="size-4" aria-label="Medication allergy" />,
+  food: <CategoryIcon icon={CookingPotIcon} labelKey="food_allergy" />,
+  medication: <CategoryIcon icon={BeakerIcon} labelKey="medication_allergy" />,
   environment: (
-    <LeafIcon className="size-4" aria-label="Environmental allergy" />
+    <CategoryIcon icon={LeafIcon} labelKey="environmental_allergy" />
   ),
-  biologic: <HeartPulseIcon className="size-4" aria-label="Biologic allergy" />,
+  biologic: <CategoryIcon icon={HeartPulseIcon} labelKey="biologic_allergy" />,
 };
 
 export function AllergyList({

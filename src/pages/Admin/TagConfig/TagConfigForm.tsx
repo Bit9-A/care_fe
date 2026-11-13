@@ -443,7 +443,7 @@ export default function TagConfigForm({
             name="facility_organization"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Facility Organisation</FormLabel>
+                <FormLabel>{t("facility_organisation")}</FormLabel>
                 <FormControl>
                   <FacilityOrganizationSelector
                     facilityId={facilityId}
@@ -470,7 +470,7 @@ export default function TagConfigForm({
             name="organization"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Organization</FormLabel>
+                <FormLabel>{t("SYSTEM__org_type__default")}</FormLabel>
                 <FormControl>
                   <RoleOrgSelector
                     value={field.value ? [field.value] : null}

@@ -41,7 +41,7 @@ export default function MultiFilter({
   onOperationChange,
   onClearAll,
   onClearFilter,
-  placeholder = "Filter",
+  placeholder,
   className,
   triggerButtonClassName,
   clearAllButtonClassName,
@@ -55,6 +55,7 @@ export default function MultiFilter({
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [openStates, setOpenStates] = useState<Record<string, boolean>>({});
   const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("filter");
 
   const activeFiltersCount = Object.values(selectedFilters).reduce(
     (sum, filterState) => {
@@ -136,7 +137,7 @@ export default function MultiFilter({
             disabled={disabled}
           >
             <ListFilter className="h-3 w-3" />
-            <span className="truncate">{placeholder}</span>
+            <span className="truncate">{resolvedPlaceholder}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

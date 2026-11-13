@@ -330,7 +330,7 @@ export default function CreateEncounterForm({
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Priority</FormLabel>
+                    <FormLabel>{t("priority")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}

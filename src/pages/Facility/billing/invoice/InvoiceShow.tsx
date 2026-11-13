@@ -462,7 +462,7 @@ function InvoiceShow({
                       <Button
                         variant="outline_primary"
                         size="icon"
-                        aria-label="More Options"
+                        aria-label={t("more_options")}
                       >
                         <ChevronDown />
                       </Button>
