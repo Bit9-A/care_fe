@@ -302,7 +302,7 @@ function PopoverMenu({ link }: { link: NavigationLink }) {
       <PopoverContent
         side="right"
         align="start"
-        className="w-48 p-1"
+        className="w-56 max-w-[calc(100vw-2.5rem)] p-1"
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <div className="flex flex-col gap-1">
