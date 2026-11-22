@@ -2,6 +2,8 @@ import "@/style/index.css";
 import "reactflow/dist/style.css";
 
 import * as Sentry from "@sentry/browser";
+import { setDefaultOptions } from "date-fns";
+import { es } from "date-fns/locale";
 
 import App from "@/App";
 import { AuthContextType, AuthUserContext } from "@/hooks/useAuthUser";
@@ -56,6 +58,10 @@ function initApp() {
 }
 
 // Initialize i18n with namespaces from API before rendering the app
+// date-fns defaults to en-US; set the Spanish locale once so every
+// format/formatDistance call across the app renders in Spanish.
+setDefaultOptions({ locale: es });
+
 initI18n()
   .catch((error) => {
     console.error("Failed to initialize i18n:", error);
