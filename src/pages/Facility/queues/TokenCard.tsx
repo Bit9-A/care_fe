@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
-import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
+import TokenPrintAction from "@/components/Tokens/TokenPrintAction";
+
+import { formatLocalDate } from "@/Utils/intl";
 import { PatientAge } from "@/components/Patient/PatientAge";
 import { Separator } from "@/components/ui/separator";
 import useBreakpoints from "@/hooks/useBreakpoints";
@@ -17,7 +19,6 @@ import {
   SchedulableResourceType,
 } from "@/types/scheduling/schedule";
 import { renderTokenNumber, TokenRetrieve } from "@/types/tokens/token/token";
-import { PrinterIcon } from "lucide-react";
 import { Link } from "raviger";
 
 interface Props {
@@ -39,29 +40,6 @@ const TokenCard = ({
 }: Props) => {
   const { t } = useTranslation();
   const isLargeScreen = useBreakpoints({ lg: true, default: false });
-
-  const printToken = (tokenId: string) => {
-    const printSection = document.getElementById(`print-token-${tokenId}`);
-
-    if (printSection) {
-      const style = document.createElement("style");
-      style.textContent = `
-        @media print {
-          body * { visibility: hidden; }
-          #print-token-${tokenId}, #print-token-${tokenId} * { visibility: visible; }
-          #print-token-${tokenId} {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100% !important;
-          }
-        }
-      `;
-      document.head.appendChild(style);
-      window.print();
-      document.head.removeChild(style);
-    }
-  };
 
   return (
     <Card
@@ -181,15 +159,31 @@ const TokenCard = ({
                   {t("queue_board")}
                 </Link>
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => printToken(token.id)}
-                className="text-base font-semibold text-gray-950"
-              >
-                <PrinterIcon className="mr-2 size-4" />
-                {t("print")}
-                <ShortcutBadge actionId="print-button" />
-              </Button>
+              <TokenPrintAction
+                buttonClassName="text-base font-semibold text-gray-950"
+                data={{
+                  sheetId: token.id,
+                  tokenNumber: renderTokenNumber(token),
+                  categoryName: token.category.name,
+                  patientName: token.patient?.name,
+                  resourceTypeLabel: t(
+                    `schedulable_resource__${token.resource_type}`,
+                  ),
+                  resourceLabel: formatScheduleResourceName(token),
+                  dateLabel: token.queue.date
+                    ? formatLocalDate(token.queue.date, {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "",
+                  qrValue: JSON.stringify({
+                    tokenId: token.id,
+                    queueId: token.queue.id,
+                  }),
+                  facility,
+                }}
+              />
             </div>
           </div>
         )}

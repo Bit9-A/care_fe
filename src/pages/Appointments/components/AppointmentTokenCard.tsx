@@ -4,12 +4,13 @@ import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
-import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
 import { PatientAge } from "@/components/Patient/PatientAge";
 import { resourceTypeToResourcePathSlug } from "@/components/Schedule/useScheduleResource";
 import TagBadge from "@/components/Tags/TagBadge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+
+import TokenPrintAction from "@/components/Tokens/TokenPrintAction";
 import { useShortcutSubContext } from "@/context/ShortcutContext";
 import useBreakpoints from "@/hooks/useBreakpoints";
 import usePatientExtensionData from "@/hooks/usePatientExtensionData";
@@ -25,8 +26,8 @@ import {
   formatScheduleResourceName,
 } from "@/types/scheduling/schedule";
 import { renderTokenNumber, TokenRead } from "@/types/tokens/token/token";
+import { formatLocalDate } from "@/Utils/intl";
 import { formatDate } from "date-fns";
-import { PrinterIcon } from "lucide-react";
 import { Link } from "raviger";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 
@@ -58,6 +59,9 @@ const TokenCard = ({
     PatientRead | undefined;
   const patientTags =
     patientWithIdentifiers?.instance_tags ?? patient?.instance_tags;
+
+  // Either prop can carry the token, depending on the screen that renders the card.
+  const tokenOrAppointmentToken = token ?? appointment?.token;
 
   const appointmentTags = appointment?.tags ?? [];
 
@@ -242,15 +246,47 @@ const TokenCard = ({
                   {t("queue_board")}
                 </Link>
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => print()}
-                className="text-base text-gray-950 font-semibold"
-              >
-                <PrinterIcon className="size-4 mr-2" />
-                {t("print_token")}
-                <ShortcutBadge actionId="print-button" />
-              </Button>
+              <TokenPrintAction
+                buttonClassName="text-base text-gray-950 font-semibold"
+                data={{
+                  sheetId:
+                    token?.id ?? appointment?.token?.id ?? appointment.id,
+                  tokenNumber: tokenOrAppointmentToken
+                    ? renderTokenNumber(tokenOrAppointmentToken)
+                    : "",
+                  categoryName: tokenOrAppointmentToken?.category?.name,
+                  patientName: patient?.name,
+                  resourceTypeLabel: appointment
+                    ? t(`schedulable_resource__${appointment.resource_type}`)
+                    : undefined,
+                  resourceLabel: appointment
+                    ? formatScheduleResourceName(appointment)
+                    : (tokenOrAppointmentToken?.queue?.name ?? ""),
+                  dateLabel: appointment
+                    ? `${formatLocalDate(
+                        appointment.token_slot.start_datetime,
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        },
+                      )} · ${formatSlotTimeRange(appointment.token_slot)}`
+                    : tokenOrAppointmentToken?.queue?.date
+                      ? formatLocalDate(tokenOrAppointmentToken.queue.date, {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "",
+                  qrValue: JSON.stringify({
+                    tokenId: tokenOrAppointmentToken?.id ?? appointment.id,
+                    queueId:
+                      tokenOrAppointmentToken?.queue?.id ??
+                      appointment.token?.queue?.id,
+                  }),
+                  facility: facility ?? (appointment?.facility as FacilityRead),
+                }}
+              />
             </div>
           </div>
         )}
