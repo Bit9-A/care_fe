@@ -79,15 +79,8 @@ interface LoginProps {
 
 const Login = (props: LoginProps) => {
   const { signIn, patientLogin, isAuthenticating } = useAuthContext();
-  const {
-    reCaptchaSiteKey,
-    urls,
-    stateLogo,
-    customLogo,
-    customLogoAlt,
-    resendOtpTimeout,
-    disablePatientLogin,
-  } = careConfig;
+  const { reCaptchaSiteKey, resendOtpTimeout, disablePatientLogin } =
+    careConfig;
   const initForm: any = {
     username: "",
     password: "",
@@ -317,65 +310,166 @@ const Login = (props: LoginProps) => {
   // Loading state derived from mutations
   const isLoading = isAuthenticating || sendOtpPending || verifyOtpPending;
 
-  const logos = [stateLogo, customLogo].filter(
-    (logo) => logo?.light || logo?.dark,
-  );
-
   return (
     <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row">
       <AuthHero />
 
       {/* Login Forms Section */}
-      <div className="login-hero-form my-4 w-full md:mt-0 md:h-full md:w-1/2">
-        <div className="relative h-full items-center flex justify-center md:flex">
-          <div className="w-full max-w-[400px] space-y-6">
-            {/* Logo for Mobile */}
-            <div className="px-4 flex items-center mx-auto gap-4 md:hidden">
-              {logos.map((logo, index) =>
-                logo && logo.dark ? (
-                  <div key={index} className="flex items-center">
-                    <img
-                      src={logo.dark}
-                      className="h-14 rounded-lg py-3"
-                      alt={t("state_logo_alt")}
+      <div className="login-hero-form flex w-full flex-1 items-center justify-center px-5 py-10 md:h-full md:w-1/2 md:px-10">
+        <div className="w-full max-w-[440px]">
+          <div className="mb-7 md:hidden">
+            <p className="text-[15px] leading-snug font-semibold tracking-tight text-sus-900">
+              {t("sus_tachira")}
+            </p>
+          </div>
+          <Card className="rounded-2xl border-0 bg-white shadow-lg shadow-sus-950/10 ring-1 ring-gray-900/5">
+            <CardHeader className="space-y-1.5 px-6 pt-7 pb-0 sm:px-8 sm:pt-8">
+              <CardTitle className="text-[22px] leading-tight font-semibold tracking-tight text-gray-900">
+                {t("welcome_back")}
+              </CardTitle>
+              <CardDescription className="text-sm text-gray-500">
+                {disablePatientLogin
+                  ? t("sign_in_to_your_account_to_continue")
+                  : t("choose_your_login_method_to_continue")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pt-6 pb-8 sm:px-8">
+              {disablePatientLogin ? (
+                <>
+                  {/* Staff Login */}
+                  {!forgotPassword ? (
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="username"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {t("username")}
+                        </Label>
+                        <Input
+                          id="username"
+                          name="username"
+                          type="text"
+                          autoComplete="username"
+                          value={form.username}
+                          onChange={handleChange}
+                          className={cn(
+                            "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
+                            errors.username &&
+                              "border-red-500 focus-visible:ring-red-500",
+                          )}
+                        />
+                        <p className="min-h-5 text-sm leading-5 text-red-600">
+                          {errors.username ? t(errors.username) : null}
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-baseline justify-between gap-4">
+                          <Label
+                            htmlFor="password"
+                            className="text-sm font-medium text-gray-700"
+                          >
+                            {t("password")}
+                          </Label>
+                          <Button
+                            variant="link"
+                            type="button"
+                            onClick={() => setForgotPassword(true)}
+                            className="h-auto p-0 text-sm font-medium whitespace-nowrap text-sus-700 hover:text-sus-900 hover:no-underline"
+                          >
+                            {t("forget_password")}
+                          </Button>
+                        </div>
+                        <PasswordInput
+                          id="password"
+                          name="password"
+                          autoComplete="current-password"
+                          value={form.password}
+                          onChange={handleChange}
+                          className={cn(
+                            "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
+                            errors.password &&
+                              "border-red-500 focus-visible:ring-red-500",
+                          )}
+                        />
+                        <p className="min-h-5 text-sm leading-5 text-red-600">
+                          {errors.password ? t(errors.password) : null}
+                        </p>
+                      </div>
+
+                      {isCaptchaEnabled && reCaptchaSiteKey && (
+                        <div className="py-2">
+                          <ReCaptcha
+                            sitekey={reCaptchaSiteKey}
+                            onChange={onCaptchaChange}
+                          />
+                        </div>
+                      )}
+
+                      <Button
+                        type="submit"
+                        className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
+                        variant="primary"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <CircularProgress className="text-white" />
+                        ) : (
+                          t("login")
+                        )}
+                      </Button>
+                    </form>
+                  ) : (
+                    <ForgotPasswordPanel
+                      username={form.username}
+                      usernameError={errors.username}
+                      onUsernameChange={handleChange}
+                      onSubmitEmail={handleForgetSubmit}
+                      onBackToLogin={() => setForgotPassword(false)}
+                      isSubmitting={isLoading || forgotPasswordPending}
                     />
-                  </div>
-                ) : null,
-              )}
-              {logos.length === 0 && (
-                <a
-                  href={urls.ohcn}
-                  className="inline-block"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  )}
+                </>
+              ) : (
+                <Tabs
+                  value={mode === "patient" ? "patient" : "staff"}
+                  onValueChange={(value) => {
+                    setQueryParams({ mode: value as LoginMode });
+                    if (value === "staff") {
+                      resetPatientLogin();
+                    } else {
+                      setForgotPassword(false);
+                    }
+                  }}
                 >
-                  <img
-                    src={customLogoAlt?.light ?? "/images/ohc_logo_light.svg"}
-                    className="h-8"
-                    alt={t("open_healthcare_network_logo_alt")}
-                  />
-                </a>
-              )}
-            </div>
-            <Card className="mx-4">
-              <CardHeader className="space-y-1 px-4">
-                <CardTitle className="text-2xl font-bold">
-                  {t("welcome_back")}
-                </CardTitle>
-                <CardDescription>
-                  {disablePatientLogin
-                    ? t("sign_in_to_your_account_to_continue")
-                    : t("choose_your_login_method_to_continue")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {disablePatientLogin ? (
-                  <>
-                    {/* Staff Login */}
+                  <TabsList className="flex w-full rounded-xl bg-gray-100 p-1">
+                    <TabsTrigger
+                      className="h-9 flex-1 rounded-lg text-sm font-medium"
+                      value="staff"
+                    >
+                      {t("staff_login")}
+                    </TabsTrigger>
+                    {!disablePatientLogin && (
+                      <TabsTrigger
+                        className="h-9 flex-1 rounded-lg text-sm font-medium"
+                        value="patient"
+                      >
+                        {t("patient_login")}
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+
+                  {/* Staff Login */}
+                  <TabsContent value="staff">
                     {!forgotPassword ? (
-                      <form onSubmit={handleSubmit} className="space-y-4">
+                      <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-2">
-                          <Label htmlFor="username">{t("username")}</Label>
+                          <Label
+                            htmlFor="username"
+                            className="text-sm font-medium text-gray-700"
+                          >
+                            {t("username")}
+                          </Label>
                           <Input
                             id="username"
                             name="username"
@@ -384,18 +478,32 @@ const Login = (props: LoginProps) => {
                             value={form.username}
                             onChange={handleChange}
                             className={cn(
+                              "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
                               errors.username &&
                                 "border-red-500 focus-visible:ring-red-500",
                             )}
                           />
-                          {errors.username && (
-                            <p className="text-sm text-red-500">
-                              {t(errors.username)}
-                            </p>
-                          )}
+                          <p className="min-h-5 text-sm leading-5 text-red-600">
+                            {errors.username ? t(errors.username) : null}
+                          </p>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="password">{t("password")}</Label>
+                          <div className="flex items-baseline justify-between gap-4">
+                            <Label
+                              htmlFor="password"
+                              className="text-sm font-medium text-gray-700"
+                            >
+                              {t("password")}
+                            </Label>
+                            <Button
+                              variant="link"
+                              type="button"
+                              onClick={() => setForgotPassword(true)}
+                              className="h-auto p-0 text-sm font-medium whitespace-nowrap text-sus-700 hover:text-sus-900 hover:no-underline"
+                            >
+                              {t("forget_password")}
+                            </Button>
+                          </div>
                           <PasswordInput
                             id="password"
                             name="password"
@@ -403,19 +511,18 @@ const Login = (props: LoginProps) => {
                             value={form.password}
                             onChange={handleChange}
                             className={cn(
+                              "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
                               errors.password &&
                                 "border-red-500 focus-visible:ring-red-500",
                             )}
                           />
-                          {errors.password && (
-                            <p className="text-sm text-red-500">
-                              {t(errors.password)}
-                            </p>
-                          )}
+                          <p className="min-h-5 text-sm leading-5 text-red-600">
+                            {errors.password ? t(errors.password) : null}
+                          </p>
                         </div>
 
                         {isCaptchaEnabled && reCaptchaSiteKey && (
-                          <div className="py-4">
+                          <div className="py-2">
                             <ReCaptcha
                               sitekey={reCaptchaSiteKey}
                               onChange={onCaptchaChange}
@@ -424,17 +531,8 @@ const Login = (props: LoginProps) => {
                         )}
 
                         <Button
-                          variant="link"
-                          type="button"
-                          onClick={() => setForgotPassword(true)}
-                          className="px-0"
-                        >
-                          {t("forget_password")}
-                        </Button>
-
-                        <Button
                           type="submit"
-                          className="w-full"
+                          className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
                           variant="primary"
                           disabled={isLoading}
                         >
@@ -455,245 +553,143 @@ const Login = (props: LoginProps) => {
                         isSubmitting={isLoading || forgotPasswordPending}
                       />
                     )}
-                  </>
-                ) : (
-                  <Tabs
-                    value={mode === "patient" ? "patient" : "staff"}
-                    onValueChange={(value) => {
-                      setQueryParams({ mode: value as LoginMode });
-                      if (value === "staff") {
-                        resetPatientLogin();
-                      } else {
-                        setForgotPassword(false);
-                      }
-                    }}
-                  >
-                    <TabsList className="flex w-full">
-                      <TabsTrigger className="flex-1" value="staff">
-                        {t("staff_login")}
-                      </TabsTrigger>
-                      {!disablePatientLogin && (
-                        <TabsTrigger className="flex-1" value="patient">
-                          {t("patient_login")}
-                        </TabsTrigger>
-                      )}
-                    </TabsList>
+                  </TabsContent>
 
-                    {/* Staff Login */}
-                    <TabsContent value="staff">
-                      {!forgotPassword ? (
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="username">{t("username")}</Label>
-                            <Input
-                              id="username"
-                              name="username"
-                              type="text"
-                              autoComplete="username"
-                              value={form.username}
-                              onChange={handleChange}
-                              className={cn(
-                                errors.username &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                            />
-                            {errors.username && (
-                              <p className="text-sm text-red-500">
-                                {t(errors.username)}
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="password">{t("password")}</Label>
-                            <PasswordInput
-                              id="password"
-                              name="password"
-                              autoComplete="current-password"
-                              value={form.password}
-                              onChange={handleChange}
-                              className={cn(
-                                errors.password &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                            />
-                            {errors.password && (
-                              <p className="text-sm text-red-500">
-                                {t(errors.password)}
-                              </p>
-                            )}
-                          </div>
-
-                          {isCaptchaEnabled && reCaptchaSiteKey && (
-                            <div className="py-4">
-                              <ReCaptcha
-                                sitekey={reCaptchaSiteKey}
-                                onChange={onCaptchaChange}
-                              />
-                            </div>
-                          )}
-
-                          <Button
-                            variant="link"
-                            type="button"
-                            onClick={() => setForgotPassword(true)}
-                            className="px-0"
-                          >
-                            {t("forget_password")}
-                          </Button>
-
-                          <Button
-                            type="submit"
-                            className="w-full"
-                            variant="primary"
-                            disabled={isLoading}
-                          >
-                            {isLoading ? (
-                              <CircularProgress className="text-white" />
-                            ) : (
-                              t("login")
-                            )}
-                          </Button>
-                        </form>
-                      ) : (
-                        <ForgotPasswordPanel
-                          username={form.username}
-                          usernameError={errors.username}
-                          onUsernameChange={handleChange}
-                          onSubmitEmail={handleForgetSubmit}
-                          onBackToLogin={() => setForgotPassword(false)}
-                          isSubmitting={isLoading || forgotPasswordPending}
+                  {/* Patient Login */}
+                  <TabsContent value="patient">
+                    <form onSubmit={handlePatientLogin} className="space-y-5">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="phone"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          {t("phone_number")}
+                        </Label>
+                        <PhoneInput
+                          id="phone"
+                          name="phone"
+                          value={phone}
+                          onChange={(value) => {
+                            setPhone(value ?? "");
+                            setOtpError("");
+                            setOtpValidationError("");
+                          }}
+                          disabled={isOtpSent}
+                          placeholder={t("enter_phone_number")}
                         />
-                      )}
-                    </TabsContent>
+                        {otpError && (
+                          <p className="text-sm text-red-600">{t(otpError)}</p>
+                        )}
+                      </div>
 
-                    {/* Patient Login */}
-                    <TabsContent value="patient">
-                      <form onSubmit={handlePatientLogin} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">{t("phone_number")}</Label>
-                          <PhoneInput
-                            id="phone"
-                            name="phone"
-                            value={phone}
-                            onChange={(value) => {
-                              setPhone(value ?? "");
-                              setOtpError("");
-                              setOtpValidationError("");
-                            }}
-                            disabled={isOtpSent}
-                            placeholder={t("enter_phone_number")}
-                          />
-                          {otpError && (
-                            <p className="text-sm text-red-500">
-                              {t(otpError)}
+                      {isOtpSent && (
+                        <div className="space-y-3">
+                          <Label
+                            htmlFor="otp"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            {t("enter_otp")}
+                          </Label>
+                          <div className="flex justify-center">
+                            <InputOTP
+                              id="otp"
+                              value={otp}
+                              maxLength={5}
+                              pattern={REGEXP_ONLY_DIGITS}
+                              autoComplete="one-time-code"
+                              autoFocus
+                              onChange={(value) => {
+                                setOtp(value);
+                                setOtpValidationError("");
+                              }}
+                            >
+                              <InputOTPGroup>
+                                {[...Array(5)].map((_, index) => (
+                                  <InputOTPSlot
+                                    key={index}
+                                    index={index}
+                                    className={cn(
+                                      "size-11 rounded-lg border-gray-200",
+                                      otpValidationError &&
+                                        "border-red-500 focus-visible:ring-red-500",
+                                    )}
+                                  />
+                                ))}
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </div>
+                          {otpValidationError && (
+                            <p className="text-center text-sm text-red-600">
+                              {t(otpValidationError)}
                             </p>
                           )}
                         </div>
+                      )}
 
-                        {isOtpSent && (
-                          <div className="space-y-2">
-                            <Label htmlFor="otp" className="mb-4">
-                              {t("enter_otp")}
-                            </Label>
-                            <div className="flex justify-center">
-                              <InputOTP
-                                id="otp"
-                                value={otp}
-                                maxLength={5}
-                                pattern={REGEXP_ONLY_DIGITS}
-                                autoComplete="one-time-code"
-                                autoFocus
-                                onChange={(value) => {
-                                  setOtp(value);
-                                  setOtpValidationError("");
-                                }}
-                              >
-                                <InputOTPGroup>
-                                  {[...Array(5)].map((_, index) => (
-                                    <InputOTPSlot
-                                      key={index}
-                                      index={index}
-                                      className={cn(
-                                        "size-10",
-                                        otpValidationError &&
-                                          "border-red-500 focus-visible:ring-red-500",
-                                      )}
-                                    />
-                                  ))}
-                                </InputOTPGroup>
-                              </InputOTP>
-                            </div>
-                            {otpValidationError && (
-                              <p className="text-sm text-red-500 text-center">
-                                {t(otpValidationError)}
-                              </p>
-                            )}
-                          </div>
+                      <Button
+                        type="submit"
+                        className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
+                        variant="primary"
+                        disabled={
+                          isLoading ||
+                          !isValidPhoneNumber(phone) ||
+                          (isOtpSent && otp.length !== 5)
+                        }
+                      >
+                        {isLoading ? (
+                          <CircularProgress className="text-white" />
+                        ) : isOtpSent ? (
+                          t("verify_otp")
+                        ) : (
+                          t("send_otp")
                         )}
-
-                        <Button
-                          type="submit"
-                          className="w-full"
-                          variant="primary"
-                          disabled={
-                            isLoading ||
-                            !isValidPhoneNumber(phone) ||
-                            (isOtpSent && otp.length !== 5)
-                          }
-                        >
-                          {isLoading ? (
-                            <CircularProgress className="text-white" />
-                          ) : isOtpSent ? (
-                            t("verify_otp")
+                      </Button>
+                      {isOtpSent && (
+                        <div className="flex flex-col items-center gap-2 text-center">
+                          {resendOtpCountdown <= 0 ? (
+                            <Button
+                              variant="link"
+                              type="button"
+                              className="h-auto p-0 text-sm font-medium text-sus-700 hover:text-sus-900"
+                              onClick={() => {
+                                sendOtp({ phone_number: phone });
+                                setResendOtpCountdown(resendOtpTimeout);
+                              }}
+                            >
+                              {t("resend_otp")}
+                            </Button>
                           ) : (
-                            t("send_otp")
+                            <p className="text-sm text-gray-500">
+                              {t("resend_otp_timer", {
+                                time: resendOtpCountdown,
+                              })}
+                            </p>
                           )}
-                        </Button>
-                        {isOtpSent && (
-                          <div className="flex flex-col items-center gap-2 text-center">
-                            {resendOtpCountdown <= 0 ? (
-                              <Button
-                                variant="link"
-                                type="button"
-                                className="h-auto p-0"
-                                onClick={() => {
-                                  sendOtp({ phone_number: phone });
-                                  setResendOtpCountdown(resendOtpTimeout);
-                                }}
-                              >
-                                {t("resend_otp")}
-                              </Button>
-                            ) : (
-                              <p className="text-sm text-gray-500">
-                                {t("resend_otp_timer", {
-                                  time: resendOtpCountdown,
-                                })}
-                              </p>
-                            )}
-                            <div className="flex items-center text-sm">
-                              <Button
-                                variant="link"
-                                type="button"
-                                className="h-auto p-0 text-primary-600"
-                                onClick={() => {
-                                  setIsOtpSent(false);
-                                  setOtp("");
-                                  setOtpError("");
-                                  setOtpValidationError("");
-                                }}
-                              >
-                                {t("change_phone_number")}
-                              </Button>
-                            </div>
+                          <div className="flex items-center text-sm">
+                            <Button
+                              variant="link"
+                              type="button"
+                              className="h-auto p-0 text-sm font-medium text-sus-700 hover:text-sus-900"
+                              onClick={() => {
+                                setIsOtpSent(false);
+                                setOtp("");
+                                setOtpError("");
+                                setOtpValidationError("");
+                              }}
+                            >
+                              {t("change_phone_number")}
+                            </Button>
                           </div>
-                        )}
-                      </form>
-                    </TabsContent>
-                  </Tabs>
-                )}
-              </CardContent>
-            </Card>
+                        </div>
+                      )}
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              )}
+            </CardContent>
+          </Card>
 
+          <div className="mt-6">
             <LanguageSelectorLogin />
           </div>
         </div>

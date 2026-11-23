@@ -281,7 +281,7 @@ export function ForgotPasswordPhone({
 
           <Button
             type="submit"
-            className="w-full"
+            className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
             variant="primary"
             disabled={sendOtpPending || !isValidPhoneNumber(phone)}
           >
@@ -399,7 +399,7 @@ export function ForgotPasswordPhone({
 
         <Button
           type="submit"
-          className="w-full"
+          className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
           variant="primary"
           disabled={
             confirmPending ||

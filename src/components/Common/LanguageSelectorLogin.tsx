@@ -35,10 +35,10 @@ const LanguageSelectorLogin = () => {
             key={e}
             onClick={() => handleLanguage(e)}
             className={cn(
-              "text-primary-400 hover:text-primary-600",
+              "text-sky-600 hover:text-sky-800",
               (i18n.language === e ||
                 (i18n.language === "en-US" && e === "en")) &&
-                "text-primary-600 underline",
+                "text-sky-800 underline",
             )}
           >
             {LANGUAGES[e]}
