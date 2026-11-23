@@ -392,7 +392,7 @@
     }
 
     /* Collapse everything else for single-print (only when multi-print is NOT also active) */
-    body:has(#single-print):not(:has(#multi-print))
+    body:not(.token-printing):has(#single-print):not(:has(#multi-print))
       *:not(#single-print):not(#single-print *) {
       height: 0 !important;
       min-height: 0 !important;
@@ -403,7 +403,7 @@
     }
 
     /* Collapse everything else for multi-print, and suppress any open single-print card */
-    body:has(#multi-print) *:not(#multi-print):not(#multi-print *) {
+    body:not(.token-printing):has(#multi-print) *:not(#multi-print):not(#multi-print *) {
       height: 0 !important;
       min-height: 0 !important;
       max-height: 0 !important;
@@ -412,7 +412,7 @@
       overflow: hidden !important;
     }
 
-    body:has(#multi-print) #single-print {
+    body:not(.token-printing):has(#multi-print) #single-print {
       display: none !important;
     }
 

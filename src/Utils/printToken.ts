@@ -14,12 +14,14 @@ export const TOKEN_PRINT_FORMATS: TokenPrintFormatOption[] = [
   {
     value: "thermal-58",
     labelKey: "print_token_thermal_58",
-    pageSize: "58mm auto",
+    // Two lengths on purpose: `size: 58mm auto` is invalid CSS and Chrome
+    // silently falls back to Letter, which is why nothing came out before.
+    pageSize: "58mm 90mm",
   },
   {
     value: "thermal-80",
     labelKey: "print_token_thermal_80",
-    pageSize: "80mm auto",
+    pageSize: "80mm 110mm",
   },
 ];
 
