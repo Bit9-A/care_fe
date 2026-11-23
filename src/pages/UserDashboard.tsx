@@ -51,7 +51,7 @@ export default function UserDashboard() {
   const user = useAuthUser();
   const { signOut } = useAuthContext();
   const facilities = user.facilities || [];
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const organizations = user.organizations || [];
   const governance = organizations.filter((org) => org.org_type === "govt");
@@ -106,7 +106,7 @@ export default function UserDashboard() {
               })}
             </h1>
             <p className="text-sm md:text-base text-gray-500">
-              {new Date().toLocaleDateString("en-US", {
+              {new Date().toLocaleDateString(i18n.language, {
                 weekday: "long",
                 year: "numeric",
                 month: "long",

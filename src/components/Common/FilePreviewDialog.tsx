@@ -100,7 +100,7 @@ export default function FilePreviewDialog(props: FilePreviewProps) {
     loadFile,
     currentIndex,
   } = props;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [page, setPage] = useState(1);
   const [rotation, setRotation] = useState<number>(0);
   const [numPages, setNumPages] = useState(1);
@@ -240,7 +240,7 @@ export default function FilePreviewDialog(props: FilePreviewProps) {
                       {t("created_on")}{" "}
                       {new Date(
                         uploadedFiles[index].created_date!,
-                      ).toLocaleString("en-US", {
+                      ).toLocaleString(i18n.language, {
                         dateStyle: "long",
                         timeStyle: "short",
                       })}

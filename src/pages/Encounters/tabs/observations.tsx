@@ -6,6 +6,9 @@ import { useInView } from "react-intersection-observer";
 
 import { Card } from "@/components/ui/card";
 
+import i18n from "@/i18n";
+import { formatLocalDate, formatLocalTime } from "@/Utils/intl";
+
 import { formatValue } from "@/components/Facility/ConsultationDetails/QuestionnaireResponsesList";
 
 import { useEncounter } from "@/pages/Encounters/utils/EncounterProvider";
@@ -34,22 +37,22 @@ function formatDisplayDate(dateStr: string) {
   yesterday.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
 
-  const formattedDate = date.toLocaleDateString("default", {
+  const formattedDate = formatLocalDate(date, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
   if (date.getTime() === today.getTime()) {
-    return `Today (${formattedDate})`;
+    return `${i18n.t("today")} (${formattedDate})`;
   } else if (date.getTime() === yesterday.getTime()) {
-    return `Yesterday (${formattedDate})`;
+    return `${i18n.t("yesterday")} (${formattedDate})`;
   }
   return formattedDate;
 }
 
 function formatDisplayTime(dateStr: string) {
-  return new Date(dateStr).toLocaleTimeString("en-US", {
+  return formatLocalTime(dateStr, {
     hour: "2-digit",
     minute: "2-digit",
   });

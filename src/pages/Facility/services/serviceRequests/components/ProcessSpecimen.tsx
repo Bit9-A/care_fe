@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { formatLocalDateTime } from "@/Utils/intl";
 
 import ValueSetSelect from "@/components/Questionnaire/ValueSetSelect";
 
@@ -148,7 +149,7 @@ export function ProcessSpecimen({
                 <div className="text-sm text-gray-600 mt-0.5">
                   {t("performed_on")}:{" "}
                   {process.time_date_time
-                    ? new Date(process.time_date_time).toLocaleString("en-US", {
+                    ? formatLocalDateTime(process.time_date_time, {
                         year: "numeric",
                         month: "short",
                         day: "2-digit",

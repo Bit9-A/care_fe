@@ -107,7 +107,7 @@ const IndividualMedicationRow: React.FC<{
   canWrite,
   productType,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isInactive = INACTIVE_MEDICATION_STATUSES.includes(
     medication.status as (typeof INACTIVE_MEDICATION_STATUSES)[number],
   );
@@ -243,7 +243,7 @@ const IndividualMedicationRow: React.FC<{
                   >
                     <CareIcon icon="l-check-circle" className="size-3" />
                     {new Date(admin.occurrence_period_start).toLocaleTimeString(
-                      "en-US",
+                      i18n.language,
                       { hour: "numeric", minute: "2-digit", hour12: true },
                     )}
                   </button>
@@ -313,7 +313,7 @@ export const GroupedMedicationRow: React.FC<GroupedMedicationRowProps> = ({
   canWrite,
   productType,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isExpanded = expandedGroups.has(group.productId);
   const hasMultipleRequests = group.requests.length > 1;
 
@@ -522,7 +522,7 @@ export const GroupedMedicationRow: React.FC<GroupedMedicationRowProps> = ({
                       >
                         {new Date(
                           admin.occurrence_period_start,
-                        ).toLocaleTimeString("en-US", {
+                        ).toLocaleTimeString(i18n.language, {
                           hour: "numeric",
                           minute: "2-digit",
                           hour12: true,
