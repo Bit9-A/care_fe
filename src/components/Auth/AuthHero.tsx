@@ -3,115 +3,69 @@ import { Link } from "raviger";
 import { useTranslation } from "react-i18next";
 
 export const AuthHero = () => {
-  const { urls, stateLogo, customLogo, customLogoAlt } = careConfig;
-  const customDescriptionHtml = __CUSTOM_DESCRIPTION_HTML__;
-  const { t } = useTranslation();
-
-  const logos = [stateLogo, customLogo].filter(
-    (logo) => logo?.light || logo?.dark,
-  );
-
   return (
     <div className="login-hero order-last relative flex flex-auto flex-col justify-between p-6 md:order-first md:h-full md:w-[calc(50%+130px)] md:flex-none md:p-0 md:px-16 md:pr-[calc(4rem+130px)]">
-      <div></div>
+      <div />
       <div className="mt-4 flex flex-col items-start rounded-lg py-4 md:mt-12">
-        <div className="mb-4 hidden items-center gap-6 md:flex">
-          {logos.map((logo, index) =>
-            logo && logo.light ? (
-              <div key={index} className="flex items-center">
-                <img
-                  src={logo.light}
-                  className="h-16 rounded-lg py-3"
-                  alt="state logo"
-                />
-              </div>
-            ) : null,
-          )}
-          {logos.length === 0 && (
-            <a
-              href={urls.ohcn}
-              className="inline-block"
-              target="_blank"
-              rel="noopener noreferrer"
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20 text-white backdrop-blur-xs border border-blue-400/30">
+            <svg
+              className="h-7 w-7 text-blue-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <img
-                src={customLogoAlt?.light ?? "/images/ohc_logo_light.svg"}
-                className="h-8"
-                alt="Open Healthcare Network logo"
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
               />
-            </a>
-          )}
+            </svg>
+          </div>
+          <div>
+            <span className="text-xs font-semibold tracking-widest uppercase text-blue-300">
+              Sistema Público Nacional de Salud
+            </span>
+            <p className="text-sm font-medium text-white/90">Estado Táchira</p>
+          </div>
         </div>
+
         <div className="max-w-lg">
-          <h1 className="text-4xl font-black leading-tight tracking-wider text-white lg:text-5xl">
-            {t("care")}
+          <h1 className="text-3xl font-black leading-tight tracking-wide text-white lg:text-4xl">
+            Red Asistencial y Gestión de ASIC
           </h1>
-          {customDescriptionHtml ? (
-            <div className="py-6">
-              <div
-                className="max-w-xl text-secondary-400"
-                dangerouslySetInnerHTML={{
-                  __html: __CUSTOM_DESCRIPTION_HTML__,
-                }}
-              />
+          <div className="max-w-xl py-4 text-base font-normal text-blue-100/90 md:text-lg">
+            Plataforma integral para la articulación demográfica, gerencial y
+            hospitalaria en los 29 municipios, 66 parroquias y 25 Áreas de Salud
+            Integral Comunitaria (ASIC).
+          </div>
+          <div className="grid grid-cols-3 gap-3 pt-2 text-center text-white/90">
+            <div className="rounded-lg bg-white/10 p-2.5 backdrop-blur-xs border border-white/10">
+              <span className="block text-xl font-bold text-white">25</span>
+              <span className="text-xs text-blue-200">ASIC</span>
             </div>
-          ) : (
-            <div className="max-w-xl py-6 pl-1 text-base font-semibold text-secondary-400 md:text-lg lg:text-xl">
-              {t("goal")}
+            <div className="rounded-lg bg-white/10 p-2.5 backdrop-blur-xs border border-white/10">
+              <span className="block text-xl font-bold text-white">29</span>
+              <span className="text-xs text-blue-200">Municipios</span>
             </div>
-          )}
+            <div className="rounded-lg bg-white/10 p-2.5 backdrop-blur-xs border border-white/10">
+              <span className="block text-xl font-bold text-white">14</span>
+              <span className="text-xs text-blue-200">Hospitales</span>
+            </div>
+          </div>
         </div>
       </div>
+
       <div className="mb-6 flex items-center">
-        <div className="max-w-lg text-xs md:text-sm">
-          <div className="mb-2 ml-1 flex items-center gap-4">
-            <a
-              href="https://www.digitalpublicgoods.net/r/care"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <img
-                src="https://cdn.ohc.network/dpg-logo.svg"
-                className="h-12"
-                alt="Logo of Digital Public Goods Alliance"
-              />
-            </a>
-            <div className="ml-2 h-8 w-px rounded-full bg-white/50" />
-            <a href={urls.ohcn} rel="noopener noreferrer" target="_blank">
-              <img
-                src="/images/ohc_logo_light.svg"
-                className="inline-block h-10"
-                alt="Open Healthcare Network logo"
-              />
-            </a>
-          </div>
-          <a
-            href={urls.ohcn}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-secondary-500"
-          >
-            {t("footer_body")}
-          </a>
-          <div className="mx-auto mt-2">
-            <a
-              href={urls.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-400 hover:text-primary-500"
-            >
-              {t("contribute_github")}
-            </a>
-            <span className="mx-2 text-primary-400">|</span>
-            <Link
-              href="/licenses"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-400 hover:text-primary-500"
-            >
-              {t("third_party_software_licenses")}
-            </Link>
-          </div>
+        <div className="max-w-lg text-xs text-blue-200/80">
+          <p className="font-semibold text-white/90">
+            MPPS · IVSS · Dirección de Salud Regional
+          </p>
+          <p className="mt-1">
+            Atención integral médica especializada, comunitaria y hospitalaria.
+          </p>
         </div>
       </div>
     </div>

@@ -28,6 +28,7 @@ import { PasswordInput } from "@/components/ui/input-password";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, UserCheck } from "lucide-react";
 
 import { ForgotPasswordPanel } from "@/components/Auth/ForgotPasswordPanel";
 import CircularProgress from "@/components/Common/CircularProgress";
@@ -326,49 +327,45 @@ const Login = (props: LoginProps) => {
       <AuthHero />
 
       {/* Login Forms Section */}
-      <div className="login-hero-form my-4 w-full md:mt-0 md:h-full md:w-1/2">
-        <div className="relative h-full items-center flex justify-center md:flex">
-          <div className="w-full max-w-[400px] space-y-6">
-            {/* Logo for Mobile */}
-            <div className="px-4 flex items-center mx-auto gap-4 md:hidden">
-              {logos.map((logo, index) =>
-                logo && logo.dark ? (
-                  <div key={index} className="flex items-center">
-                    <img
-                      src={logo.dark}
-                      className="h-14 rounded-lg py-3"
-                      alt="state logo"
-                    />
-                  </div>
-                ) : null,
-              )}
-              {logos.length === 0 && (
-                <a
-                  href={urls.ohcn}
-                  className="inline-block"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img
-                    src={customLogoAlt?.light ?? "/images/ohc_logo_light.svg"}
-                    className="h-8"
-                    alt="Open Healthcare Network logo"
-                  />
-                </a>
-              )}
+      <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
+        <div className="w-full max-w-[420px] space-y-4 my-auto">
+          {/* Logo/Header for Mobile */}
+          <div className="flex items-center justify-center gap-3 md:hidden pb-2">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#00a3ff]/15 text-[#00a3ff] border border-[#00a3ff]/30 shadow-xs">
+              <svg
+                className="h-6 w-6 text-[#00a3ff]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                />
+              </svg>
             </div>
-            <Card className="mx-4">
-              <CardHeader className="space-y-1 px-4">
-                <CardTitle className="text-2xl font-bold">
-                  {t("welcome_back")}
-                </CardTitle>
-                <CardDescription>
-                  {disablePatientLogin
-                    ? t("sign_in_to_your_account_to_continue")
-                    : t("choose_your_login_method_to_continue")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+            <div>
+              <span className="text-[10px] font-bold tracking-widest uppercase text-slate-500 block leading-tight">
+                Sistema Público Nacional de Salud
+              </span>
+              <p className="text-sm font-bold text-slate-800 leading-tight">
+                Estado Táchira · Red ASIC
+              </p>
+            </div>
+          </div>
+
+          <Card className="w-full rounded-2xl border border-slate-200/90 shadow-[0_14px_45px_-8px_rgba(0,163,255,0.18),0_4px_16px_-2px_rgba(15,23,42,0.06)] bg-white overflow-hidden transition-all duration-300">
+            <CardHeader className="space-y-1 px-6 pt-6 pb-4">
+              <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
+                {t("welcome_back")}
+              </CardTitle>
+              <CardDescription className="text-xs sm:text-sm text-slate-500">
+                {t("sign_in_to_your_account_to_continue")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-6 pt-0">
                 {disablePatientLogin ? (
                   <>
                     {/* Staff Login */}
@@ -434,8 +431,7 @@ const Login = (props: LoginProps) => {
 
                         <Button
                           type="submit"
-                          className="w-full"
-                          variant="primary"
+                          className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
                           disabled={isLoading}
                         >
                           {isLoading ? (
@@ -468,13 +464,21 @@ const Login = (props: LoginProps) => {
                       }
                     }}
                   >
-                    <TabsList className="flex w-full">
-                      <TabsTrigger className="flex-1" value="staff">
-                        {t("staff_login")}
+                    <TabsList className="grid grid-cols-2 w-full h-11 p-1 bg-slate-100 rounded-xl mb-5 border border-slate-200/80">
+                      <TabsTrigger
+                        className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
+                        value="staff"
+                      >
+                        <UserCheck className="size-4 shrink-0 text-[#00a3ff]" />
+                        <span className="truncate">Personal de Salud</span>
                       </TabsTrigger>
                       {!disablePatientLogin && (
-                        <TabsTrigger className="flex-1" value="patient">
-                          {t("patient_login")}
+                        <TabsTrigger
+                          className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
+                          value="patient"
+                        >
+                          <User className="size-4 shrink-0 text-[#00a3ff]" />
+                          <span className="truncate">Paciente</span>
                         </TabsTrigger>
                       )}
                     </TabsList>
@@ -543,8 +547,7 @@ const Login = (props: LoginProps) => {
 
                           <Button
                             type="submit"
-                            className="w-full"
-                            variant="primary"
+                            className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
                             disabled={isLoading}
                           >
                             {isLoading ? (
@@ -633,8 +636,7 @@ const Login = (props: LoginProps) => {
 
                         <Button
                           type="submit"
-                          className="w-full"
-                          variant="primary"
+                          className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
                           disabled={
                             isLoading ||
                             !isValidPhoneNumber(phone) ||
@@ -698,8 +700,7 @@ const Login = (props: LoginProps) => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default Login;

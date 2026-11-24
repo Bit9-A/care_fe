@@ -11,12 +11,8 @@ import { initReactI18next } from "react-i18next";
 import { z } from "zod";
 
 export const LANGUAGES = {
+  es: "Español",
   en: "English",
-  ta: "தமிழ்",
-  ml: "മലയാളം",
-  mr: "मराठी",
-  kn: "ಕನ್ನಡ",
-  hi: "हिन्दी",
 } as const;
 
 const DEFAULT_NAMESPACE = "care_fe";
@@ -152,7 +148,8 @@ export async function initI18n() {
       }),
     )
     .init({
-      fallbackLng: "en",
+      lng: "es",
+      fallbackLng: "es",
       ns: namespaces,
       fallbackNS: pluginNamespaces,
       load: "currentOnly",

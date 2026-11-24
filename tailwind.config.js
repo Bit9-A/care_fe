@@ -17,21 +17,22 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Figtree", "sans-serif"],
+        sans: ["'Plus Jakarta Sans'", "Figtree", "sans-serif"],
       },
       colors: {
         primary: {
-          50: "#ecfdf5",
-          100: "#def7ec",
-          200: "#bcf0da",
-          300: "#84e1bc",
-          400: "#31c48d",
-          500: "#0d9f6e",
-          600: "#057a55",
-          700: "#046c4e",
-          800: "#03543F",
-          900: "#014737",
-          DEFAULT: "#0d9f6e",
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          200: "#bae6fd",
+          300: "#7dd3fc",
+          400: "#38bdf8",
+          500: "#00a3ff", // Azul de salud exacto
+          600: "#008fe6",
+          700: "#0076be",
+          800: "#025f97",
+          900: "#064e7a",
+          950: "#043250",
+          DEFAULT: "#00a3ff",
         },
         secondary: secondary,
         sidebar: {

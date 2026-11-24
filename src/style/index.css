@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+
 @import "@fontsource/figtree/300.css" layer(base);
 @import "@fontsource/figtree/400.css" layer(base);
 @import "@fontsource/figtree/500.css" layer(base);
@@ -563,14 +565,15 @@
   .login-hero {
     background:
       linear-gradient(
-        to bottom right,
-        rgba(4, 78, 55, 0.466),
-        rgba(2, 54, 40, 0.521)
+        135deg,
+        rgba(3, 37, 76, 0.96) 0%,
+        rgba(0, 95, 168, 0.88) 45%,
+        rgba(0, 163, 255, 0.75) 100%
       ),
       url("/images/wave_scene_square.png");
     background-size: cover;
     background-position: center;
-    animation: alternate-reverse 30s linear infinite herobg;
+    animation: alternate-reverse 35s linear infinite herobg;
   }
 
   .login-hero::before {
@@ -585,7 +588,7 @@
     background-position: top right;
     transition: 0.2s;
     animation: 120s linear infinite wave alternate-reverse;
-    -webkit-filter: drop-shadow(-30px 10px 10px rgba(34, 34, 34, 0.101));
+    -webkit-filter: drop-shadow(-24px 10px 14px rgba(0, 163, 255, 0.2));
   }
 
   .login-hero::after {
@@ -597,10 +600,10 @@
     width: 200px;
     z-index: 1;
     background: url("/images/wave_long.png");
-    opacity: 0.5;
+    opacity: 0.55;
     background-position: bottom right;
     animation: 120s linear infinite wave_2 alternate-reverse;
-    -webkit-filter: drop-shadow(-30px 10px 10px rgba(34, 34, 34, 0.116));
+    -webkit-filter: drop-shadow(-24px 10px 14px rgba(0, 163, 255, 0.25));
   }
 
   @media screen and (max-width: 768px) {
