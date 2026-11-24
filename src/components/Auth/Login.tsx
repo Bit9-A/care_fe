@@ -319,7 +319,12 @@ const Login = (props: LoginProps) => {
       <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
         <div className="w-full max-w-[420px] space-y-4 my-auto">
           <Card className="w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.18),0_4px_16px_-2px_rgba(15,23,42,0.06)] bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
-            <CardHeader className="space-y-1 px-6 pt-6 pb-4">
+            <CardHeader className="space-y-1.5 px-6 pt-6 pb-4 items-center text-center">
+              <img
+                src="/images/LogoRAG.png"
+                alt="Logo SPNS Táchira"
+                className="h-20 w-20 object-contain mb-1 select-none drop-shadow-xs"
+              />
               <CardTitle className="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-slate-900">
                 {t("welcome_back")}
               </CardTitle>
