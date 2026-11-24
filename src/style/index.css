@@ -566,6 +566,7 @@
   }
 
   .login-hero {
+    overflow: hidden;
     background:
       radial-gradient(circle at 20% 20%, rgba(0, 163, 255, 0.45), transparent 50%),
       linear-gradient(
@@ -602,7 +603,9 @@
     z-index: 2;
     background: url("/images/wave_long_2.png");
     background-position: top right;
-    transition: 0.2s;
+    transform: translate3d(var(--wave-shift-x, 0px), var(--wave-shift-y, 0px), 0);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+    will-change: transform;
     animation: 120s linear infinite wave alternate-reverse;
     -webkit-filter: drop-shadow(-24px 10px 14px rgba(0, 163, 255, 0.2));
   }
@@ -618,8 +621,20 @@
     background: url("/images/wave_long.png");
     opacity: 0.55;
     background-position: bottom right;
+    transform: translate3d(calc(var(--wave-shift-x, 0px) * -1.4), calc(var(--wave-shift-y, 0px) * -1.2), 0);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease, opacity 0.4s ease;
+    will-change: transform;
     animation: 120s linear infinite wave_2 alternate-reverse;
     -webkit-filter: drop-shadow(-24px 10px 14px rgba(0, 163, 255, 0.25));
+  }
+
+  .login-hero:hover::before {
+    -webkit-filter: drop-shadow(-28px 10px 22px rgba(0, 163, 255, 0.5));
+  }
+
+  .login-hero:hover::after {
+    opacity: 0.82;
+    -webkit-filter: drop-shadow(-28px 10px 24px rgba(56, 189, 248, 0.52));
   }
 
   @media screen and (max-width: 768px) {

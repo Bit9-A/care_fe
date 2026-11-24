@@ -8,6 +8,9 @@ import { useTranslation } from "react-i18next";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 
+import { motion } from "framer-motion";
+import { ArrowRight, Eye, EyeOff, Lock, User, UserCheck } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -18,17 +21,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { PasswordInput } from "@/components/ui/input-password";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, UserCheck } from "lucide-react";
 
 import { ForgotPasswordPanel } from "@/components/Auth/ForgotPasswordPanel";
 import CircularProgress from "@/components/Common/CircularProgress";
@@ -101,6 +101,17 @@ const Login = (props: LoginProps) => {
   const [otpError, setOtpError] = useState<string>("");
   const [otpValidationError, setOtpValidationError] = useState<string>("");
   const [resendOtpCountdown, setResendOtpCountdown] = useState(0);
+  const [focusedField, setFocusedField] = useState<
+    "username" | "password" | "phone" | null
+  >(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [capsLockActivo, setCapsLockActivo] = useState(false);
+
+  const checkCapsLock = (e: React.KeyboardEvent) => {
+    if (e.getModifierState) {
+      setCapsLockActivo(e.getModifierState("CapsLock"));
+    }
+  };
 
   // Timer Function for resend OTP
   useEffect(() => {
@@ -311,19 +322,277 @@ const Login = (props: LoginProps) => {
   // Loading state derived from mutations
   const isLoading = isAuthenticating || sendOtpPending || verifyOtpPending;
 
+  const renderStaffForm = () =>
+    !forgotPassword ? (
+      <motion.form
+        key="staff-form"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        onSubmit={handleSubmit}
+        className="space-y-3.5"
+      >
+        {/* Campo Usuario */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="username"
+              className={cn(
+                "text-xs font-semibold transition-colors duration-200",
+                focusedField === "username"
+                  ? "text-[#0076be]"
+                  : "text-slate-700",
+              )}
+            >
+              {t("username")}
+            </Label>
+            {focusedField === "username" && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+              >
+                <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+                Activo
+              </motion.span>
+            )}
+          </div>
+
+          <motion.div
+            animate={{
+              scale: focusedField === "username" ? 1.008 : 1,
+              boxShadow:
+                focusedField === "username"
+                  ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                  : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+              borderColor: errors.username
+                ? "#ef4444"
+                : focusedField === "username"
+                  ? "#00a3ff"
+                  : "#e2e8f0",
+              backgroundColor:
+                focusedField === "username" ? "#ffffff" : "#f8fafc",
+            }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="relative flex items-center rounded-xl border overflow-hidden h-10"
+          >
+            <motion.div
+              initial={false}
+              animate={{
+                scaleX: focusedField === "username" ? 1 : 0,
+                opacity: focusedField === "username" ? 1 : 0,
+              }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0076be] via-[#00a3ff] to-[#38bdf8] origin-center pointer-events-none"
+            />
+            <motion.div
+              animate={{
+                scale: focusedField === "username" ? 1.12 : 1,
+                color: focusedField === "username" ? "#00a3ff" : "#94a3b8",
+              }}
+              transition={{ duration: 0.2 }}
+              className="pl-3 pr-2 flex items-center pointer-events-none shrink-0"
+            >
+              <User className="size-4" />
+            </motion.div>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              value={form.username}
+              onFocus={() => setFocusedField("username")}
+              onBlur={() => setFocusedField(null)}
+              onChange={handleChange}
+              onKeyDown={checkCapsLock}
+              onKeyUp={checkCapsLock}
+              placeholder="Ej. care-doctor"
+              className="w-full h-full pr-3 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+            />
+          </motion.div>
+          {errors.username && (
+            <p className="text-xs text-red-500">{t(errors.username)}</p>
+          )}
+        </div>
+
+        {/* Campo Contraseña */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="password"
+              className={cn(
+                "text-xs font-semibold transition-colors duration-200",
+                focusedField === "password"
+                  ? "text-[#0076be]"
+                  : "text-slate-700",
+              )}
+            >
+              {t("password")}
+            </Label>
+            {focusedField === "password" && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+              >
+                <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+                Seguro
+              </motion.span>
+            )}
+          </div>
+
+          <motion.div
+            animate={{
+              scale: focusedField === "password" ? 1.008 : 1,
+              boxShadow:
+                focusedField === "password"
+                  ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                  : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+              borderColor: errors.password
+                ? "#ef4444"
+                : focusedField === "password"
+                  ? "#00a3ff"
+                  : "#e2e8f0",
+              backgroundColor:
+                focusedField === "password" ? "#ffffff" : "#f8fafc",
+            }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="relative flex items-center rounded-xl border overflow-hidden h-10"
+          >
+            <motion.div
+              initial={false}
+              animate={{
+                scaleX: focusedField === "password" ? 1 : 0,
+                opacity: focusedField === "password" ? 1 : 0,
+              }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0076be] via-[#00a3ff] to-[#38bdf8] origin-center pointer-events-none"
+            />
+            <motion.div
+              animate={{
+                scale: focusedField === "password" ? 1.12 : 1,
+                color: focusedField === "password" ? "#00a3ff" : "#94a3b8",
+              }}
+              transition={{ duration: 0.2 }}
+              className="pl-3 pr-2 flex items-center pointer-events-none shrink-0"
+            >
+              <Lock className="size-4" />
+            </motion.div>
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              value={form.password}
+              onFocus={() => setFocusedField("password")}
+              onBlur={() => setFocusedField(null)}
+              onChange={handleChange}
+              onKeyDown={checkCapsLock}
+              onKeyUp={checkCapsLock}
+              placeholder="••••••••"
+              className="w-full h-full pr-10 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+            />
+            <motion.button
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 p-1 rounded-md text-slate-400 hover:text-[#00a3ff] hover:bg-[#00a3ff]/10 transition-colors"
+            >
+              {showPassword ? (
+                <EyeOff className="size-4" />
+              ) : (
+                <Eye className="size-4" />
+              )}
+            </motion.button>
+          </motion.div>
+
+          {capsLockActivo && (
+            <motion.div
+              initial={{ opacity: 0, y: -3 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-medium"
+            >
+              <span>⚠️ Bloqueo de Mayúsculas activo</span>
+            </motion.div>
+          )}
+          {errors.password && (
+            <p className="text-xs text-red-500">{t(errors.password)}</p>
+          )}
+        </div>
+
+        {isCaptchaEnabled && reCaptchaSiteKey && (
+          <div className="py-2">
+            <ReCaptcha sitekey={reCaptchaSiteKey} onChange={onCaptchaChange} />
+          </div>
+        )}
+
+        <div className="flex justify-end pt-0.5">
+          <Button
+            variant="link"
+            type="button"
+            onClick={() => setForgotPassword(true)}
+            className="h-auto p-0 text-xs font-medium text-[#0076be] hover:text-[#00a3ff]"
+          >
+            {t("forget_password")}
+          </Button>
+        </div>
+
+        <motion.div
+          whileHover={{ scale: 1.015, y: -1 }}
+          whileTap={{ scale: 0.985 }}
+          transition={{ duration: 0.15 }}
+        >
+          <Button
+            type="submit"
+            className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <CircularProgress className="text-white" />
+            ) : (
+              <span className="inline-flex items-center justify-center gap-2">
+                <span>{t("login")}</span>
+                <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+              </span>
+            )}
+          </Button>
+        </motion.div>
+      </motion.form>
+    ) : (
+      <ForgotPasswordPanel
+        username={form.username}
+        usernameError={errors.username}
+        onUsernameChange={handleChange}
+        onSubmitEmail={handleForgetSubmit}
+        onBackToLogin={() => setForgotPassword(false)}
+        isSubmitting={isLoading || forgotPasswordPending}
+      />
+    );
+
   return (
     <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row">
       <AuthHero />
 
       {/* Login Forms Section */}
       <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
-        <div className="w-full max-w-[400px] space-y-3 my-auto">
-          <Card className="w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.16),0_4px_16px_-2px_rgba(15,23,42,0.05)] bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[400px] space-y-3 my-auto"
+        >
+          <Card className="group/card w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.16),0_4px_16px_-2px_rgba(15,23,42,0.05)] hover:shadow-[0_24px_60px_-10px_rgba(0,163,255,0.26)] hover:border-[#00a3ff]/40 bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
             <CardHeader className="space-y-1 px-6 pt-5 pb-3 items-center text-center">
-              <img
+              <motion.img
                 src="/images/LogoRAG.png"
                 alt="Logo SPNS Táchira"
-                className="h-24 w-24 sm:h-28 sm:w-28 object-contain mb-1.5 select-none drop-shadow-xs"
+                initial={{ opacity: 0, scale: 0.88 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.07, rotate: 1.5 }}
+                transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                className="h-24 w-24 sm:h-28 sm:w-28 object-contain mb-1.5 select-none drop-shadow-xs cursor-pointer"
               />
               <CardTitle className="font-display text-xl sm:text-[22px] font-bold tracking-tight text-slate-900">
                 {t("welcome_back")}
@@ -334,105 +603,7 @@ const Login = (props: LoginProps) => {
             </CardHeader>
             <CardContent className="px-6 pb-5 pt-0">
               {disablePatientLogin ? (
-                <>
-                  {/* Staff Login */}
-                  {!forgotPassword ? (
-                    <form onSubmit={handleSubmit} className="space-y-3.5">
-                      <div className="space-y-1.5">
-                        <Label
-                          htmlFor="username"
-                          className="text-xs font-semibold text-slate-700"
-                        >
-                          {t("username")}
-                        </Label>
-                        <Input
-                          id="username"
-                          name="username"
-                          type="text"
-                          autoComplete="username"
-                          value={form.username}
-                          onChange={handleChange}
-                          className={cn(
-                            "h-10 rounded-xl text-sm",
-                            errors.username &&
-                              "border-red-500 focus-visible:ring-red-500",
-                          )}
-                        />
-                        {errors.username && (
-                          <p className="text-xs text-red-500">
-                            {t(errors.username)}
-                          </p>
-                        )}
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label
-                          htmlFor="password"
-                          className="text-xs font-semibold text-slate-700"
-                        >
-                          {t("password")}
-                        </Label>
-                        <PasswordInput
-                          id="password"
-                          name="password"
-                          autoComplete="current-password"
-                          value={form.password}
-                          onChange={handleChange}
-                          className={cn(
-                            "h-10 rounded-xl text-sm",
-                            errors.password &&
-                              "border-red-500 focus-visible:ring-red-500",
-                          )}
-                        />
-                        {errors.password && (
-                          <p className="text-xs text-red-500">
-                            {t(errors.password)}
-                          </p>
-                        )}
-                      </div>
-
-                      {isCaptchaEnabled && reCaptchaSiteKey && (
-                        <div className="py-2">
-                          <ReCaptcha
-                            sitekey={reCaptchaSiteKey}
-                            onChange={onCaptchaChange}
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex justify-end pt-0.5">
-                        <Button
-                          variant="link"
-                          type="button"
-                          onClick={() => setForgotPassword(true)}
-                          className="h-auto p-0 text-xs font-medium text-[#0076be] hover:text-[#00a3ff]"
-                        >
-                          {t("forget_password")}
-                        </Button>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/30 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <CircularProgress className="text-white" />
-                        ) : (
-                          t("login")
-                        )}
-                      </Button>
-                    </form>
-                  ) : (
-                    <ForgotPasswordPanel
-                      username={form.username}
-                      usernameError={errors.username}
-                      onUsernameChange={handleChange}
-                      onSubmitEmail={handleForgetSubmit}
-                      onBackToLogin={() => setForgotPassword(false)}
-                      isSubmitting={isLoading || forgotPasswordPending}
-                    />
-                  )}
-                </>
+                renderStaffForm()
               ) : (
                 <Tabs
                   value={mode === "patient" ? "patient" : "staff"}
@@ -465,127 +636,63 @@ const Login = (props: LoginProps) => {
                   </TabsList>
 
                   {/* Staff Login */}
-                  <TabsContent value="staff">
-                    {!forgotPassword ? (
-                      <form onSubmit={handleSubmit} className="space-y-3.5">
-                        <div className="space-y-1.5">
-                          <Label
-                            htmlFor="username"
-                            className="text-xs font-semibold text-slate-700"
-                          >
-                            {t("username")}
-                          </Label>
-                          <Input
-                            id="username"
-                            name="username"
-                            type="text"
-                            autoComplete="username"
-                            value={form.username}
-                            onChange={handleChange}
-                            className={cn(
-                              "h-10 rounded-xl text-sm",
-                              errors.username &&
-                                "border-red-500 focus-visible:ring-red-500",
-                            )}
-                          />
-                          {errors.username && (
-                            <p className="text-xs text-red-500">
-                              {t(errors.username)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label
-                            htmlFor="password"
-                            className="text-xs font-semibold text-slate-700"
-                          >
-                            {t("password")}
-                          </Label>
-                          <PasswordInput
-                            id="password"
-                            name="password"
-                            autoComplete="current-password"
-                            value={form.password}
-                            onChange={handleChange}
-                            className={cn(
-                              "h-10 rounded-xl text-sm",
-                              errors.password &&
-                                "border-red-500 focus-visible:ring-red-500",
-                            )}
-                          />
-                          {errors.password && (
-                            <p className="text-xs text-red-500">
-                              {t(errors.password)}
-                            </p>
-                          )}
-                        </div>
-
-                        {isCaptchaEnabled && reCaptchaSiteKey && (
-                          <div className="py-2">
-                            <ReCaptcha
-                              sitekey={reCaptchaSiteKey}
-                              onChange={onCaptchaChange}
-                            />
-                          </div>
-                        )}
-
-                        <div className="flex justify-end pt-0.5">
-                          <Button
-                            variant="link"
-                            type="button"
-                            onClick={() => setForgotPassword(true)}
-                            className="h-auto p-0 text-xs font-medium text-[#0076be] hover:text-[#00a3ff]"
-                          >
-                            {t("forget_password")}
-                          </Button>
-                        </div>
-
-                        <Button
-                          type="submit"
-                          className="w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/30 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <CircularProgress className="text-white" />
-                          ) : (
-                            t("login")
-                          )}
-                        </Button>
-                      </form>
-                    ) : (
-                      <ForgotPasswordPanel
-                        username={form.username}
-                        usernameError={errors.username}
-                        onUsernameChange={handleChange}
-                        onSubmitEmail={handleForgetSubmit}
-                        onBackToLogin={() => setForgotPassword(false)}
-                        isSubmitting={isLoading || forgotPasswordPending}
-                      />
-                    )}
-                  </TabsContent>
+                  <TabsContent value="staff">{renderStaffForm()}</TabsContent>
 
                   {/* Patient Login */}
                   <TabsContent value="patient">
-                    <form onSubmit={handlePatientLogin} className="space-y-3.5">
+                    <motion.form
+                      key="patient-form"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      onSubmit={handlePatientLogin}
+                      className="space-y-3.5"
+                    >
                       <div className="space-y-1.5">
-                        <Label
-                          htmlFor="phone"
-                          className="text-xs font-semibold text-slate-700"
-                        >
-                          {t("phone_number")}
-                        </Label>
-                        <PhoneInput
-                          id="phone"
-                          name="phone"
-                          value={phone}
-                          onChange={(value) => {
-                            setPhone(value ?? "");
-                            setOtpError("");
-                            setOtpValidationError("");
+                        <div className="flex items-center justify-between">
+                          <Label
+                            htmlFor="phone"
+                            className={cn(
+                              "text-xs font-semibold transition-colors duration-200",
+                              focusedField === "phone"
+                                ? "text-[#0076be]"
+                                : "text-slate-700",
+                            )}
+                          >
+                            {t("phone_number")}
+                          </Label>
+                          {focusedField === "phone" && (
+                            <motion.span
+                              initial={{ opacity: 0, scale: 0.85 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+                            >
+                              <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+                              Activo
+                            </motion.span>
+                          )}
+                        </div>
+                        <motion.div
+                          animate={{
+                            scale: focusedField === "phone" ? 1.008 : 1,
                           }}
-                          disabled={isOtpSent}
-                          placeholder="Ej. 412 123 4567"
-                        />
+                          transition={{ duration: 0.2 }}
+                          onFocus={() => setFocusedField("phone")}
+                          onBlur={() => setFocusedField(null)}
+                        >
+                          <PhoneInput
+                            id="phone"
+                            name="phone"
+                            value={phone}
+                            onChange={(value) => {
+                              setPhone(value ?? "");
+                              setOtpError("");
+                              setOtpValidationError("");
+                            }}
+                            disabled={isOtpSent}
+                            placeholder="Ej. 412 123 4567"
+                          />
+                        </motion.div>
                         <p className="text-[11px] text-slate-400">
                           Ingrese su número sin el 0 inicial (ej. 412, 414, 416,
                           424).
@@ -636,23 +743,32 @@ const Login = (props: LoginProps) => {
                         </div>
                       )}
 
-                      <Button
-                        type="submit"
-                        className="w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/30 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
-                        disabled={
-                          isLoading ||
-                          !isValidPhoneNumber(phone) ||
-                          (isOtpSent && otp.length !== 5)
-                        }
+                      <motion.div
+                        whileHover={{ scale: 1.015, y: -1 }}
+                        whileTap={{ scale: 0.985 }}
+                        transition={{ duration: 0.15 }}
                       >
-                        {isLoading ? (
-                          <CircularProgress className="text-white" />
-                        ) : isOtpSent ? (
-                          t("verify_otp")
-                        ) : (
-                          t("send_otp")
-                        )}
-                      </Button>
+                        <Button
+                          type="submit"
+                          className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                          disabled={
+                            isLoading ||
+                            !isValidPhoneNumber(phone) ||
+                            (isOtpSent && otp.length !== 5)
+                          }
+                        >
+                          {isLoading ? (
+                            <CircularProgress className="text-white" />
+                          ) : (
+                            <span className="inline-flex items-center justify-center gap-2">
+                              <span>
+                                {isOtpSent ? t("verify_otp") : t("send_otp")}
+                              </span>
+                              <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+                            </span>
+                          )}
+                        </Button>
+                      </motion.div>
                       {isOtpSent && (
                         <div className="flex flex-col items-center gap-2 text-center">
                           {resendOtpCountdown <= 0 ? (
@@ -691,7 +807,7 @@ const Login = (props: LoginProps) => {
                           </div>
                         </div>
                       )}
-                    </form>
+                    </motion.form>
                   </TabsContent>
                 </Tabs>
               )}
@@ -702,7 +818,7 @@ const Login = (props: LoginProps) => {
           <p className="text-center text-[11px] font-medium text-white/80 md:hidden pt-1 pb-2">
             MPPS · IVSS · Dirección de Salud Regional
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
