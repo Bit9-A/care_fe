@@ -65,6 +65,7 @@ function PhoneInput({
   className,
   onChange,
   value,
+  countries = [careConfig.defaultCountry.code],
   ...props
 }: React.ComponentProps<typeof RPNInput.default> & PhoneInputProps) {
   const [country, setCountry] = React.useState<CountryCode>(
@@ -82,6 +83,7 @@ function PhoneInput({
             ? "ring-red-500"
             : "ring-primary-700",
         )}
+        countries={countries}
         flagComponent={FlagComponent}
         countrySelectComponent={CountrySelect}
         inputComponent={InputComponent}
@@ -99,10 +101,17 @@ function PhoneInput({
          * react-phone-number-input might trigger the onChange event as undefined
          * when a valid phone number is not entered. To prevent this,
          * the value is coerced to an empty string.
+         * En el caso de Venezuela (+58), se normaliza para omitir el 0 inicial.
          *
          * @param {E164Number | undefined} value - The entered value
          */
-        onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
+        onChange={(nextValue) => {
+          let normalized = (nextValue || "") as string;
+          if (country === "VE" && normalized.startsWith("+580")) {
+            normalized = `+58${normalized.slice(4).replace(/^0+/, "")}`;
+          }
+          onChange?.(normalized as RPNInput.Value);
+        }}
         {...props}
       />
     </PhoneInputContext.Provider>
@@ -139,6 +148,20 @@ function InputComponent({
       const selectionEnd = input.selectionEnd ?? currentValue.length;
       const selectedText = currentValue.slice(selectionStart, selectionEnd);
       const selectedDigits = extractDigits(selectedText);
+      const beforeDigits = extractDigits(currentValue.slice(0, selectionStart));
+
+      // Para Venezuela (+58), impedir colocar 0 al principio del número
+      if (
+        country === "VE" &&
+        !currentValue.includes("+") &&
+        beforeDigits.length === 0 &&
+        newDigits.startsWith("0")
+      ) {
+        e.preventDefault();
+        setAnnouncement("Omita el 0 inicial (ej. 412 1234567)");
+        setTimeout(() => setAnnouncement(""), 1500);
+        return;
+      }
 
       // Calculate post-replacement digit count:
       // current digits - digits being replaced + new digits being added
@@ -159,7 +182,40 @@ function InputComponent({
         setTimeout(() => setAnnouncement(""), 1000);
       }
     },
-    [maxNationalDigits, maxTotalDigits, t],
+    [country, maxNationalDigits, maxTotalDigits, t],
+  );
+
+  const handlePaste = React.useCallback(
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      if (country !== "VE") return;
+      const pasted = e.clipboardData.getData("text");
+      const digits = extractDigits(pasted);
+      if (!digits) return;
+
+      let cleaned = digits;
+      if (cleaned.startsWith("580")) {
+        cleaned = cleaned.slice(3);
+      } else if (cleaned.startsWith("58") && cleaned.length > 10) {
+        cleaned = cleaned.slice(2);
+      }
+      cleaned = cleaned.replace(/^0+/, "");
+
+      if (cleaned !== digits) {
+        e.preventDefault();
+        const input = e.currentTarget;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        const nextVal =
+          input.value.slice(0, start) + cleaned + input.value.slice(end);
+        const nativeSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          "value",
+        )?.set;
+        nativeSetter?.call(input, nextVal);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    },
+    [country],
   );
 
   return (
@@ -170,6 +226,7 @@ function InputComponent({
           className,
         )}
         onBeforeInput={handleBeforeInput}
+        onPaste={handlePaste}
         aria-describedby="phone-input-constraint"
         {...props}
       />
@@ -207,6 +264,21 @@ const CountrySelect = ({
     onChange(country);
     setOpen(false);
   };
+
+  const validCountries = countryList.filter((c) => Boolean(c.value));
+  const effectiveCountry = selectedCountry || careConfig.defaultCountry.code;
+  if (validCountries.length <= 1) {
+    return (
+      <div className="flex items-center gap-1.5 rounded-e-none rounded-s-md border border-r-0 border-gray-200 bg-slate-50 px-3 text-sm font-semibold text-slate-700 select-none">
+        <FlagComponent
+          country={effectiveCountry}
+          countryName={effectiveCountry}
+        />
+        <span>+{RPNInput.getCountryCallingCode(effectiveCountry)}</span>
+      </div>
+    );
+  }
+
   return (
     <Popover
       open={open}

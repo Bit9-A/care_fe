@@ -318,63 +318,6 @@ const Login = (props: LoginProps) => {
       {/* Login Forms Section */}
       <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
         <div className="w-full max-w-[420px] space-y-4 my-auto">
-          {/* Logo/Header for Mobile (visible sobre fondo azul vivo) */}
-          <div className="flex flex-col items-center text-center gap-3 md:hidden pb-1">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white backdrop-blur-md border border-white/30 shadow-lg shadow-[#00a3ff]/30">
-                <svg
-                  className="h-6 w-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              <div className="text-left">
-                <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase text-[#bae6fd] block leading-tight">
-                  Sistema Público Nacional de Salud
-                </span>
-                <p className="font-display text-base font-extrabold text-white leading-tight">
-                  Estado Táchira · Red ASIC
-                </p>
-              </div>
-            </div>
-
-            {/* Indicadores compactos visibles al instante en móvil */}
-            <div className="grid grid-cols-3 gap-2 w-full pt-1">
-              <div className="rounded-xl bg-white/15 backdrop-blur-md py-1.5 px-2 border border-white/20">
-                <span className="font-display block text-sm font-extrabold text-white leading-none">
-                  25
-                </span>
-                <span className="text-[10px] font-medium text-[#bae6fd]">
-                  ASIC
-                </span>
-              </div>
-              <div className="rounded-xl bg-white/15 backdrop-blur-md py-1.5 px-2 border border-white/20">
-                <span className="font-display block text-sm font-extrabold text-white leading-none">
-                  29
-                </span>
-                <span className="text-[10px] font-medium text-[#bae6fd]">
-                  Municipios
-                </span>
-              </div>
-              <div className="rounded-xl bg-white/15 backdrop-blur-md py-1.5 px-2 border border-white/20">
-                <span className="font-display block text-sm font-extrabold text-white leading-none">
-                  14
-                </span>
-                <span className="text-[10px] font-medium text-[#bae6fd]">
-                  Hospitales
-                </span>
-              </div>
-            </div>
-          </div>
-
           <Card className="w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.18),0_4px_16px_-2px_rgba(15,23,42,0.06)] bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
             <CardHeader className="space-y-1 px-6 pt-6 pb-4">
               <CardTitle className="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-slate-900">
@@ -603,8 +546,12 @@ const Login = (props: LoginProps) => {
                             setOtpValidationError("");
                           }}
                           disabled={isOtpSent}
-                          placeholder={t("enter_phone_number")}
+                          placeholder="Ej. 412 123 4567"
                         />
+                        <p className="text-[11px] text-slate-400">
+                          Ingrese su número sin el 0 inicial (ej. 412, 414, 416,
+                          424).
+                        </p>
                         {otpError && (
                           <p className="text-sm text-red-500">{t(otpError)}</p>
                         )}
