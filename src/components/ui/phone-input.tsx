@@ -65,7 +65,7 @@ function PhoneInput({
   className,
   onChange,
   value,
-  countries = [careConfig.defaultCountry.code],
+  countries = ["VE", "CO"],
   ...props
 }: React.ComponentProps<typeof RPNInput.default> & PhoneInputProps) {
   const [country, setCountry] = React.useState<CountryCode>(
@@ -292,47 +292,60 @@ const CountrySelect = ({
         <Button
           type="button"
           variant="outline"
-          className="flex gap-1 rounded-e-none rounded-s-md border-r-0 border-gray-200 shadow-xs px-3 focus:z-10 h-auto"
+          className="flex items-center gap-1.5 rounded-e-none rounded-s-md border-r-0 border-gray-200 bg-slate-50 shadow-xs px-3 focus:z-10 h-auto text-slate-700 font-semibold"
           disabled={disabled}
         >
           <FlagComponent
-            country={selectedCountry}
-            countryName={selectedCountry}
+            country={effectiveCountry}
+            countryName={effectiveCountry}
           />
+          <span className="text-sm">
+            +{RPNInput.getCountryCallingCode(effectiveCountry)}
+          </span>
           <ChevronsUpDown
             className={cn(
-              "-mr-2 size-4 opacity-50",
+              "-mr-1 size-3.5 opacity-50",
               disabled ? "hidden" : "opacity-100",
             )}
           />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="p-2 sm:p-0 w-[var(--radix-popover-trigger-width)] min-w-64"
+        className={cn(
+          "p-1",
+          validCountries.length <= 5
+            ? "w-52"
+            : "sm:p-0 w-[var(--radix-popover-trigger-width)] min-w-64",
+        )}
         align="start"
         sideOffset={5}
       >
         <Command>
-          <CommandInput
-            value={searchValue}
-            onValueChange={(value) => {
-              setSearchValue(value);
-              setTimeout(() => {
-                if (scrollAreaRef.current) {
-                  const viewportElement = scrollAreaRef.current.querySelector(
-                    "[data-radix-scroll-area-viewport]",
-                  );
-                  if (viewportElement) {
-                    viewportElement.scrollTop = 0;
+          {validCountries.length > 5 && (
+            <CommandInput
+              value={searchValue}
+              onValueChange={(value) => {
+                setSearchValue(value);
+                setTimeout(() => {
+                  if (scrollAreaRef.current) {
+                    const viewportElement = scrollAreaRef.current.querySelector(
+                      "[data-radix-scroll-area-viewport]",
+                    );
+                    if (viewportElement) {
+                      viewportElement.scrollTop = 0;
+                    }
                   }
-                }
-              }, 0);
-            }}
-            placeholder={t("search_country")}
-            className="outline-hidden border-none ring-0 shadow-none"
-          />
+                }, 0);
+              }}
+              placeholder={t("search_country")}
+              className="outline-hidden border-none ring-0 shadow-none"
+            />
+          )}
           <CommandList>
-            <ScrollArea ref={scrollAreaRef} className="h-72">
+            <ScrollArea
+              ref={scrollAreaRef}
+              className={validCountries.length <= 5 ? "h-auto" : "h-72"}
+            >
               <CommandEmpty>{t("no_country_found")}</CommandEmpty>
               <CommandGroup>
                 {countryList.map(({ value, label }) =>
