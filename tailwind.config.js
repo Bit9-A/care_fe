@@ -17,7 +17,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'Plus Jakarta Sans'", "Figtree", "sans-serif"],
+        sans: ["'Plus Jakarta Sans'", "system-ui", "sans-serif"],
+        display: ["'Outfit'", "'Plus Jakarta Sans'", "system-ui", "sans-serif"],
       },
       colors: {
         primary: {

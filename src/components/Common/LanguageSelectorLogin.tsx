@@ -26,24 +26,26 @@ const LanguageSelectorLogin = () => {
   );
 
   return (
-    <div className="mt-8 flex flex-col items-center text-sm text-secondary-800">
-      {t("available_in")}
-      <br />
-      <div className="inline-flex flex-wrap items-center justify-center gap-3">
-        {availableLocales.map((e) => (
-          <button
-            key={e}
-            onClick={() => handleLanguage(e)}
-            className={cn(
-              "text-primary-400 hover:text-primary-600",
-              (i18n.language === e ||
-                (i18n.language === "en-US" && e === "en")) &&
-                "text-primary-600 underline",
-            )}
-          >
-            {LANGUAGES[e]}
-          </button>
-        ))}
+    <div className="mt-4 flex items-center justify-center">
+      <div className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full bg-white/90 md:bg-transparent backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm text-slate-600 shadow-md md:shadow-none border border-white/50 md:border-transparent">
+        <span className="font-medium text-slate-500">{t("available_in")}:</span>
+        <div className="inline-flex items-center gap-2.5">
+          {availableLocales.map((e) => (
+            <button
+              key={e}
+              type="button"
+              onClick={() => handleLanguage(e)}
+              className={cn(
+                "font-semibold transition-colors text-[#0076be] hover:text-[#00a3ff]",
+                (i18n.language === e ||
+                  (i18n.language === "en-US" && e === "en")) &&
+                  "text-[#00a3ff] underline underline-offset-4",
+              )}
+            >
+              {LANGUAGES[e]}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

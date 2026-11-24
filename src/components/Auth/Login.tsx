@@ -80,15 +80,8 @@ interface LoginProps {
 
 const Login = (props: LoginProps) => {
   const { signIn, patientLogin, isAuthenticating } = useAuthContext();
-  const {
-    reCaptchaSiteKey,
-    urls,
-    stateLogo,
-    customLogo,
-    customLogoAlt,
-    resendOtpTimeout,
-    disablePatientLogin,
-  } = careConfig;
+  const { reCaptchaSiteKey, resendOtpTimeout, disablePatientLogin } =
+    careConfig;
   const initForm: any = {
     username: "",
     password: "",
@@ -318,10 +311,6 @@ const Login = (props: LoginProps) => {
   // Loading state derived from mutations
   const isLoading = isAuthenticating || sendOtpPending || verifyOtpPending;
 
-  const logos = [stateLogo, customLogo].filter(
-    (logo) => logo?.light || logo?.dark,
-  );
-
   return (
     <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row">
       <AuthHero />
@@ -329,36 +318,66 @@ const Login = (props: LoginProps) => {
       {/* Login Forms Section */}
       <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
         <div className="w-full max-w-[420px] space-y-4 my-auto">
-          {/* Logo/Header for Mobile */}
-          <div className="flex items-center justify-center gap-3 md:hidden pb-2">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#00a3ff]/15 text-[#00a3ff] border border-[#00a3ff]/30 shadow-xs">
-              <svg
-                className="h-6 w-6 text-[#00a3ff]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
+          {/* Logo/Header for Mobile (visible sobre fondo azul vivo) */}
+          <div className="flex flex-col items-center text-center gap-3 md:hidden pb-1">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white backdrop-blur-md border border-white/30 shadow-lg shadow-[#00a3ff]/30">
+                <svg
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <div className="text-left">
+                <span className="font-display text-[10px] font-bold tracking-[0.2em] uppercase text-[#bae6fd] block leading-tight">
+                  Sistema Público Nacional de Salud
+                </span>
+                <p className="font-display text-base font-extrabold text-white leading-tight">
+                  Estado Táchira · Red ASIC
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="text-[10px] font-bold tracking-widest uppercase text-slate-500 block leading-tight">
-                Sistema Público Nacional de Salud
-              </span>
-              <p className="text-sm font-bold text-slate-800 leading-tight">
-                Estado Táchira · Red ASIC
-              </p>
+
+            {/* Indicadores compactos visibles al instante en móvil */}
+            <div className="grid grid-cols-3 gap-2 w-full pt-1">
+              <div className="rounded-xl bg-white/15 backdrop-blur-md py-1.5 px-2 border border-white/20">
+                <span className="font-display block text-sm font-extrabold text-white leading-none">
+                  25
+                </span>
+                <span className="text-[10px] font-medium text-[#bae6fd]">
+                  ASIC
+                </span>
+              </div>
+              <div className="rounded-xl bg-white/15 backdrop-blur-md py-1.5 px-2 border border-white/20">
+                <span className="font-display block text-sm font-extrabold text-white leading-none">
+                  29
+                </span>
+                <span className="text-[10px] font-medium text-[#bae6fd]">
+                  Municipios
+                </span>
+              </div>
+              <div className="rounded-xl bg-white/15 backdrop-blur-md py-1.5 px-2 border border-white/20">
+                <span className="font-display block text-sm font-extrabold text-white leading-none">
+                  14
+                </span>
+                <span className="text-[10px] font-medium text-[#bae6fd]">
+                  Hospitales
+                </span>
+              </div>
             </div>
           </div>
 
-          <Card className="w-full rounded-2xl border border-slate-200/90 shadow-[0_14px_45px_-8px_rgba(0,163,255,0.18),0_4px_16px_-2px_rgba(15,23,42,0.06)] bg-white overflow-hidden transition-all duration-300">
+          <Card className="w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.18),0_4px_16px_-2px_rgba(15,23,42,0.06)] bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
             <CardHeader className="space-y-1 px-6 pt-6 pb-4">
-              <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
+              <CardTitle className="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-slate-900">
                 {t("welcome_back")}
               </CardTitle>
               <CardDescription className="text-xs sm:text-sm text-slate-500">
@@ -366,9 +385,125 @@ const Login = (props: LoginProps) => {
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 pb-6 pt-0">
-                {disablePatientLogin ? (
-                  <>
-                    {/* Staff Login */}
+              {disablePatientLogin ? (
+                <>
+                  {/* Staff Login */}
+                  {!forgotPassword ? (
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="username">{t("username")}</Label>
+                        <Input
+                          id="username"
+                          name="username"
+                          type="text"
+                          autoComplete="username"
+                          value={form.username}
+                          onChange={handleChange}
+                          className={cn(
+                            errors.username &&
+                              "border-red-500 focus-visible:ring-red-500",
+                          )}
+                        />
+                        {errors.username && (
+                          <p className="text-sm text-red-500">
+                            {t(errors.username)}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">{t("password")}</Label>
+                        <PasswordInput
+                          id="password"
+                          name="password"
+                          autoComplete="current-password"
+                          value={form.password}
+                          onChange={handleChange}
+                          className={cn(
+                            errors.password &&
+                              "border-red-500 focus-visible:ring-red-500",
+                          )}
+                        />
+                        {errors.password && (
+                          <p className="text-sm text-red-500">
+                            {t(errors.password)}
+                          </p>
+                        )}
+                      </div>
+
+                      {isCaptchaEnabled && reCaptchaSiteKey && (
+                        <div className="py-4">
+                          <ReCaptcha
+                            sitekey={reCaptchaSiteKey}
+                            onChange={onCaptchaChange}
+                          />
+                        </div>
+                      )}
+
+                      <Button
+                        variant="link"
+                        type="button"
+                        onClick={() => setForgotPassword(true)}
+                        className="px-0"
+                      >
+                        {t("forget_password")}
+                      </Button>
+
+                      <Button
+                        type="submit"
+                        className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <CircularProgress className="text-white" />
+                        ) : (
+                          t("login")
+                        )}
+                      </Button>
+                    </form>
+                  ) : (
+                    <ForgotPasswordPanel
+                      username={form.username}
+                      usernameError={errors.username}
+                      onUsernameChange={handleChange}
+                      onSubmitEmail={handleForgetSubmit}
+                      onBackToLogin={() => setForgotPassword(false)}
+                      isSubmitting={isLoading || forgotPasswordPending}
+                    />
+                  )}
+                </>
+              ) : (
+                <Tabs
+                  value={mode === "patient" ? "patient" : "staff"}
+                  onValueChange={(value) => {
+                    setQueryParams({ mode: value as LoginMode });
+                    if (value === "staff") {
+                      resetPatientLogin();
+                    } else {
+                      setForgotPassword(false);
+                    }
+                  }}
+                >
+                  <TabsList className="grid grid-cols-2 w-full h-11 p-1 bg-slate-100 rounded-xl mb-5 border border-slate-200/80">
+                    <TabsTrigger
+                      className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
+                      value="staff"
+                    >
+                      <UserCheck className="size-4 shrink-0 text-[#00a3ff]" />
+                      <span className="truncate">Personal de Salud</span>
+                    </TabsTrigger>
+                    {!disablePatientLogin && (
+                      <TabsTrigger
+                        className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
+                        value="patient"
+                      >
+                        <User className="size-4 shrink-0 text-[#00a3ff]" />
+                        <span className="truncate">Paciente</span>
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+
+                  {/* Staff Login */}
+                  <TabsContent value="staff">
                     {!forgotPassword ? (
                       <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
@@ -451,256 +586,141 @@ const Login = (props: LoginProps) => {
                         isSubmitting={isLoading || forgotPasswordPending}
                       />
                     )}
-                  </>
-                ) : (
-                  <Tabs
-                    value={mode === "patient" ? "patient" : "staff"}
-                    onValueChange={(value) => {
-                      setQueryParams({ mode: value as LoginMode });
-                      if (value === "staff") {
-                        resetPatientLogin();
-                      } else {
-                        setForgotPassword(false);
-                      }
-                    }}
-                  >
-                    <TabsList className="grid grid-cols-2 w-full h-11 p-1 bg-slate-100 rounded-xl mb-5 border border-slate-200/80">
-                      <TabsTrigger
-                        className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
-                        value="staff"
-                      >
-                        <UserCheck className="size-4 shrink-0 text-[#00a3ff]" />
-                        <span className="truncate">Personal de Salud</span>
-                      </TabsTrigger>
-                      {!disablePatientLogin && (
-                        <TabsTrigger
-                          className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
-                          value="patient"
-                        >
-                          <User className="size-4 shrink-0 text-[#00a3ff]" />
-                          <span className="truncate">Paciente</span>
-                        </TabsTrigger>
-                      )}
-                    </TabsList>
+                  </TabsContent>
 
-                    {/* Staff Login */}
-                    <TabsContent value="staff">
-                      {!forgotPassword ? (
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="username">{t("username")}</Label>
-                            <Input
-                              id="username"
-                              name="username"
-                              type="text"
-                              autoComplete="username"
-                              value={form.username}
-                              onChange={handleChange}
-                              className={cn(
-                                errors.username &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                            />
-                            {errors.username && (
-                              <p className="text-sm text-red-500">
-                                {t(errors.username)}
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="password">{t("password")}</Label>
-                            <PasswordInput
-                              id="password"
-                              name="password"
-                              autoComplete="current-password"
-                              value={form.password}
-                              onChange={handleChange}
-                              className={cn(
-                                errors.password &&
-                                  "border-red-500 focus-visible:ring-red-500",
-                              )}
-                            />
-                            {errors.password && (
-                              <p className="text-sm text-red-500">
-                                {t(errors.password)}
-                              </p>
-                            )}
-                          </div>
-
-                          {isCaptchaEnabled && reCaptchaSiteKey && (
-                            <div className="py-4">
-                              <ReCaptcha
-                                sitekey={reCaptchaSiteKey}
-                                onChange={onCaptchaChange}
-                              />
-                            </div>
-                          )}
-
-                          <Button
-                            variant="link"
-                            type="button"
-                            onClick={() => setForgotPassword(true)}
-                            className="px-0"
-                          >
-                            {t("forget_password")}
-                          </Button>
-
-                          <Button
-                            type="submit"
-                            className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
-                            disabled={isLoading}
-                          >
-                            {isLoading ? (
-                              <CircularProgress className="text-white" />
-                            ) : (
-                              t("login")
-                            )}
-                          </Button>
-                        </form>
-                      ) : (
-                        <ForgotPasswordPanel
-                          username={form.username}
-                          usernameError={errors.username}
-                          onUsernameChange={handleChange}
-                          onSubmitEmail={handleForgetSubmit}
-                          onBackToLogin={() => setForgotPassword(false)}
-                          isSubmitting={isLoading || forgotPasswordPending}
+                  {/* Patient Login */}
+                  <TabsContent value="patient">
+                    <form onSubmit={handlePatientLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">{t("phone_number")}</Label>
+                        <PhoneInput
+                          id="phone"
+                          name="phone"
+                          value={phone}
+                          onChange={(value) => {
+                            setPhone(value ?? "");
+                            setOtpError("");
+                            setOtpValidationError("");
+                          }}
+                          disabled={isOtpSent}
+                          placeholder={t("enter_phone_number")}
                         />
-                      )}
-                    </TabsContent>
+                        {otpError && (
+                          <p className="text-sm text-red-500">{t(otpError)}</p>
+                        )}
+                      </div>
 
-                    {/* Patient Login */}
-                    <TabsContent value="patient">
-                      <form onSubmit={handlePatientLogin} className="space-y-4">
+                      {isOtpSent && (
                         <div className="space-y-2">
-                          <Label htmlFor="phone">{t("phone_number")}</Label>
-                          <PhoneInput
-                            id="phone"
-                            name="phone"
-                            value={phone}
-                            onChange={(value) => {
-                              setPhone(value ?? "");
-                              setOtpError("");
-                              setOtpValidationError("");
-                            }}
-                            disabled={isOtpSent}
-                            placeholder={t("enter_phone_number")}
-                          />
-                          {otpError && (
-                            <p className="text-sm text-red-500">
-                              {t(otpError)}
+                          <Label htmlFor="otp" className="mb-4">
+                            {t("enter_otp")}
+                          </Label>
+                          <div className="flex justify-center">
+                            <InputOTP
+                              id="otp"
+                              value={otp}
+                              maxLength={5}
+                              pattern={REGEXP_ONLY_DIGITS}
+                              autoComplete="one-time-code"
+                              autoFocus
+                              onChange={(value) => {
+                                setOtp(value);
+                                setOtpValidationError("");
+                              }}
+                            >
+                              <InputOTPGroup>
+                                {[...Array(5)].map((_, index) => (
+                                  <InputOTPSlot
+                                    key={index}
+                                    index={index}
+                                    className={cn(
+                                      "size-10",
+                                      otpValidationError &&
+                                        "border-red-500 focus-visible:ring-red-500",
+                                    )}
+                                  />
+                                ))}
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </div>
+                          {otpValidationError && (
+                            <p className="text-sm text-red-500 text-center">
+                              {t(otpValidationError)}
                             </p>
                           )}
                         </div>
+                      )}
 
-                        {isOtpSent && (
-                          <div className="space-y-2">
-                            <Label htmlFor="otp" className="mb-4">
-                              {t("enter_otp")}
-                            </Label>
-                            <div className="flex justify-center">
-                              <InputOTP
-                                id="otp"
-                                value={otp}
-                                maxLength={5}
-                                pattern={REGEXP_ONLY_DIGITS}
-                                autoComplete="one-time-code"
-                                autoFocus
-                                onChange={(value) => {
-                                  setOtp(value);
-                                  setOtpValidationError("");
-                                }}
-                              >
-                                <InputOTPGroup>
-                                  {[...Array(5)].map((_, index) => (
-                                    <InputOTPSlot
-                                      key={index}
-                                      index={index}
-                                      className={cn(
-                                        "size-10",
-                                        otpValidationError &&
-                                          "border-red-500 focus-visible:ring-red-500",
-                                      )}
-                                    />
-                                  ))}
-                                </InputOTPGroup>
-                              </InputOTP>
-                            </div>
-                            {otpValidationError && (
-                              <p className="text-sm text-red-500 text-center">
-                                {t(otpValidationError)}
-                              </p>
-                            )}
-                          </div>
+                      <Button
+                        type="submit"
+                        className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                        disabled={
+                          isLoading ||
+                          !isValidPhoneNumber(phone) ||
+                          (isOtpSent && otp.length !== 5)
+                        }
+                      >
+                        {isLoading ? (
+                          <CircularProgress className="text-white" />
+                        ) : isOtpSent ? (
+                          t("verify_otp")
+                        ) : (
+                          t("send_otp")
                         )}
-
-                        <Button
-                          type="submit"
-                          className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
-                          disabled={
-                            isLoading ||
-                            !isValidPhoneNumber(phone) ||
-                            (isOtpSent && otp.length !== 5)
-                          }
-                        >
-                          {isLoading ? (
-                            <CircularProgress className="text-white" />
-                          ) : isOtpSent ? (
-                            t("verify_otp")
+                      </Button>
+                      {isOtpSent && (
+                        <div className="flex flex-col items-center gap-2 text-center">
+                          {resendOtpCountdown <= 0 ? (
+                            <Button
+                              variant="link"
+                              type="button"
+                              className="h-auto p-0"
+                              onClick={() => {
+                                sendOtp({ phone_number: phone });
+                                setResendOtpCountdown(resendOtpTimeout);
+                              }}
+                            >
+                              {t("resend_otp")}
+                            </Button>
                           ) : (
-                            t("send_otp")
+                            <p className="text-sm text-gray-500">
+                              {t("resend_otp_timer", {
+                                time: resendOtpCountdown,
+                              })}
+                            </p>
                           )}
-                        </Button>
-                        {isOtpSent && (
-                          <div className="flex flex-col items-center gap-2 text-center">
-                            {resendOtpCountdown <= 0 ? (
-                              <Button
-                                variant="link"
-                                type="button"
-                                className="h-auto p-0"
-                                onClick={() => {
-                                  sendOtp({ phone_number: phone });
-                                  setResendOtpCountdown(resendOtpTimeout);
-                                }}
-                              >
-                                {t("resend_otp")}
-                              </Button>
-                            ) : (
-                              <p className="text-sm text-gray-500">
-                                {t("resend_otp_timer", {
-                                  time: resendOtpCountdown,
-                                })}
-                              </p>
-                            )}
-                            <div className="flex items-center text-sm">
-                              <Button
-                                variant="link"
-                                type="button"
-                                className="h-auto p-0 text-primary-600"
-                                onClick={() => {
-                                  setIsOtpSent(false);
-                                  setOtp("");
-                                  setOtpError("");
-                                  setOtpValidationError("");
-                                }}
-                              >
-                                {t("change_phone_number")}
-                              </Button>
-                            </div>
+                          <div className="flex items-center text-sm">
+                            <Button
+                              variant="link"
+                              type="button"
+                              className="h-auto p-0 text-primary-600"
+                              onClick={() => {
+                                setIsOtpSent(false);
+                                setOtp("");
+                                setOtpError("");
+                                setOtpValidationError("");
+                              }}
+                            >
+                              {t("change_phone_number")}
+                            </Button>
                           </div>
-                        )}
-                      </form>
-                    </TabsContent>
-                  </Tabs>
-                )}
-              </CardContent>
-            </Card>
+                        </div>
+                      )}
+                    </form>
+                  </TabsContent>
+                </Tabs>
+              )}
+            </CardContent>
+          </Card>
 
-            <LanguageSelectorLogin />
-          </div>
+          <LanguageSelectorLogin />
+          <p className="text-center text-[11px] font-medium text-white/80 md:hidden pt-1 pb-2">
+            MPPS · IVSS · Dirección de Salud Regional
+          </p>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default Login;

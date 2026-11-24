@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 @import "@fontsource/figtree/300.css" layer(base);
 @import "@fontsource/figtree/400.css" layer(base);
@@ -156,6 +156,8 @@
   --color-danger-900: var(--color-red-900);
 
   --animate-blink: blink 1.5s infinite;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
 @layer utilities {
@@ -164,9 +166,9 @@
   }
 
   body {
-    font-family: "Figtree", sans-serif;
-    color: #453c52;
-    @apply text-secondary-900 size-full font-sans antialiased;
+    font-family: var(--font-sans);
+    color: #1e293b;
+    @apply text-slate-800 size-full font-sans antialiased;
   }
 
   h1,
@@ -175,7 +177,8 @@
   h4,
   h5,
   h6 {
-    @apply font-bold;
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
   }
 
   h1 {
@@ -564,16 +567,29 @@
 
   .login-hero {
     background:
+      radial-gradient(circle at 20% 20%, rgba(0, 163, 255, 0.45), transparent 50%),
       linear-gradient(
         135deg,
         rgba(3, 37, 76, 0.96) 0%,
-        rgba(0, 95, 168, 0.88) 45%,
-        rgba(0, 163, 255, 0.75) 100%
+        rgba(0, 114, 188, 0.88) 45%,
+        rgba(0, 163, 255, 0.82) 100%
       ),
       url("/images/wave_scene_square.png");
     background-size: cover;
     background-position: center;
     animation: alternate-reverse 35s linear infinite herobg;
+  }
+
+  @media screen and (max-width: 767px) {
+    .login-hero-form {
+      background:
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.45), transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(0, 163, 255, 0.4), transparent 50%),
+        linear-gradient(155deg, #03254c 0%, #006cc7 48%, #00a3ff 100%),
+        url("/images/wave_scene_square.png");
+      background-size: cover;
+      background-position: center;
+    }
   }
 
   .login-hero::before {

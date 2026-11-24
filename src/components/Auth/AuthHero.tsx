@@ -1,16 +1,12 @@
-import careConfig from "@careConfig";
-import { Link } from "raviger";
-import { useTranslation } from "react-i18next";
-
 export const AuthHero = () => {
   return (
-    <div className="login-hero order-last relative flex flex-auto flex-col justify-between p-6 md:order-first md:h-full md:w-[calc(50%+130px)] md:flex-none md:p-0 md:px-16 md:pr-[calc(4rem+130px)]">
+    <div className="login-hero hidden md:flex relative flex-auto flex-col justify-between md:order-first md:h-full md:w-[calc(50%+130px)] md:flex-none md:px-16 md:pr-[calc(4rem+130px)]">
       <div />
-      <div className="mt-4 flex flex-col items-start rounded-lg py-4 md:mt-12">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20 text-white backdrop-blur-xs border border-blue-400/30">
+      <div className="mt-12 flex flex-col items-start rounded-lg py-4">
+        <div className="mb-5 flex items-center gap-3.5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#00a3ff]/25 text-white backdrop-blur-md border border-[#00a3ff]/50 shadow-lg shadow-[#00a3ff]/25">
             <svg
-              className="h-7 w-7 text-blue-200"
+              className="h-6 w-6 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -25,42 +21,54 @@ export const AuthHero = () => {
             </svg>
           </div>
           <div>
-            <span className="text-xs font-semibold tracking-widest uppercase text-blue-300">
+            <span className="font-display text-xs font-bold tracking-[0.18em] uppercase text-[#7dd3fc]">
               Sistema Público Nacional de Salud
             </span>
-            <p className="text-sm font-medium text-white/90">Estado Táchira</p>
+            <p className="font-display text-base font-semibold text-white">
+              Estado Táchira
+            </p>
           </div>
         </div>
 
         <div className="max-w-lg">
-          <h1 className="text-3xl font-black leading-tight tracking-wide text-white lg:text-4xl">
+          <h1 className="font-display text-4xl font-extrabold leading-[1.12] tracking-tight text-white lg:text-[2.75rem]">
             Red Asistencial y Gestión de ASIC
           </h1>
-          <div className="max-w-xl py-4 text-base font-normal text-blue-100/90 md:text-lg">
+          <p className="max-w-xl py-4 text-base font-normal leading-relaxed text-sky-100/90 lg:text-[17px]">
             Plataforma integral para la articulación demográfica, gerencial y
             hospitalaria en los 29 municipios, 66 parroquias y 25 Áreas de Salud
             Integral Comunitaria (ASIC).
-          </div>
-          <div className="grid grid-cols-3 gap-3 pt-2 text-center text-white/90">
-            <div className="rounded-lg bg-white/10 p-2.5 backdrop-blur-xs border border-white/10">
-              <span className="block text-xl font-bold text-white">25</span>
-              <span className="text-xs text-blue-200">ASIC</span>
+          </p>
+          <div className="grid grid-cols-3 gap-3 pt-2 text-center text-white">
+            <div className="rounded-2xl bg-white/10 p-3 backdrop-blur-md border border-white/20 hover:border-[#00a3ff]/60 transition-colors">
+              <span className="font-display block text-2xl font-extrabold text-white">
+                25
+              </span>
+              <span className="text-xs font-medium text-[#7dd3fc]">ASIC</span>
             </div>
-            <div className="rounded-lg bg-white/10 p-2.5 backdrop-blur-xs border border-white/10">
-              <span className="block text-xl font-bold text-white">29</span>
-              <span className="text-xs text-blue-200">Municipios</span>
+            <div className="rounded-2xl bg-white/10 p-3 backdrop-blur-md border border-white/20 hover:border-[#00a3ff]/60 transition-colors">
+              <span className="font-display block text-2xl font-extrabold text-white">
+                29
+              </span>
+              <span className="text-xs font-medium text-[#7dd3fc]">
+                Municipios
+              </span>
             </div>
-            <div className="rounded-lg bg-white/10 p-2.5 backdrop-blur-xs border border-white/10">
-              <span className="block text-xl font-bold text-white">14</span>
-              <span className="text-xs text-blue-200">Hospitales</span>
+            <div className="rounded-2xl bg-white/10 p-3 backdrop-blur-md border border-white/20 hover:border-[#00a3ff]/60 transition-colors">
+              <span className="font-display block text-2xl font-extrabold text-white">
+                14
+              </span>
+              <span className="text-xs font-medium text-[#7dd3fc]">
+                Hospitales
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mb-6 flex items-center">
-        <div className="max-w-lg text-xs text-blue-200/80">
-          <p className="font-semibold text-white/90">
+      <div className="mb-8 flex items-center">
+        <div className="max-w-lg text-xs text-sky-100/80">
+          <p className="font-display font-semibold tracking-wide text-white">
             MPPS · IVSS · Dirección de Salud Regional
           </p>
           <p className="mt-1">
