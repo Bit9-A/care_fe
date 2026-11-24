@@ -4832,6 +4832,8 @@
  "scan_invoice_qr": "Escanear QR de la factura",
  "scan_patient_qr": "Escanear código QR del paciente",
  "scan_with_camera": "Escanear con cámara",
+ "scan_how": "¿Cómo querés escanear?",
+ "scan_with_reader": "Usar lector de códigos",
  "scanned_patient": "Paciente escaneado",
  "schedule_an_appointment_or_create_a_new_encounter": "Programe una cita o cree un nuevo episodio clínico",
  "schedule_availability_created_successfully": "Disponibilidad creada correctamente",

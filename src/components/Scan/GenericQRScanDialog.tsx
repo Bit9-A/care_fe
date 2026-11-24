@@ -1,6 +1,6 @@
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import { Camera, QrCode, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -42,6 +42,18 @@ function GenericQRScanDialog({
   const [inputValue, setInputValue] = useState("");
   const [scanning, setScanning] = useState(autoStartScanning);
   const [hasPermission, setHasPermission] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // A hardware scanner behaves like a keyboard: it only writes where the focus
+  // is. Radix moves the focus to the dialog itself, so the input has to claim
+  // it back once the reader mode is showing.
+  useEffect(() => {
+    if (!open || scanning) {
+      return;
+    }
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 100);
+    return () => window.clearTimeout(timer);
+  }, [open, scanning]);
 
   // Default values
   const dialogTitle = title || t("scan_qr");
@@ -179,6 +191,7 @@ function GenericQRScanDialog({
                     {labelText}
                   </label>
                   <Input
+                    ref={inputRef}
                     placeholder={placeholderText}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value.trim())}

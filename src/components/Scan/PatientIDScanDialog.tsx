@@ -5,12 +5,18 @@ interface PatientIDScanDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onScanSuccess: (patientId: string) => void;
+  /**
+   * `true` opens straight into the camera, `false` (or omitted) leaves the
+   * input focused so a keyboard-wedge scanner can type into it.
+   */
+  startWithCamera?: boolean;
 }
 
 export function PatientIDScanDialog({
   open,
   onOpenChange,
   onScanSuccess,
+  startWithCamera = false,
 }: PatientIDScanDialogProps) {
   const { t } = useTranslation();
 
@@ -35,11 +41,11 @@ export function PatientIDScanDialog({
       open={open}
       onOpenChange={onOpenChange}
       onScanSuccess={onScanSuccess}
+      autoStartScanning={startWithCamera}
       title={t("scan_patient_qr")}
       inputLabel={t("patient_id")}
       inputPlaceholder={t("enter_patient_id")}
       extractValue={extractPatientId}
-      autoStartScanning={true}
     />
   );
 }

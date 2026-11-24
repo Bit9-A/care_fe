@@ -23,6 +23,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import {
@@ -295,6 +303,9 @@ export default function PatientIdentifierFilter({
   const [verificationOpen, setVerificationOpen] = useState(false);
   const isMobile = useBreakpoints({ default: true, sm: false });
   const [scanDialogOpen, setScanDialogOpen] = useState(false);
+  // The dialog used to always start the camera, so the barcode reader input was
+  // unreachable. The button now asks which one to use.
+  const [scanWithCamera, setScanWithCamera] = useState(false);
 
   useEffect(() => {
     setOpen(externalOpen);
@@ -492,16 +503,41 @@ export default function PatientIdentifierFilter({
         )}
       >
         {!hideScanButton && (
-          <Button
-            variant="ghost"
-            onClick={() => setScanDialogOpen(true)}
-            className="shrink-0 text-gray-950 px-2 border-r rounded-r-none bg-white"
-            aria-label={t("scan_patient_qr")}
-            data-shortcut-id="scan-patient"
-          >
-            <QrCode className="size-4" />
-            <span className="hidden md:block">{t("scan")}</span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="shrink-0 text-gray-950 px-2 border-r rounded-r-none bg-white"
+                aria-label={t("scan_patient_qr")}
+                data-shortcut-id="scan-patient"
+              >
+                <QrCode className="size-4" />
+                <span className="hidden md:block">{t("scan")}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuLabel className="font-normal text-gray-600">
+                {t("scan_how")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setScanWithCamera(true);
+                  setScanDialogOpen(true);
+                }}
+              >
+                {t("scan_with_camera")}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setScanWithCamera(false);
+                  setScanDialogOpen(true);
+                }}
+              >
+                {t("scan_with_reader")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
         {isMobile ? (
           <Drawer open={open} onOpenChange={setOpen}>
@@ -559,6 +595,7 @@ export default function PatientIdentifierFilter({
         open={scanDialogOpen}
         onOpenChange={setScanDialogOpen}
         onScanSuccess={handleScanSuccess}
+        startWithCamera={scanWithCamera}
       />
 
       <Dialog open={verificationOpen} onOpenChange={setVerificationOpen}>

@@ -4,6 +4,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -76,6 +78,7 @@ const PatientScanButton = ({
 }) => {
   const { t } = useTranslation();
   const [scanDialogOpen, setScanDialogOpen] = useState(false);
+  const [scanWithCamera, setScanWithCamera] = useState(false);
 
   const { mutate: checkPatientAppointments, isPending } = useMutation({
     mutationFn: async (patientId: string) => {
@@ -133,20 +136,46 @@ const PatientScanButton = ({
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <Button
-        variant="ghost"
-        onClick={() => setScanDialogOpen(true)}
-        disabled={isPending}
-        aria-label={t("scan_qr")}
-        className="flex-col gap-0 size-auto sm:flex-row sm:gap-2"
-      >
-        <ScanLine className="size-4 text-black" />
-        <span className="text-sm text-black">{t("scan")}</span>
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            disabled={isPending}
+            aria-label={t("scan_qr")}
+            className="flex-col gap-0 size-auto sm:flex-row sm:gap-2"
+          >
+            <ScanLine className="size-4 text-black" />
+            <span className="text-sm text-black">{t("scan")}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="center">
+          <DropdownMenuLabel className="font-normal text-gray-600">
+            {t("scan_how")}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              setScanWithCamera(true);
+              setScanDialogOpen(true);
+            }}
+          >
+            {t("scan_with_camera")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setScanWithCamera(false);
+              setScanDialogOpen(true);
+            }}
+          >
+            {t("scan_with_reader")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <PatientIDScanDialog
         open={scanDialogOpen}
         onOpenChange={setScanDialogOpen}
         onScanSuccess={handleScanSuccess}
+        startWithCamera={scanWithCamera}
       />
     </div>
   );
