@@ -1,4 +1,5 @@
-export type TokenPrintFormat = "normal" | "thermal-58" | "thermal-80";
+export type TokenPrintFormat =
+  "normal" | "thermal-58" | "thermal-80" | "label-100x150";
 
 const STORAGE_KEY = "care_token_print_format";
 
@@ -22,6 +23,13 @@ export const TOKEN_PRINT_FORMATS: TokenPrintFormatOption[] = [
     value: "thermal-80",
     labelKey: "print_token_thermal_80",
     pageSize: "80mm 110mm",
+  },
+  {
+    value: "label-100x150",
+    labelKey: "print_token_label_100x150",
+    // Label stock is 100x150; "horizontal" means the label is fed so the
+    // wider side is the page width: 150mm wide by 100mm tall.
+    pageSize: "150mm 100mm",
   },
 ];
 

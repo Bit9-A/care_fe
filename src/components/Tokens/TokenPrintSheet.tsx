@@ -171,6 +171,77 @@ const ThermalLayout = ({
   );
 };
 
+/**
+ * 100x150 label printed horizontally (150 mm wide, 100 mm tall). It is a label
+ * and not a roll, so the height is fixed: the layout has to fit in it instead
+ * of growing, and the QR sits on the right where the hand scanner reaches it.
+ */
+const LabelLayout = ({ data }: { data: TokenPrintData }) => {
+  const { t } = useTranslation();
+
+  return (
+    <div
+      className="flex text-black"
+      style={{ width: "150mm", height: "100mm", padding: "4mm", gap: "4mm" }}
+    >
+      <div className="flex min-w-0 flex-1 flex-col justify-between">
+        <div>
+          <p className="text-[10pt] font-bold leading-tight">
+            {data.facility.name}
+          </p>
+          {data.facility.address && (
+            <p className="text-[6.5pt] leading-tight">
+              {data.facility.address.replace(/,\s*/g, ", ")}
+            </p>
+          )}
+          {data.facility.phone_number && (
+            <p className="text-[6.5pt] leading-tight">
+              {data.facility.phone_number}
+            </p>
+          )}
+        </div>
+
+        <div>
+          {data.categoryName && (
+            <p className="text-[8pt] uppercase tracking-wider">
+              {data.categoryName}
+            </p>
+          )}
+          <p className="text-[46pt] font-bold leading-none tracking-tight">
+            {data.tokenNumber}
+          </p>
+        </div>
+
+        <div className="space-y-[1mm]">
+          {data.patientName && (
+            <div>
+              <p className="text-[6.5pt] uppercase tracking-wider">
+                {t("patient_name")}
+              </p>
+              <p className="text-[11pt] font-semibold leading-tight break-words">
+                {data.patientName}
+              </p>
+            </div>
+          )}
+          <p className="text-[7.5pt] leading-tight">
+            {data.resourceTypeLabel ? `${data.resourceTypeLabel}: ` : ""}
+            {data.resourceLabel}
+          </p>
+          <p className="text-[7.5pt] leading-tight">{data.dateLabel}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center justify-center">
+        <QRCodeSVG
+          size={160}
+          value={data.qrValue}
+          style={{ width: "38mm", height: "38mm" }}
+        />
+      </div>
+    </div>
+  );
+};
+
 export default function TokenPrintSheet({ data, format }: Props) {
   return createPortal(
     <div
@@ -178,11 +249,11 @@ export default function TokenPrintSheet({ data, format }: Props) {
       data-format={format}
       className="token-print-sheet"
     >
-      {format === "normal" ? (
-        <NormalLayout data={data} />
-      ) : (
+      {format === "normal" && <NormalLayout data={data} />}
+      {(format === "thermal-58" || format === "thermal-80") && (
         <ThermalLayout data={data} variant={format} />
       )}
+      {format === "label-100x150" && <LabelLayout data={data} />}
     </div>,
     document.body,
   );
