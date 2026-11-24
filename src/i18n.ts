@@ -148,7 +148,14 @@ export async function initI18n() {
       }),
     )
     .init({
-      fallbackLng: "en",
+      // This deployment is Spanish-only: a browser set to English used to get
+      // an English interface, so the detected language is no longer consulted
+      // and Spanish is both the default and the fallback.
+      fallbackLng: "es",
+      detection: {
+        order: ["querystring", "localStorage", "cookie"],
+        caches: ["localStorage"],
+      },
       ns: namespaces,
       fallbackNS: pluginNamespaces,
       load: "currentOnly",
