@@ -95,7 +95,7 @@ function ListContent({
             autoFocus={!isIOSDevice}
           />
         </div>
-        <CommandList className="max-h-none">
+        <CommandList className="max-h-full overflow-y-auto">
           <CommandEmpty>{t("no_results_found")}</CommandEmpty>
           <CommandGroup>
             <CommandItem
