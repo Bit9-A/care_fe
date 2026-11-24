@@ -566,7 +566,12 @@ const Login = (props: LoginProps) => {
           className="w-full max-w-[400px] space-y-3 my-auto"
         >
           <Card className="group/card w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.16),0_4px_16px_-2px_rgba(15,23,42,0.05)] hover:shadow-[0_24px_60px_-10px_rgba(0,163,255,0.26)] hover:border-[#00a3ff]/40 bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
-            <CardHeader className="space-y-1 px-6 pt-5 pb-3 items-center text-center">
+            <CardHeader
+              className={cn(
+                "space-y-1 px-6 pt-5 items-center text-center",
+                forgotPassword ? "pb-2" : "pb-3",
+              )}
+            >
               <motion.img
                 src="/images/LogoRAG.png"
                 alt="Logo SPNS Táchira"
@@ -574,17 +579,35 @@ const Login = (props: LoginProps) => {
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.07, rotate: 1.5 }}
                 transition={{ type: "spring", stiffness: 260, damping: 18 }}
-                className="h-24 w-24 sm:h-28 sm:w-28 object-contain mb-1.5 select-none drop-shadow-xs cursor-pointer"
+                className={cn(
+                  "object-contain select-none drop-shadow-xs cursor-pointer",
+                  forgotPassword
+                    ? "h-20 w-20 mb-0.5"
+                    : "h-24 w-24 sm:h-28 sm:w-28 mb-1.5",
+                )}
               />
-              <CardTitle className="font-display text-xl sm:text-[22px] font-bold tracking-tight text-slate-900">
-                {t("welcome_back")}
-              </CardTitle>
-              <CardDescription className="text-xs text-slate-500">
-                {t("sign_in_to_your_account_to_continue")}
-              </CardDescription>
+              {!forgotPassword && (
+                <>
+                  <CardTitle className="font-display text-xl sm:text-[22px] font-bold tracking-tight text-slate-900">
+                    {t("welcome_back")}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-slate-500">
+                    {t("sign_in_to_your_account_to_continue")}
+                  </CardDescription>
+                </>
+              )}
             </CardHeader>
             <CardContent className="px-6 pb-5 pt-0">
-              {disablePatientLogin ? (
+              {forgotPassword ? (
+                <ForgotPasswordPanel
+                  username={form.username}
+                  usernameError={errors.username}
+                  onUsernameChange={handleChange}
+                  onSubmitEmail={handleForgetSubmit}
+                  onBackToLogin={() => setForgotPassword(false)}
+                  isSubmitting={isLoading || forgotPasswordPending}
+                />
+              ) : disablePatientLogin ? (
                 renderStaffForm()
               ) : (
                 <Tabs

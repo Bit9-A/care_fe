@@ -1,6 +1,8 @@
 import careConfig from "@careConfig";
 import { useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { ArrowLeft, ArrowRight, User } from "lucide-react";
 import { navigate } from "raviger";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,10 +11,7 @@ import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 
-import CareIcon from "@/CAREUI/icons/CareIcon";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
@@ -108,6 +107,9 @@ export function ForgotPasswordPhone({
   const [errors, setErrors] = useState<ConfirmFieldErrors>({});
   const [phoneError, setPhoneError] = useState("");
   const [isPasswordFieldFocused, setIsPasswordFieldFocused] = useState(false);
+  const [focusedField, setFocusedField] = useState<"phone" | "username" | null>(
+    null,
+  );
   const [resendOtpCountdown, setResendOtpCountdown] = useState(0);
 
   useEffect(() => {
@@ -243,129 +245,225 @@ export function ForgotPasswordPhone({
 
   if (step === "phone") {
     return (
-      <form onSubmit={handleSendOtp} className="space-y-4">
-        <Button
-          variant="link"
+      <motion.form
+        key="forgot-phone-form"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        onSubmit={handleSendOtp}
+        className="space-y-3.5"
+      >
+        <button
           type="button"
           onClick={onBackToEmail}
-          className="px-0 mb-4 flex items-center gap-2"
+          className="group/back inline-flex items-center gap-1.5 text-xs font-semibold text-[#0076be] hover:text-[#00a3ff] transition-colors"
         >
-          <CareIcon icon="l-arrow-left" className="text-lg" />
+          <ArrowLeft className="size-3.5 transition-transform duration-200 group-hover/back:-translate-x-1" />
           <span>{t("back_to_email_reset")}</span>
-        </Button>
+        </button>
 
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              {t("reset_using_phone_number")}
-            </h2>
-            <p className="text-sm text-gray-500 mt-2">
-              {t("forget_password_phone_instruction")}
-            </p>
+        <div className="space-y-1">
+          <h2 className="font-display text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+            {t("reset_using_phone_number")}
+          </h2>
+          <p className="text-xs leading-relaxed text-slate-500">
+            {t("forget_password_phone_instruction")}
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="reset_phone"
+              className={cn(
+                "text-xs font-semibold transition-colors duration-200",
+                focusedField === "phone" ? "text-[#0076be]" : "text-slate-700",
+              )}
+            >
+              {t("phone_number")}
+            </Label>
+            {focusedField === "phone" && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+              >
+                <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+                Activo
+              </motion.span>
+            )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="reset_phone">{t("phone_number")}</Label>
+          <motion.div
+            animate={{
+              scale: focusedField === "phone" ? 1.008 : 1,
+              boxShadow:
+                focusedField === "phone"
+                  ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                  : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+              borderColor: phoneError
+                ? "#ef4444"
+                : focusedField === "phone"
+                  ? "#00a3ff"
+                  : "#e2e8f0",
+              backgroundColor: focusedField === "phone" ? "#ffffff" : "#f8fafc",
+            }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onFocus={() => setFocusedField("phone")}
+            onBlur={() => setFocusedField(null)}
+            className="relative flex items-center rounded-xl border overflow-hidden h-10"
+          >
             <PhoneInput
               id="reset_phone"
               name="phone"
+              embedded
               value={phone}
               onChange={(value) => {
                 setPhone(value ?? "");
                 setPhoneError("");
               }}
-              placeholder={t("enter_phone_number")}
+              placeholder="Ej. 412 123 4567"
             />
-            {phoneError && <p className="text-sm text-red-500">{phoneError}</p>}
-          </div>
+          </motion.div>
+          <p className="text-[11px] text-slate-400">
+            Ingrese su número sin el 0 inicial (ej. 412, 414, 416, 424).
+          </p>
+          {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
+        </div>
 
+        <motion.div
+          whileHover={{ scale: 1.015, y: -1 }}
+          whileTap={{ scale: 0.985 }}
+          transition={{ duration: 0.15 }}
+        >
           <Button
             type="submit"
-            className="w-full"
-            variant="primary"
+            className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
             disabled={sendOtpPending || !isValidPhoneNumber(phone)}
           >
             {sendOtpPending ? (
               <CircularProgress className="text-white" />
             ) : (
-              t("send_otp")
+              <span className="inline-flex items-center justify-center gap-2">
+                <span>{t("send_otp")}</span>
+                <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+              </span>
             )}
           </Button>
-        </div>
-      </form>
+        </motion.div>
+      </motion.form>
     );
   }
 
   return (
-    <form onSubmit={handleConfirm} className="space-y-4">
-      <Button
-        variant="link"
+    <motion.form
+      key="forgot-confirm-form"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      onSubmit={handleConfirm}
+      className="space-y-3.5"
+    >
+      <button
         type="button"
         onClick={handleChangePhone}
-        className="px-0 mb-4 flex items-center gap-2"
+        className="group/back inline-flex items-center gap-1.5 text-xs font-semibold text-[#0076be] hover:text-[#00a3ff] transition-colors"
       >
-        <CareIcon icon="l-arrow-left" className="text-lg" />
+        <ArrowLeft className="size-3.5 transition-transform duration-200 group-hover/back:-translate-x-1" />
         <span>{t("change_phone_number")}</span>
-      </Button>
+      </button>
 
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            {t("reset_password")}
-          </h2>
-          <p className="text-sm text-gray-500 mt-2">
-            {t("forget_password_phone_otp_instruction")}
-          </p>
+      <div className="space-y-1">
+        <h2 className="font-display text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+          {t("reset_password")}
+        </h2>
+        <p className="text-xs leading-relaxed text-slate-500">
+          {t("forget_password_phone_otp_instruction")}
+        </p>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label
+          htmlFor="reset_otp"
+          className="text-xs font-semibold text-slate-700"
+        >
+          {t("enter_otp")}
+        </Label>
+        <div className="flex justify-center">
+          <InputOTP
+            id="reset_otp"
+            maxLength={OTP_LENGTH}
+            value={otp}
+            onChange={(value) => {
+              setOtp(value);
+              if (errors.otp) {
+                setErrors((prev) => ({ ...prev, otp: null }));
+              }
+            }}
+            pattern={REGEXP_ONLY_DIGITS}
+          >
+            <InputOTPGroup>
+              {Array.from({ length: OTP_LENGTH }).map((_, index) => (
+                <InputOTPSlot
+                  key={index}
+                  index={index}
+                  className={cn(errors.otp && "border-red-500")}
+                />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
         </div>
+        {errors.otp && (
+          <p className="text-xs text-red-500 text-center">{errors.otp}</p>
+        )}
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="reset_otp">{t("enter_otp")}</Label>
-          <div className="flex justify-center">
-            <InputOTP
-              id="reset_otp"
-              maxLength={OTP_LENGTH}
-              value={otp}
-              onChange={(value) => {
-                setOtp(value);
-                if (errors.otp) {
-                  setErrors((prev) => ({ ...prev, otp: null }));
-                }
-              }}
-              pattern={REGEXP_ONLY_DIGITS}
-            >
-              <InputOTPGroup>
-                {Array.from({ length: OTP_LENGTH }).map((_, index) => (
-                  <InputOTPSlot
-                    key={index}
-                    index={index}
-                    className={cn(errors.otp && "border-red-500")}
-                  />
-                ))}
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-          {errors.otp && (
-            <p className="text-sm text-red-500 text-center">{errors.otp}</p>
-          )}
-        </div>
+      <PasswordFields
+        password={passwordForm.password}
+        confirm={passwordForm.confirm}
+        errors={errors}
+        onChange={handlePasswordChange}
+        isPasswordFieldFocused={isPasswordFieldFocused}
+        onPasswordFocusChange={setIsPasswordFieldFocused}
+      />
 
-        <PasswordFields
-          password={passwordForm.password}
-          confirm={passwordForm.confirm}
-          errors={errors}
-          onChange={handlePasswordChange}
-          isPasswordFieldFocused={isPasswordFieldFocused}
-          onPasswordFocusChange={setIsPasswordFieldFocused}
-        />
-
-        {requiresUsername && (
-          <div className="space-y-2">
-            <Label htmlFor="reset_username">{t("username")}</Label>
-            <Input
+      {requiresUsername && (
+        <div className="space-y-1.5">
+          <Label
+            htmlFor="reset_username"
+            className="text-xs font-semibold text-slate-700"
+          >
+            {t("username")}
+          </Label>
+          <motion.div
+            animate={{
+              scale: focusedField === "username" ? 1.008 : 1,
+              boxShadow:
+                focusedField === "username"
+                  ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                  : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+              borderColor:
+                errors.username || errors.error
+                  ? "#ef4444"
+                  : focusedField === "username"
+                    ? "#00a3ff"
+                    : "#e2e8f0",
+              backgroundColor:
+                focusedField === "username" ? "#ffffff" : "#f8fafc",
+            }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="relative flex items-center rounded-xl border overflow-hidden h-10"
+          >
+            <div className="pl-3 pr-2 flex items-center pointer-events-none shrink-0 text-slate-400">
+              <User className="size-4" />
+            </div>
+            <input
               id="reset_username"
               name="username"
               type="text"
               value={username}
+              onFocus={() => setFocusedField("username")}
+              onBlur={() => setFocusedField(null)}
               onChange={(e) => {
                 setUsername(e.target.value.toLowerCase());
                 if (errors.username || errors.error) {
@@ -377,30 +475,32 @@ export function ForgotPasswordPhone({
                 }
               }}
               placeholder={t("enter_your_username")}
-              className={cn(
-                (errors.username || errors.error) &&
-                  "border-red-500 focus-visible:ring-red-500",
-              )}
+              className="w-full h-full pr-3 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 border-0 ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none shadow-none"
             />
-            {(errors.username || errors.error) && (
-              <p className="text-sm text-red-500">
-                {errors.username || errors.error}
-              </p>
-            )}
-            <p className="text-xs text-gray-500">
-              {t("multiple_users_linked_to_phone_hint")}
+          </motion.div>
+          {(errors.username || errors.error) && (
+            <p className="text-xs text-red-500">
+              {errors.username || errors.error}
             </p>
-          </div>
-        )}
+          )}
+          <p className="text-[11px] text-slate-400">
+            {t("multiple_users_linked_to_phone_hint")}
+          </p>
+        </div>
+      )}
 
-        {!requiresUsername && errors.error && (
-          <p className="text-sm text-red-500">{errors.error}</p>
-        )}
+      {!requiresUsername && errors.error && (
+        <p className="text-xs text-red-500">{errors.error}</p>
+      )}
 
+      <motion.div
+        whileHover={{ scale: 1.015, y: -1 }}
+        whileTap={{ scale: 0.985 }}
+        transition={{ duration: 0.15 }}
+      >
         <Button
           type="submit"
-          className="w-full"
-          variant="primary"
+          className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
           disabled={
             confirmPending ||
             otp.length !== OTP_LENGTH ||
@@ -411,30 +511,33 @@ export function ForgotPasswordPhone({
           {confirmPending ? (
             <CircularProgress className="text-white" />
           ) : (
-            t("reset_password")
+            <span className="inline-flex items-center justify-center gap-2">
+              <span>{t("reset_password")}</span>
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+            </span>
           )}
         </Button>
+      </motion.div>
 
-        <p className="text-sm text-red-500 font-base">{t("dont_share_code")}</p>
+      <p className="text-xs text-red-500">{t("dont_share_code")}</p>
 
-        <div className="text-center">
-          {resendOtpCountdown <= 0 ? (
-            <Button
-              variant="link"
-              type="button"
-              onClick={handleResendOtp}
-              disabled={sendOtpPending}
-              className="px-0"
-            >
-              {t("resend_otp")}
-            </Button>
-          ) : (
-            <p className="text-sm text-gray-500">
-              {t("resend_otp_timer", { time: resendOtpCountdown })}
-            </p>
-          )}
-        </div>
+      <div className="text-center">
+        {resendOtpCountdown <= 0 ? (
+          <Button
+            variant="link"
+            type="button"
+            onClick={handleResendOtp}
+            disabled={sendOtpPending}
+            className="h-auto p-0 text-xs font-semibold text-[#0076be] hover:text-[#00a3ff]"
+          >
+            {t("resend_otp")}
+          </Button>
+        ) : (
+          <p className="text-xs text-slate-500">
+            {t("resend_otp_timer", { time: resendOtpCountdown })}
+          </p>
+        )}
       </div>
-    </form>
+    </motion.form>
   );
 }
