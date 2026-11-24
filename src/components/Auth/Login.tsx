@@ -8,6 +8,9 @@ import { useTranslation } from "react-i18next";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Eye, EyeOff, Lock, User, UserCheck } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -18,18 +21,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { PasswordInput } from "@/components/ui/input-password";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ForgotPasswordPanel } from "@/components/Auth/ForgotPasswordPanel";
+import {
+  authSlideTransition,
+  authSlideVariants,
+} from "@/components/Auth/authMotion";
 import CircularProgress from "@/components/Common/CircularProgress";
 import LanguageSelectorLogin from "@/components/Common/LanguageSelectorLogin";
 
@@ -94,12 +99,36 @@ const Login = (props: LoginProps) => {
   const [isCaptchaEnabled, setCaptcha] = useState(false);
   const { t } = useTranslation();
   const [forgotPassword, setForgotPassword] = useState(forgot);
+  const [tabDirection, setTabDirection] = useState(1);
+  const [authDirection, setAuthDirection] = useState(1);
+  const activeTab: LoginMode = mode === "patient" ? "patient" : "staff";
+
+  const openForgotPassword = () => {
+    setAuthDirection(1);
+    setForgotPassword(true);
+  };
+
+  const closeForgotPassword = () => {
+    setAuthDirection(-1);
+    setForgotPassword(false);
+  };
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string>("");
   const [otpValidationError, setOtpValidationError] = useState<string>("");
   const [resendOtpCountdown, setResendOtpCountdown] = useState(0);
+  const [focusedField, setFocusedField] = useState<
+    "username" | "password" | "phone" | null
+  >(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [capsLockActivo, setCapsLockActivo] = useState(false);
+
+  const checkCapsLock = (e: React.KeyboardEvent) => {
+    if (e.getModifierState) {
+      setCapsLockActivo(e.getModifierState("CapsLock"));
+    }
+  };
 
   // Timer Function for resend OTP
   useEffect(() => {
@@ -310,389 +339,601 @@ const Login = (props: LoginProps) => {
   // Loading state derived from mutations
   const isLoading = isAuthenticating || sendOtpPending || verifyOtpPending;
 
+  const renderStaffForm = () => (
+    <motion.form
+      key="staff-form"
+      custom={tabDirection}
+      variants={authSlideVariants}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      transition={authSlideTransition}
+      onSubmit={handleSubmit}
+      className="space-y-3.5"
+    >
+      {/* Campo Usuario */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor="username"
+            className={cn(
+              "text-xs font-semibold transition-colors duration-200",
+              focusedField === "username" ? "text-[#0076be]" : "text-slate-700",
+            )}
+          >
+            {t("username")}
+          </Label>
+          {focusedField === "username" && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+            >
+              <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+              Activo
+            </motion.span>
+          )}
+        </div>
+
+        <motion.div
+          animate={{
+            scale: focusedField === "username" ? 1.008 : 1,
+            boxShadow:
+              focusedField === "username"
+                ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+            borderColor: errors.username
+              ? "#ef4444"
+              : focusedField === "username"
+                ? "#00a3ff"
+                : "#e2e8f0",
+            backgroundColor:
+              focusedField === "username" ? "#ffffff" : "#f8fafc",
+          }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="relative flex items-center rounded-xl border overflow-hidden h-10"
+        >
+          <motion.div
+            animate={{
+              scale: focusedField === "username" ? 1.12 : 1,
+              color: focusedField === "username" ? "#00a3ff" : "#94a3b8",
+            }}
+            transition={{ duration: 0.2 }}
+            className="pl-3 pr-2 flex items-center pointer-events-none shrink-0"
+          >
+            <User className="size-4" />
+          </motion.div>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autoComplete="username"
+            value={form.username}
+            onFocus={() => setFocusedField("username")}
+            onBlur={() => setFocusedField(null)}
+            onChange={handleChange}
+            onKeyDown={checkCapsLock}
+            onKeyUp={checkCapsLock}
+            placeholder="Ej. care-doctor"
+            className="w-full h-full pr-3 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 border-0 ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none shadow-none"
+          />
+        </motion.div>
+        {errors.username && (
+          <p className="text-xs text-red-500">{t(errors.username)}</p>
+        )}
+      </div>
+
+      {/* Campo Contraseña */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <Label
+            htmlFor="password"
+            className={cn(
+              "text-xs font-semibold transition-colors duration-200",
+              focusedField === "password" ? "text-[#0076be]" : "text-slate-700",
+            )}
+          >
+            {t("password")}
+          </Label>
+          {focusedField === "password" && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+            >
+              <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+              Seguro
+            </motion.span>
+          )}
+        </div>
+
+        <motion.div
+          animate={{
+            scale: focusedField === "password" ? 1.008 : 1,
+            boxShadow:
+              focusedField === "password"
+                ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+            borderColor: errors.password
+              ? "#ef4444"
+              : focusedField === "password"
+                ? "#00a3ff"
+                : "#e2e8f0",
+            backgroundColor:
+              focusedField === "password" ? "#ffffff" : "#f8fafc",
+          }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="relative flex items-center rounded-xl border overflow-hidden h-10"
+        >
+          <motion.div
+            animate={{
+              scale: focusedField === "password" ? 1.12 : 1,
+              color: focusedField === "password" ? "#00a3ff" : "#94a3b8",
+            }}
+            transition={{ duration: 0.2 }}
+            className="pl-3 pr-2 flex items-center pointer-events-none shrink-0"
+          >
+            <Lock className="size-4" />
+          </motion.div>
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            value={form.password}
+            onFocus={() => setFocusedField("password")}
+            onBlur={() => setFocusedField(null)}
+            onChange={handleChange}
+            onKeyDown={checkCapsLock}
+            onKeyUp={checkCapsLock}
+            placeholder="••••••••"
+            className="w-full h-full pr-10 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 border-0 ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none shadow-none"
+          />
+          <motion.button
+            whileHover={{ scale: 1.12 }}
+            whileTap={{ scale: 0.88 }}
+            type="button"
+            tabIndex={-1}
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 p-1 rounded-md text-slate-400 hover:text-[#00a3ff] hover:bg-[#00a3ff]/10 transition-colors"
+          >
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </motion.button>
+        </motion.div>
+
+        {capsLockActivo && (
+          <motion.div
+            initial={{ opacity: 0, y: -3 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-medium"
+          >
+            <span>⚠️ Bloqueo de Mayúsculas activo</span>
+          </motion.div>
+        )}
+        {errors.password && (
+          <p className="text-xs text-red-500">{t(errors.password)}</p>
+        )}
+      </div>
+
+      {isCaptchaEnabled && reCaptchaSiteKey && (
+        <div className="py-2">
+          <ReCaptcha sitekey={reCaptchaSiteKey} onChange={onCaptchaChange} />
+        </div>
+      )}
+
+      <div className="flex justify-end pt-0.5">
+        <Button
+          variant="link"
+          type="button"
+          onClick={openForgotPassword}
+          className="h-auto p-0 text-xs font-medium text-[#0076be] hover:text-[#00a3ff]"
+        >
+          {t("forget_password")}
+        </Button>
+      </div>
+
+      <motion.div
+        whileHover={{ scale: 1.015, y: -1 }}
+        whileTap={{ scale: 0.985 }}
+        transition={{ duration: 0.15 }}
+      >
+        <Button
+          type="submit"
+          className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <CircularProgress className="text-white" />
+          ) : (
+            <span className="inline-flex items-center justify-center gap-2">
+              <span>{t("login")}</span>
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+            </span>
+          )}
+        </Button>
+      </motion.div>
+    </motion.form>
+  );
+
   return (
     <div className="relative flex min-h-screen flex-col md:h-screen md:flex-row">
       <AuthHero />
 
       {/* Login Forms Section */}
-      <div className="login-hero-form flex w-full flex-1 items-center justify-center px-5 py-10 md:h-full md:w-1/2 md:px-10">
-        <div className="w-full max-w-[440px]">
-          <div className="mb-7 md:hidden">
-            <p className="text-[15px] leading-snug font-semibold tracking-tight text-sus-900">
-              {t("sus_tachira")}
-            </p>
-          </div>
-          <Card className="rounded-2xl border-0 bg-white shadow-lg shadow-sus-950/10 ring-1 ring-gray-900/5">
-            <CardHeader className="space-y-1.5 px-6 pt-7 pb-0 sm:px-8 sm:pt-8">
-              <CardTitle className="text-[22px] leading-tight font-semibold tracking-tight text-gray-900">
-                {t("welcome_back")}
-              </CardTitle>
-              <CardDescription className="text-sm text-gray-500">
-                {disablePatientLogin
-                  ? t("sign_in_to_your_account_to_continue")
-                  : t("choose_your_login_method_to_continue")}
-              </CardDescription>
+      <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[400px] space-y-3 my-auto"
+        >
+          <Card className="group/card w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.16),0_4px_16px_-2px_rgba(15,23,42,0.05)] hover:shadow-[0_24px_60px_-10px_rgba(0,163,255,0.26)] hover:border-[#00a3ff]/40 bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
+            <CardHeader className="space-y-1 px-6 pt-5 pb-3 items-center text-center">
+              <motion.img
+                src="/images/LogoRAG.png"
+                alt="Logo SPNS Táchira"
+                initial={{ opacity: 0, scale: 0.88 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.07, rotate: 1.5 }}
+                transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                className="h-24 w-24 sm:h-28 sm:w-28 mb-1.5 object-contain select-none drop-shadow-xs cursor-pointer"
+              />
+              <AnimatePresence initial={false}>
+                {!forgotPassword && (
+                  <motion.div
+                    key="login-welcome-header"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="space-y-1 overflow-hidden w-full"
+                  >
+                    <CardTitle className="font-display text-xl sm:text-[22px] font-bold tracking-tight text-slate-900">
+                      {t("welcome_back")}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-500">
+                      {t("sign_in_to_your_account_to_continue")}
+                    </CardDescription>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </CardHeader>
-            <CardContent className="px-6 pt-6 pb-8 sm:px-8">
-              {disablePatientLogin ? (
-                <>
-                  {/* Staff Login */}
-                  {!forgotPassword ? (
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="username"
-                          className="text-sm font-medium text-gray-700"
-                        >
-                          {t("username")}
-                        </Label>
-                        <Input
-                          id="username"
-                          name="username"
-                          type="text"
-                          autoComplete="username"
-                          value={form.username}
-                          onChange={handleChange}
-                          className={cn(
-                            "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
-                            errors.username &&
-                              "border-red-500 focus-visible:ring-red-500",
-                          )}
-                        />
-                        <p className="min-h-5 text-sm leading-5 text-red-600">
-                          {errors.username ? t(errors.username) : null}
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-baseline justify-between gap-4">
-                          <Label
-                            htmlFor="password"
-                            className="text-sm font-medium text-gray-700"
-                          >
-                            {t("password")}
-                          </Label>
-                          <Button
-                            variant="link"
-                            type="button"
-                            onClick={() => setForgotPassword(true)}
-                            className="h-auto p-0 text-sm font-medium whitespace-nowrap text-sus-700 hover:text-sus-900 hover:no-underline"
-                          >
-                            {t("forget_password")}
-                          </Button>
-                        </div>
-                        <PasswordInput
-                          id="password"
-                          name="password"
-                          autoComplete="current-password"
-                          value={form.password}
-                          onChange={handleChange}
-                          className={cn(
-                            "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
-                            errors.password &&
-                              "border-red-500 focus-visible:ring-red-500",
-                          )}
-                        />
-                        <p className="min-h-5 text-sm leading-5 text-red-600">
-                          {errors.password ? t(errors.password) : null}
-                        </p>
-                      </div>
-
-                      {isCaptchaEnabled && reCaptchaSiteKey && (
-                        <div className="py-2">
-                          <ReCaptcha
-                            sitekey={reCaptchaSiteKey}
-                            onChange={onCaptchaChange}
-                          />
-                        </div>
-                      )}
-
-                      <Button
-                        type="submit"
-                        className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
-                        variant="primary"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <CircularProgress className="text-white" />
-                        ) : (
-                          t("login")
-                        )}
-                      </Button>
-                    </form>
-                  ) : (
-                    <ForgotPasswordPanel
-                      username={form.username}
-                      usernameError={errors.username}
-                      onUsernameChange={handleChange}
-                      onSubmitEmail={handleForgetSubmit}
-                      onBackToLogin={() => setForgotPassword(false)}
-                      isSubmitting={isLoading || forgotPasswordPending}
-                    />
-                  )}
-                </>
-              ) : (
-                <Tabs
-                  value={mode === "patient" ? "patient" : "staff"}
-                  onValueChange={(value) => {
-                    setQueryParams({ mode: value as LoginMode });
-                    if (value === "staff") {
-                      resetPatientLogin();
-                    } else {
-                      setForgotPassword(false);
-                    }
-                  }}
+            <CardContent className="px-6 pb-5 pt-0">
+              <div className="overflow-hidden px-1.5 -mx-1.5 py-1.5 -my-1.5">
+                <AnimatePresence
+                  mode="wait"
+                  custom={authDirection}
+                  initial={false}
                 >
-                  <TabsList className="flex w-full rounded-xl bg-gray-100 p-1">
-                    <TabsTrigger
-                      className="h-9 flex-1 rounded-lg text-sm font-medium"
-                      value="staff"
+                  {forgotPassword ? (
+                    <motion.div
+                      key="forgot-password-view"
+                      custom={authDirection}
+                      variants={authSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={authSlideTransition}
                     >
-                      {t("staff_login")}
-                    </TabsTrigger>
-                    {!disablePatientLogin && (
-                      <TabsTrigger
-                        className="h-9 flex-1 rounded-lg text-sm font-medium"
-                        value="patient"
-                      >
-                        {t("patient_login")}
-                      </TabsTrigger>
-                    )}
-                  </TabsList>
-
-                  {/* Staff Login */}
-                  <TabsContent value="staff">
-                    {!forgotPassword ? (
-                      <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="space-y-2">
-                          <Label
-                            htmlFor="username"
-                            className="text-sm font-medium text-gray-700"
-                          >
-                            {t("username")}
-                          </Label>
-                          <Input
-                            id="username"
-                            name="username"
-                            type="text"
-                            autoComplete="username"
-                            value={form.username}
-                            onChange={handleChange}
-                            className={cn(
-                              "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
-                              errors.username &&
-                                "border-red-500 focus-visible:ring-red-500",
-                            )}
-                          />
-                          <p className="min-h-5 text-sm leading-5 text-red-600">
-                            {errors.username ? t(errors.username) : null}
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-baseline justify-between gap-4">
-                            <Label
-                              htmlFor="password"
-                              className="text-sm font-medium text-gray-700"
-                            >
-                              {t("password")}
-                            </Label>
-                            <Button
-                              variant="link"
-                              type="button"
-                              onClick={() => setForgotPassword(true)}
-                              className="h-auto p-0 text-sm font-medium whitespace-nowrap text-sus-700 hover:text-sus-900 hover:no-underline"
-                            >
-                              {t("forget_password")}
-                            </Button>
-                          </div>
-                          <PasswordInput
-                            id="password"
-                            name="password"
-                            autoComplete="current-password"
-                            value={form.password}
-                            onChange={handleChange}
-                            className={cn(
-                              "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
-                              errors.password &&
-                                "border-red-500 focus-visible:ring-red-500",
-                            )}
-                          />
-                          <p className="min-h-5 text-sm leading-5 text-red-600">
-                            {errors.password ? t(errors.password) : null}
-                          </p>
-                        </div>
-
-                        {isCaptchaEnabled && reCaptchaSiteKey && (
-                          <div className="py-2">
-                            <ReCaptcha
-                              sitekey={reCaptchaSiteKey}
-                              onChange={onCaptchaChange}
-                            />
-                          </div>
-                        )}
-
-                        <Button
-                          type="submit"
-                          className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
-                          variant="primary"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <CircularProgress className="text-white" />
-                          ) : (
-                            t("login")
-                          )}
-                        </Button>
-                      </form>
-                    ) : (
                       <ForgotPasswordPanel
                         username={form.username}
                         usernameError={errors.username}
                         onUsernameChange={handleChange}
                         onSubmitEmail={handleForgetSubmit}
-                        onBackToLogin={() => setForgotPassword(false)}
+                        onBackToLogin={closeForgotPassword}
                         isSubmitting={isLoading || forgotPasswordPending}
                       />
-                    )}
-                  </TabsContent>
-
-                  {/* Patient Login */}
-                  <TabsContent value="patient">
-                    <form onSubmit={handlePatientLogin} className="space-y-5">
-                      <div className="space-y-2">
-                        <Label
-                          htmlFor="phone"
-                          className="text-sm font-medium text-gray-700"
-                        >
-                          {t("phone_number")}
-                        </Label>
-                        <PhoneInput
-                          id="phone"
-                          name="phone"
-                          value={phone}
-                          onChange={(value) => {
-                            setPhone(value ?? "");
-                            setOtpError("");
-                            setOtpValidationError("");
-                          }}
-                          disabled={isOtpSent}
-                          placeholder={t("enter_phone_number")}
-                        />
-                        {otpError && (
-                          <p className="text-sm text-red-600">{t(otpError)}</p>
-                        )}
-                      </div>
-
-                      {isOtpSent && (
-                        <div className="space-y-3">
-                          <Label
-                            htmlFor="otp"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            {t("enter_otp")}
-                          </Label>
-                          <div className="flex justify-center">
-                            <InputOTP
-                              id="otp"
-                              value={otp}
-                              maxLength={5}
-                              pattern={REGEXP_ONLY_DIGITS}
-                              autoComplete="one-time-code"
-                              autoFocus
-                              onChange={(value) => {
-                                setOtp(value);
-                                setOtpValidationError("");
-                              }}
-                            >
-                              <InputOTPGroup>
-                                {[...Array(5)].map((_, index) => (
-                                  <InputOTPSlot
-                                    key={index}
-                                    index={index}
-                                    className={cn(
-                                      "size-11 rounded-lg border-gray-200",
-                                      otpValidationError &&
-                                        "border-red-500 focus-visible:ring-red-500",
-                                    )}
-                                  />
-                                ))}
-                              </InputOTPGroup>
-                            </InputOTP>
-                          </div>
-                          {otpValidationError && (
-                            <p className="text-center text-sm text-red-600">
-                              {t(otpValidationError)}
-                            </p>
-                          )}
-                        </div>
-                      )}
-
-                      <Button
-                        type="submit"
-                        className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
-                        variant="primary"
-                        disabled={
-                          isLoading ||
-                          !isValidPhoneNumber(phone) ||
-                          (isOtpSent && otp.length !== 5)
-                        }
+                    </motion.div>
+                  ) : disablePatientLogin ? (
+                    <motion.div
+                      key="staff-only-view"
+                      custom={authDirection}
+                      variants={authSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={authSlideTransition}
+                    >
+                      {renderStaffForm()}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="login-tabs-view"
+                      custom={authDirection}
+                      variants={authSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={authSlideTransition}
+                    >
+                      <Tabs
+                        value={activeTab}
+                        onValueChange={(value) => {
+                          const nextMode = value as LoginMode;
+                          setTabDirection(nextMode === "patient" ? 1 : -1);
+                          setQueryParams({ mode: nextMode });
+                          if (nextMode === "staff") {
+                            resetPatientLogin();
+                          } else {
+                            setForgotPassword(false);
+                          }
+                        }}
                       >
-                        {isLoading ? (
-                          <CircularProgress className="text-white" />
-                        ) : isOtpSent ? (
-                          t("verify_otp")
-                        ) : (
-                          t("send_otp")
-                        )}
-                      </Button>
-                      {isOtpSent && (
-                        <div className="flex flex-col items-center gap-2 text-center">
-                          {resendOtpCountdown <= 0 ? (
-                            <Button
-                              variant="link"
-                              type="button"
-                              className="h-auto p-0 text-sm font-medium text-sus-700 hover:text-sus-900"
-                              onClick={() => {
-                                sendOtp({ phone_number: phone });
-                                setResendOtpCountdown(resendOtpTimeout);
-                              }}
+                        <TabsList className="grid grid-cols-2 w-full h-10 p-1 bg-slate-100 rounded-xl mb-4 border border-slate-200/80">
+                          <TabsTrigger
+                            className="relative w-full h-full text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 text-slate-600 data-[state=active]:bg-transparent data-[state=active]:text-[#0076be] data-[state=active]:shadow-none transition-colors select-none"
+                            value="staff"
+                          >
+                            {activeTab === "staff" && (
+                              <motion.span
+                                layoutId="login-mode-pill"
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 380,
+                                  damping: 32,
+                                }}
+                                className="absolute inset-0 rounded-lg bg-white shadow-xs"
+                              />
+                            )}
+                            <span className="relative z-10 inline-flex items-center justify-center gap-1.5 min-w-0">
+                              <UserCheck className="size-3.5 shrink-0 text-[#00a3ff]" />
+                              <span className="truncate">
+                                Personal de Salud
+                              </span>
+                            </span>
+                          </TabsTrigger>
+                          {!disablePatientLogin && (
+                            <TabsTrigger
+                              className="relative w-full h-full text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 text-slate-600 data-[state=active]:bg-transparent data-[state=active]:text-[#0076be] data-[state=active]:shadow-none transition-colors select-none"
+                              value="patient"
                             >
-                              {t("resend_otp")}
-                            </Button>
-                          ) : (
-                            <p className="text-sm text-gray-500">
-                              {t("resend_otp_timer", {
-                                time: resendOtpCountdown,
-                              })}
-                            </p>
+                              {activeTab === "patient" && (
+                                <motion.span
+                                  layoutId="login-mode-pill"
+                                  transition={{
+                                    type: "spring",
+                                    stiffness: 380,
+                                    damping: 32,
+                                  }}
+                                  className="absolute inset-0 rounded-lg bg-white shadow-xs"
+                                />
+                              )}
+                              <span className="relative z-10 inline-flex items-center justify-center gap-1.5 min-w-0">
+                                <User className="size-3.5 shrink-0 text-[#00a3ff]" />
+                                <span className="truncate">Paciente</span>
+                              </span>
+                            </TabsTrigger>
                           )}
-                          <div className="flex items-center text-sm">
-                            <Button
-                              variant="link"
-                              type="button"
-                              className="h-auto p-0 text-sm font-medium text-sus-700 hover:text-sus-900"
-                              onClick={() => {
-                                setIsOtpSent(false);
-                                setOtp("");
-                                setOtpError("");
-                                setOtpValidationError("");
-                              }}
-                            >
-                              {t("change_phone_number")}
-                            </Button>
-                          </div>
+                        </TabsList>
+
+                        <div
+                          role="tabpanel"
+                          className="overflow-hidden px-1.5 -mx-1.5 py-1.5 -my-1.5"
+                        >
+                          <AnimatePresence
+                            mode="wait"
+                            custom={tabDirection}
+                            initial={false}
+                          >
+                            {activeTab === "staff" ? (
+                              renderStaffForm()
+                            ) : (
+                              <motion.form
+                                key="patient-form"
+                                custom={tabDirection}
+                                variants={authSlideVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={authSlideTransition}
+                                onSubmit={handlePatientLogin}
+                                className="space-y-3.5"
+                              >
+                                <div className="space-y-1.5">
+                                  <div className="flex items-center justify-between">
+                                    <Label
+                                      htmlFor="phone"
+                                      className={cn(
+                                        "text-xs font-semibold transition-colors duration-200",
+                                        focusedField === "phone"
+                                          ? "text-[#0076be]"
+                                          : "text-slate-700",
+                                      )}
+                                    >
+                                      {t("phone_number")}
+                                    </Label>
+                                    {focusedField === "phone" && (
+                                      <motion.span
+                                        initial={{ opacity: 0, scale: 0.85 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+                                      >
+                                        <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+                                        Activo
+                                      </motion.span>
+                                    )}
+                                  </div>
+                                  <motion.div
+                                    animate={{
+                                      scale:
+                                        focusedField === "phone" ? 1.008 : 1,
+                                      boxShadow:
+                                        focusedField === "phone"
+                                          ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                                          : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+                                      borderColor: otpError
+                                        ? "#ef4444"
+                                        : focusedField === "phone"
+                                          ? "#00a3ff"
+                                          : "#e2e8f0",
+                                      backgroundColor:
+                                        focusedField === "phone"
+                                          ? "#ffffff"
+                                          : "#f8fafc",
+                                    }}
+                                    transition={{
+                                      duration: 0.2,
+                                      ease: "easeOut",
+                                    }}
+                                    onFocus={() => setFocusedField("phone")}
+                                    onBlur={() => setFocusedField(null)}
+                                    className="relative flex items-center rounded-xl border overflow-hidden h-10"
+                                  >
+                                    <PhoneInput
+                                      id="phone"
+                                      name="phone"
+                                      embedded
+                                      value={phone}
+                                      onChange={(value) => {
+                                        setPhone(value ?? "");
+                                        setOtpError("");
+                                        setOtpValidationError("");
+                                      }}
+                                      disabled={isOtpSent}
+                                      placeholder="Ej. 412 123 4567"
+                                    />
+                                  </motion.div>
+                                  <p className="text-[11px] text-slate-400">
+                                    Ingrese su número sin el 0 inicial (ej. 412,
+                                    414, 416, 424).
+                                  </p>
+                                  {otpError && (
+                                    <p className="text-xs text-red-500">
+                                      {t(otpError)}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {isOtpSent && (
+                                  <div className="space-y-2">
+                                    <Label htmlFor="otp" className="mb-4">
+                                      {t("enter_otp")}
+                                    </Label>
+                                    <div className="flex justify-center">
+                                      <InputOTP
+                                        id="otp"
+                                        value={otp}
+                                        maxLength={5}
+                                        pattern={REGEXP_ONLY_DIGITS}
+                                        autoComplete="one-time-code"
+                                        autoFocus
+                                        onChange={(value) => {
+                                          setOtp(value);
+                                          setOtpValidationError("");
+                                        }}
+                                      >
+                                        <InputOTPGroup>
+                                          {[...Array(5)].map((_, index) => (
+                                            <InputOTPSlot
+                                              key={index}
+                                              index={index}
+                                              className={cn(
+                                                "size-10",
+                                                otpValidationError &&
+                                                  "border-red-500 focus-visible:ring-red-500",
+                                              )}
+                                            />
+                                          ))}
+                                        </InputOTPGroup>
+                                      </InputOTP>
+                                    </div>
+                                    {otpValidationError && (
+                                      <p className="text-sm text-red-500 text-center">
+                                        {t(otpValidationError)}
+                                      </p>
+                                    )}
+                                  </div>
+                                )}
+
+                                <motion.div
+                                  whileHover={{ scale: 1.015, y: -1 }}
+                                  whileTap={{ scale: 0.985 }}
+                                  transition={{ duration: 0.15 }}
+                                >
+                                  <Button
+                                    type="submit"
+                                    className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                                    disabled={
+                                      isLoading ||
+                                      !isValidPhoneNumber(phone) ||
+                                      (isOtpSent && otp.length !== 5)
+                                    }
+                                  >
+                                    {isLoading ? (
+                                      <CircularProgress className="text-white" />
+                                    ) : (
+                                      <span className="inline-flex items-center justify-center gap-2">
+                                        <span>
+                                          {isOtpSent
+                                            ? t("verify_otp")
+                                            : t("send_otp")}
+                                        </span>
+                                        <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+                                      </span>
+                                    )}
+                                  </Button>
+                                </motion.div>
+                                {isOtpSent && (
+                                  <div className="flex flex-col items-center gap-2 text-center">
+                                    {resendOtpCountdown <= 0 ? (
+                                      <Button
+                                        variant="link"
+                                        type="button"
+                                        className="h-auto p-0"
+                                        onClick={() => {
+                                          sendOtp({ phone_number: phone });
+                                          setResendOtpCountdown(
+                                            resendOtpTimeout,
+                                          );
+                                        }}
+                                      >
+                                        {t("resend_otp")}
+                                      </Button>
+                                    ) : (
+                                      <p className="text-sm text-gray-500">
+                                        {t("resend_otp_timer", {
+                                          time: resendOtpCountdown,
+                                        })}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center text-sm">
+                                      <Button
+                                        variant="link"
+                                        type="button"
+                                        className="h-auto p-0 text-primary-600"
+                                        onClick={() => {
+                                          setIsOtpSent(false);
+                                          setOtp("");
+                                          setOtpError("");
+                                          setOtpValidationError("");
+                                        }}
+                                      >
+                                        {t("change_phone_number")}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </motion.form>
+                            )}
+                          </AnimatePresence>
                         </div>
-                      )}
-                    </form>
-                  </TabsContent>
-                </Tabs>
-              )}
+                      </Tabs>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </CardContent>
           </Card>
 
-          <div className="mt-6">
-            <LanguageSelectorLogin />
-          </div>
-        </div>
+          <LanguageSelectorLogin />
+          <p className="text-center text-[11px] font-medium text-white/80 md:hidden pt-1 pb-2">
+            MPPS · IVSS · Dirección de Salud Regional
+          </p>
+        </motion.div>
       </div>
     </div>
   );

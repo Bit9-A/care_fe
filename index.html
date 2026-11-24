@@ -20,11 +20,15 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Care" />
+    <meta name="apple-mobile-web-app-title" content="SPNS Táchira" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/LogoRAG.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="apple-touch-icon"
-      href="/images/icons/apple-touch-icon-180x180.png"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
     />
     %REACT_INJECTED_HEAD%
   </head>
@@ -66,29 +70,64 @@
     <div id="root">
       <style nonce="7e14cf80">
         .temp-loading {
-          display: grid;
-          place-items: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
           height: 100vh;
-          text-align: center;
+          background: #f8fafc;
+          font-family: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
         }
-        .temp-loading-heart {
-          width: 4rem;
-          aspect-ratio: 10 / 8;
+        .spns-loader-wrap {
+          position: relative;
+          width: 72px;
+          height: 72px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .spns-loader-ring {
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          border: 3.5px solid #e0f2fe;
+          border-top-color: #00a3ff;
+          border-right-color: #38bdf8;
+          animation: spns-spin 1.1s linear infinite;
+        }
+        .spns-loader-badge {
+          position: absolute;
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #00a3ff, #0076be);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 6px 16px rgba(0, 163, 255, 0.3);
+        }
+        .spns-loader-text {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #0076be;
+        }
+        @keyframes spns-spin {
+          to { transform: rotate(360deg); }
         }
       </style>
-      <div class="temp-loading">
-        <!-- Static frame of the Care UI loading animation; the animated version takes over once the bundle mounts. -->
-        <svg
-          class="temp-loading-heart"
-          viewBox="0 0 10 8"
-          role="img"
-          aria-label="Care is loading"
-        >
-          <path
-            fill="#f43f5e"
-            d="M 2.3,0 L 3.01,0 L 3.01,1.01 L 2,1.01 L 2,0.3 Q 2,0 2.3,0 Z M 3,0 L 3.71,0 Q 4.01,0 4.01,0.3 L 4.01,1.01 L 3,1.01 L 3,0 Z M 6.3,0 L 7.01,0 L 7.01,1.01 L 6,1.01 L 6,0.3 Q 6,0 6.3,0 Z M 7,0 L 7.71,0 Q 8.01,0 8.01,0.3 L 8.01,1.01 L 7,1.01 L 7,0 Z M 1,1 L 2.01,1 L 2.01,2.01 L 1,2.01 L 1,1 Z M 2,1 L 3.01,1 L 3.01,2.01 L 2,2.01 L 2,1 Z M 3,1 L 4.01,1 L 4.01,2.01 L 3,2.01 L 3,1 Z M 4,1 L 5.01,1 L 5.01,2.01 L 4,2.01 L 4,1 Z M 5,1 L 6.01,1 L 6.01,2.01 L 5,2.01 L 5,1 Z M 6,1 L 7.01,1 L 7.01,2.01 L 6,2.01 L 6,1 Z M 7,1 L 8.01,1 L 8.01,2.01 L 7,2.01 L 7,1 Z M 8,1 L 9.01,1 L 9.01,2.01 L 8,2.01 L 8,1 Z M 0.3,2 L 1.01,2 L 1.01,3.01 L 0,3.01 L 0,2.3 Q 0,2 0.3,2 Z M 1,2 L 2.01,2 L 2.01,3.01 L 1,3.01 L 1,2 Z M 3,2 L 4.01,2 L 4.01,3.01 L 3,3.01 L 3,2 Z M 4,2 L 5.01,2 L 5.01,3.01 L 4,3.01 L 4,2 Z M 5,2 L 6.01,2 L 6.01,3.01 L 5,3.01 L 5,2 Z M 6,2 L 7.01,2 L 7.01,3.01 L 6,3.01 L 6,2 Z M 7,2 L 8.01,2 L 8.01,3.01 L 7,3.01 L 7,2 Z M 8,2 L 9.01,2 L 9.01,3.01 L 8,3.01 L 8,2 Z M 9,2 L 9.71,2 Q 10.01,2 10.01,2.3 L 10.01,3.01 L 9,3.01 L 9,2 Z M 0,3 L 1.01,3 L 1.01,4.01 L 0.3,4.01 Q 0,4.01 0,3.71 L 0,3 Z M 1,3 L 2.01,3 L 2.01,4.01 L 1,4.01 L 1,3 Z M 2,3 L 3.01,3 L 3.01,4.01 L 2,4.01 L 2,3 Z M 3,3 L 4.01,3 L 4.01,4.01 L 3,4.01 L 3,3 Z M 4,3 L 5.01,3 L 5.01,4.01 L 4,4.01 L 4,3 Z M 5,3 L 6.01,3 L 6.01,4.01 L 5,4.01 L 5,3 Z M 6,3 L 7.01,3 L 7.01,4.01 L 6,4.01 L 6,3 Z M 7,3 L 8.01,3 L 8.01,4.01 L 7,4.01 L 7,3 Z M 8,3 L 9.01,3 L 9.01,4.01 L 8,4.01 L 8,3 Z M 9,3 L 10.01,3 L 10.01,3.71 Q 10.01,4.01 9.71,4.01 L 9,4.01 L 9,3 Z M 1,4 L 2.01,4 L 2.01,5.01 L 1,5.01 L 1,4 Z M 2,4 L 3.01,4 L 3.01,5.01 L 2,5.01 L 2,4 Z M 3,4 L 4.01,4 L 4.01,5.01 L 3,5.01 L 3,4 Z M 4,4 L 5.01,4 L 5.01,5.01 L 4,5.01 L 4,4 Z M 5,4 L 6.01,4 L 6.01,5.01 L 5,5.01 L 5,4 Z M 6,4 L 7.01,4 L 7.01,5.01 L 6,5.01 L 6,4 Z M 7,4 L 8.01,4 L 8.01,5.01 L 7,5.01 L 7,4 Z M 8,4 L 9.01,4 L 9.01,5.01 L 8,5.01 L 8,4 Z M 2,5 L 3.01,5 L 3.01,6.01 L 2,6.01 L 2,5 Z M 3,5 L 4.01,5 L 4.01,6.01 L 3,6.01 L 3,5 Z M 4,5 L 5.01,5 L 5.01,6.01 L 4,6.01 L 4,5 Z M 5,5 L 6.01,5 L 6.01,6.01 L 5,6.01 L 5,5 Z M 6,5 L 7.01,5 L 7.01,6.01 L 6,6.01 L 6,5 Z M 7,5 L 8.01,5 L 8.01,6.01 L 7,6.01 L 7,5 Z M 3,6 L 4.01,6 L 4.01,7.01 L 3,7.01 L 3,6 Z M 4,6 L 5.01,6 L 5.01,7.01 L 4,7.01 L 4,6 Z M 5,6 L 6.01,6 L 6.01,7.01 L 5,7.01 L 5,6 Z M 6,6 L 7.01,6 L 7.01,7.01 L 6,7.01 L 6,6 Z M 4,7 L 5.01,7 L 5.01,8.01 L 4.3,8.01 Q 4,8.01 4,7.71 L 4,7 Z M 5,7 L 6.01,7 L 6.01,7.71 Q 6.01,8.01 5.71,8.01 L 5,8.01 L 5,7 Z"
-          />
-        </svg>
+      <div class="temp-loading" role="status" aria-label="Cargando SPNS Táchira">
+        <div class="spns-loader-wrap">
+          <div class="spns-loader-ring"></div>
+          <div class="spns-loader-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12h4l2.2-5 3.6 10 2.2-5H21" />
+            </svg>
+          </div>
+        </div>
+        <div class="spns-loader-text">SPNS Táchira · Iniciando</div>
       </div>
     </div>
     <script type="module" src="/src/index.tsx"></script>

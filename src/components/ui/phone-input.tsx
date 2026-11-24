@@ -51,20 +51,25 @@ type PhoneInputProps = Omit<
 > &
   Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
     onChange?: (value: RPNInput.Value) => void;
+    embedded?: boolean;
   };
 
 const PhoneInputContext = React.createContext<{
   country: CountryCode;
   setCountry: (country: CountryCode) => void;
+  embedded?: boolean;
 }>({
   country: careConfig.defaultCountry.code,
   setCountry: () => {},
+  embedded: false,
 });
 
 function PhoneInput({
   className,
   onChange,
   value,
+  countries = ["VE", "CO"],
+  embedded = false,
   ...props
 }: React.ComponentProps<typeof RPNInput.default> & PhoneInputProps) {
   const [country, setCountry] = React.useState<CountryCode>(
@@ -72,16 +77,20 @@ function PhoneInput({
   );
 
   return (
-    <PhoneInputContext.Provider value={{ country, setCountry }}>
+    <PhoneInputContext.Provider value={{ country, setCountry, embedded }}>
       <RPNInput.default
         className={cn(
-          "flex rounded-md focus-within:ring-1",
+          embedded
+            ? "flex w-full h-full items-center"
+            : "flex rounded-md focus-within:ring-1",
           className,
-          props.value &&
+          !embedded &&
+            (props.value &&
             !RPNInput.isValidPhoneNumber((props.value ?? "") as string)
-            ? "ring-red-500"
-            : "ring-primary-700",
+              ? "ring-red-500"
+              : "ring-primary-700"),
         )}
+        countries={countries}
         flagComponent={FlagComponent}
         countrySelectComponent={CountrySelect}
         inputComponent={InputComponent}
@@ -99,10 +108,17 @@ function PhoneInput({
          * react-phone-number-input might trigger the onChange event as undefined
          * when a valid phone number is not entered. To prevent this,
          * the value is coerced to an empty string.
+         * En el caso de Venezuela (+58), se normaliza para omitir el 0 inicial.
          *
          * @param {E164Number | undefined} value - The entered value
          */
-        onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
+        onChange={(nextValue) => {
+          let normalized = (nextValue || "") as string;
+          if (country === "VE" && normalized.startsWith("+580")) {
+            normalized = `+58${normalized.slice(4).replace(/^0+/, "")}`;
+          }
+          onChange?.(normalized as RPNInput.Value);
+        }}
         {...props}
       />
     </PhoneInputContext.Provider>
@@ -115,7 +131,7 @@ function InputComponent({
   ...props
 }: React.ComponentProps<"input">) {
   const { t } = useTranslation();
-  const { country } = React.useContext(PhoneInputContext);
+  const { country, embedded } = React.useContext(PhoneInputContext);
   const maxNationalDigits = getMaxDigits(country);
   const maxTotalDigits = getMaxTotalDigits(country);
   const [announcement, setAnnouncement] = React.useState("");
@@ -139,6 +155,20 @@ function InputComponent({
       const selectionEnd = input.selectionEnd ?? currentValue.length;
       const selectedText = currentValue.slice(selectionStart, selectionEnd);
       const selectedDigits = extractDigits(selectedText);
+      const beforeDigits = extractDigits(currentValue.slice(0, selectionStart));
+
+      // Para Venezuela (+58), impedir colocar 0 al principio del número
+      if (
+        country === "VE" &&
+        !currentValue.includes("+") &&
+        beforeDigits.length === 0 &&
+        newDigits.startsWith("0")
+      ) {
+        e.preventDefault();
+        setAnnouncement("Omita el 0 inicial (ej. 412 1234567)");
+        setTimeout(() => setAnnouncement(""), 1500);
+        return;
+      }
 
       // Calculate post-replacement digit count:
       // current digits - digits being replaced + new digits being added
@@ -159,17 +189,53 @@ function InputComponent({
         setTimeout(() => setAnnouncement(""), 1000);
       }
     },
-    [maxNationalDigits, maxTotalDigits, t],
+    [country, maxNationalDigits, maxTotalDigits, t],
+  );
+
+  const handlePaste = React.useCallback(
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      if (country !== "VE") return;
+      const pasted = e.clipboardData.getData("text");
+      const digits = extractDigits(pasted);
+      if (!digits) return;
+
+      let cleaned = digits;
+      if (cleaned.startsWith("580")) {
+        cleaned = cleaned.slice(3);
+      } else if (cleaned.startsWith("58") && cleaned.length > 10) {
+        cleaned = cleaned.slice(2);
+      }
+      cleaned = cleaned.replace(/^0+/, "");
+
+      if (cleaned !== digits) {
+        e.preventDefault();
+        const input = e.currentTarget;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        const nextVal =
+          input.value.slice(0, start) + cleaned + input.value.slice(end);
+        const nativeSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          "value",
+        )?.set;
+        nativeSetter?.call(input, nextVal);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    },
+    [country],
   );
 
   return (
     <>
       <Input
         className={cn(
-          "rounded-e-md rounded-s-none focus-visible:ring-0 focus-visible:outline-hidden focus-visible:border-gray-200",
+          embedded
+            ? "h-full w-full border-0 bg-transparent px-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-none ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none rounded-none"
+            : "rounded-e-md rounded-s-none focus-visible:ring-0 focus-visible:outline-hidden focus-visible:border-gray-200",
           className,
         )}
         onBeforeInput={handleBeforeInput}
+        onPaste={handlePaste}
         aria-describedby="phone-input-constraint"
         {...props}
       />
@@ -200,6 +266,7 @@ const CountrySelect = ({
   onChange,
 }: CountrySelectProps) => {
   const { t } = useTranslation();
+  const { embedded } = React.useContext(PhoneInputContext);
   const scrollAreaRef = React.useRef<HTMLDivElement>(null);
   const [searchValue, setSearchValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -207,6 +274,28 @@ const CountrySelect = ({
     onChange(country);
     setOpen(false);
   };
+
+  const validCountries = countryList.filter((c) => Boolean(c.value));
+  const effectiveCountry = selectedCountry || careConfig.defaultCountry.code;
+  if (validCountries.length <= 1) {
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-1.5 px-3 text-sm font-semibold text-slate-700 select-none",
+          embedded
+            ? "h-full border-0 border-r border-slate-200/80 bg-transparent"
+            : "rounded-e-none rounded-s-md border border-r-0 border-gray-200 bg-slate-50",
+        )}
+      >
+        <FlagComponent
+          country={effectiveCountry}
+          countryName={effectiveCountry}
+        />
+        <span>+{RPNInput.getCountryCallingCode(effectiveCountry)}</span>
+      </div>
+    );
+  }
+
   return (
     <Popover
       open={open}
@@ -219,48 +308,66 @@ const CountrySelect = ({
       <PopoverTrigger asChild>
         <Button
           type="button"
-          variant="outline"
-          className="flex gap-1 rounded-e-none rounded-s-md border-r-0 border-gray-200 shadow-xs px-3 focus:z-10 h-auto"
+          variant={embedded ? "ghost" : "outline"}
+          className={cn(
+            "flex items-center gap-1.5 px-3 focus:z-10 text-slate-700 font-semibold",
+            embedded
+              ? "h-full rounded-none border-0 border-r border-slate-200/80 bg-transparent hover:bg-slate-100/60 shadow-none"
+              : "rounded-e-none rounded-s-md border-r-0 border-gray-200 bg-slate-50 shadow-xs h-auto",
+          )}
           disabled={disabled}
         >
           <FlagComponent
-            country={selectedCountry}
-            countryName={selectedCountry}
+            country={effectiveCountry}
+            countryName={effectiveCountry}
           />
+          <span className="text-sm">
+            +{RPNInput.getCountryCallingCode(effectiveCountry)}
+          </span>
           <ChevronsUpDown
             className={cn(
-              "-mr-2 size-4 opacity-50",
+              "-mr-1 size-3.5 opacity-50",
               disabled ? "hidden" : "opacity-100",
             )}
           />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="p-2 sm:p-0 w-[var(--radix-popover-trigger-width)] min-w-64"
+        className={cn(
+          "p-1",
+          validCountries.length <= 5
+            ? "w-52"
+            : "sm:p-0 w-[var(--radix-popover-trigger-width)] min-w-64",
+        )}
         align="start"
         sideOffset={5}
       >
         <Command>
-          <CommandInput
-            value={searchValue}
-            onValueChange={(value) => {
-              setSearchValue(value);
-              setTimeout(() => {
-                if (scrollAreaRef.current) {
-                  const viewportElement = scrollAreaRef.current.querySelector(
-                    "[data-radix-scroll-area-viewport]",
-                  );
-                  if (viewportElement) {
-                    viewportElement.scrollTop = 0;
+          {validCountries.length > 5 && (
+            <CommandInput
+              value={searchValue}
+              onValueChange={(value) => {
+                setSearchValue(value);
+                setTimeout(() => {
+                  if (scrollAreaRef.current) {
+                    const viewportElement = scrollAreaRef.current.querySelector(
+                      "[data-radix-scroll-area-viewport]",
+                    );
+                    if (viewportElement) {
+                      viewportElement.scrollTop = 0;
+                    }
                   }
-                }
-              }, 0);
-            }}
-            placeholder={t("search_country")}
-            className="outline-hidden border-none ring-0 shadow-none"
-          />
+                }, 0);
+              }}
+              placeholder={t("search_country")}
+              className="outline-hidden border-none ring-0 shadow-none"
+            />
+          )}
           <CommandList>
-            <ScrollArea ref={scrollAreaRef} className="h-72">
+            <ScrollArea
+              ref={scrollAreaRef}
+              className={validCountries.length <= 5 ? "h-auto" : "h-72"}
+            >
               <CommandEmpty>{t("no_country_found")}</CommandEmpty>
               <CommandGroup>
                 {countryList.map(({ value, label }) =>

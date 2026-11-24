@@ -1,14 +1,17 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, ArrowRight, Phone, User } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
 
-import CareIcon from "@/CAREUI/icons/CareIcon";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import {
+  authSlideTransition,
+  authSlideVariants,
+} from "@/components/Auth/authMotion";
 import { ForgotPasswordPhone } from "@/components/Auth/ForgotPasswordPhone";
 import CircularProgress from "@/components/Common/CircularProgress";
 
@@ -33,91 +36,170 @@ export function ForgotPasswordPanel({
 }: ForgotPasswordPanelProps) {
   const { t } = useTranslation();
   const [forgotMethod, setForgotMethod] = useState<ForgotMethod>("email");
+  const [methodDirection, setMethodDirection] = useState(1);
+  const [isFocused, setIsFocused] = useState(false);
 
-  if (forgotMethod === "phone") {
-    return (
-      <ForgotPasswordPhone
-        onBackToEmail={() => setForgotMethod("email")}
-        onSuccess={onBackToLogin}
-      />
-    );
-  }
+  const handleGoToPhone = () => {
+    setMethodDirection(1);
+    setForgotMethod("phone");
+  };
+
+  const handleBackToEmail = () => {
+    setMethodDirection(-1);
+    setForgotMethod("email");
+  };
 
   return (
-    <form onSubmit={onSubmitEmail} className="space-y-5">
-      <Button
-        variant="link"
-        type="button"
-        onClick={onBackToLogin}
-        className="-ml-1 flex h-auto items-center gap-1.5 p-0 text-sm font-medium text-sus-700 hover:text-sus-900 hover:no-underline"
-      >
-        <CareIcon
-          icon="l-arrow-left"
-          className="text-base"
-          aria-hidden="true"
-        />
-        <span>{t("back_to_login")}</span>
-      </Button>
-
-      <div className="space-y-5">
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-            {t("forget_password")}
-          </h2>
-          <p className="mt-1 text-sm leading-relaxed text-gray-500">
-            {t("forget_password_instruction")}
-          </p>
-        </div>
-
-        <div className="space-y-2">
-          <Label
-            htmlFor="forgot_username"
-            className="text-sm font-medium text-gray-700"
+    <div className="overflow-hidden px-1.5 -mx-1.5 py-1.5 -my-1.5">
+      <AnimatePresence mode="wait" custom={methodDirection} initial={false}>
+        {forgotMethod === "phone" ? (
+          <motion.div
+            key="forgot-method-phone"
+            custom={methodDirection}
+            variants={authSlideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={authSlideTransition}
           >
-            {t("username")}
-          </Label>
-          <Input
-            id="forgot_username"
-            name="username"
-            type="text"
-            value={username}
-            onChange={onUsernameChange}
-            placeholder={t("enter_your_username")}
-            className={cn(
-              "h-12 rounded-xl border-gray-200 bg-gray-50 px-4 text-base shadow-none transition-colors focus:border-sus-600 focus:bg-white focus:ring-sus-600",
-              usernameError && "border-red-500 focus-visible:ring-red-500",
-            )}
-          />
-          <p className="min-h-5 text-sm leading-5 text-red-600">
-            {usernameError ? t(usernameError) : null}
-          </p>
-        </div>
-
-        <Button
-          type="submit"
-          className="h-12 w-full rounded-xl bg-sus-700 font-semibold text-white shadow-sm transition-colors hover:bg-sus-800 active:bg-sus-900"
-          variant="primary"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <CircularProgress className="text-white" />
-          ) : (
-            t("send_reset_link")
-          )}
-        </Button>
-
-        <div className="text-center">
-          <p className="text-sm text-gray-500">{t("cant_access_email")}</p>
-          <Button
-            variant="link"
-            type="button"
-            onClick={() => setForgotMethod("phone")}
-            className="h-auto p-0 text-sm font-medium text-sus-700 hover:text-sus-900 hover:underline"
+            <ForgotPasswordPhone
+              onBackToEmail={handleBackToEmail}
+              onSuccess={onBackToLogin}
+            />
+          </motion.div>
+        ) : (
+          <motion.form
+            key="forgot-method-email"
+            custom={methodDirection}
+            variants={authSlideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={authSlideTransition}
+            onSubmit={onSubmitEmail}
+            className="space-y-3.5"
           >
-            {t("reset_using_phone_number")}
-          </Button>
-        </div>
-      </div>
-    </form>
+            <button
+              type="button"
+              onClick={onBackToLogin}
+              className="group/back inline-flex items-center gap-1.5 text-xs font-semibold text-[#0076be] hover:text-[#00a3ff] transition-colors"
+            >
+              <ArrowLeft className="size-3.5 transition-transform duration-200 group-hover/back:-translate-x-1" />
+              <span>{t("back_to_login")}</span>
+            </button>
+
+            <div className="space-y-1">
+              <h2 className="font-display text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+                {t("forget_password")}
+              </h2>
+              <p className="text-xs leading-relaxed text-slate-500">
+                {t("forget_password_instruction")}
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="forgot_username"
+                  className={cn(
+                    "text-xs font-semibold transition-colors duration-200",
+                    isFocused ? "text-[#0076be]" : "text-slate-700",
+                  )}
+                >
+                  {t("username")}
+                </Label>
+                {isFocused && (
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#00a3ff]"
+                  >
+                    <span className="size-1.5 rounded-full bg-[#00a3ff] animate-pulse" />
+                    Activo
+                  </motion.span>
+                )}
+              </div>
+
+              <motion.div
+                animate={{
+                  scale: isFocused ? 1.008 : 1,
+                  boxShadow: isFocused
+                    ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                    : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+                  borderColor: usernameError
+                    ? "#ef4444"
+                    : isFocused
+                      ? "#00a3ff"
+                      : "#e2e8f0",
+                  backgroundColor: isFocused ? "#ffffff" : "#f8fafc",
+                }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="relative flex items-center rounded-xl border overflow-hidden h-10"
+              >
+                <motion.div
+                  animate={{
+                    scale: isFocused ? 1.12 : 1,
+                    color: isFocused ? "#00a3ff" : "#94a3b8",
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className="pl-3 pr-2 flex items-center pointer-events-none shrink-0"
+                >
+                  <User className="size-4" />
+                </motion.div>
+                <input
+                  id="forgot_username"
+                  name="username"
+                  type="text"
+                  value={username}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  onChange={onUsernameChange}
+                  placeholder={t("enter_your_username")}
+                  className="w-full h-full pr-3 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 border-0 ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none shadow-none"
+                />
+              </motion.div>
+              {usernameError && (
+                <p className="text-xs text-red-500">{t(usernameError)}</p>
+              )}
+            </div>
+
+            <motion.div
+              whileHover={{ scale: 1.015, y: -1 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Button
+                type="submit"
+                className="group/btn w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <CircularProgress className="text-white" />
+                ) : (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <span>{t("send_reset_link")}</span>
+                    <ArrowRight className="size-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+                  </span>
+                )}
+              </Button>
+            </motion.div>
+
+            <div className="pt-2 text-center border-t border-slate-100">
+              <p className="text-[11px] text-slate-400 mb-1">
+                {t("cant_access_email")}
+              </p>
+              <button
+                type="button"
+                onClick={handleGoToPhone}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0076be] hover:text-[#00a3ff] transition-colors"
+              >
+                <Phone className="size-3.5" />
+                <span>{t("reset_using_phone_number")}</span>
+              </button>
+            </div>
+          </motion.form>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

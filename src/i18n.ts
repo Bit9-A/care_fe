@@ -11,8 +11,8 @@ import { initReactI18next } from "react-i18next";
 import { z } from "zod";
 
 export const LANGUAGES = {
-  en: "English",
   es: "Español",
+  en: "English",
 } as const;
 
 const DEFAULT_NAMESPACE = "care_fe";
@@ -148,9 +148,7 @@ export async function initI18n() {
       }),
     )
     .init({
-      // This deployment is Spanish-only: a browser set to English used to get
-      // an English interface, so the detected language is no longer consulted
-      // and Spanish is both the default and the fallback.
+      // Este despliegue usa Español por defecto incluso si el navegador está en inglés.
       fallbackLng: "es",
       detection: {
         order: ["querystring", "localStorage", "cookie"],

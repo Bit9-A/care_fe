@@ -232,8 +232,8 @@ const careConfig = {
     env.REACT_OBSERVATION_PLOTS_CONFIG_URL || "/config/plots.json",
 
   defaultCountry: {
-    code: (env.REACT_DEFAULT_COUNTRY || "IN") as CountryCode,
-    name: env.REACT_DEFAULT_COUNTRY_NAME || "India",
+    code: (env.REACT_DEFAULT_COUNTRY || "VE") as CountryCode,
+    name: env.REACT_DEFAULT_COUNTRY_NAME || "Venezuela",
   },
 
   medicationValueSetSelectDefaultTab:

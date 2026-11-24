@@ -72,3 +72,11 @@ public/_headers
 
 namespaceMapping.json
 dump.rdb
+
+# AI Agent & Local Memory (no subir al repo)
+agent.md
+AGENT.md
+memory.md
+MEMORY.md
+.agent/
+.agents/
