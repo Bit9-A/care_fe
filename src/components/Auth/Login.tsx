@@ -317,29 +317,34 @@ const Login = (props: LoginProps) => {
 
       {/* Login Forms Section */}
       <div className="login-hero-form flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8 w-full md:w-1/2 min-h-screen md:min-h-0 overflow-y-auto">
-        <div className="w-full max-w-[420px] space-y-4 my-auto">
-          <Card className="w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.18),0_4px_16px_-2px_rgba(15,23,42,0.06)] bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
-            <CardHeader className="space-y-1.5 px-6 pt-6 pb-4 items-center text-center">
+        <div className="w-full max-w-[400px] space-y-3 my-auto">
+          <Card className="w-full rounded-2xl border border-white/60 md:border-slate-200/90 shadow-[0_24px_60px_-12px_rgba(3,37,76,0.45)] md:shadow-[0_14px_45px_-8px_rgba(0,163,255,0.16),0_4px_16px_-2px_rgba(15,23,42,0.05)] bg-white/95 md:bg-white backdrop-blur-xl overflow-hidden transition-all duration-300">
+            <CardHeader className="space-y-1 px-6 pt-5 pb-3 items-center text-center">
               <img
                 src="/images/LogoRAG.png"
                 alt="Logo SPNS Táchira"
-                className="h-20 w-20 object-contain mb-1 select-none drop-shadow-xs"
+                className="h-24 w-24 sm:h-28 sm:w-28 object-contain mb-1.5 select-none drop-shadow-xs"
               />
-              <CardTitle className="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-slate-900">
+              <CardTitle className="font-display text-xl sm:text-[22px] font-bold tracking-tight text-slate-900">
                 {t("welcome_back")}
               </CardTitle>
-              <CardDescription className="text-xs sm:text-sm text-slate-500">
+              <CardDescription className="text-xs text-slate-500">
                 {t("sign_in_to_your_account_to_continue")}
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-6 pb-6 pt-0">
+            <CardContent className="px-6 pb-5 pt-0">
               {disablePatientLogin ? (
                 <>
                   {/* Staff Login */}
                   {!forgotPassword ? (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="username">{t("username")}</Label>
+                    <form onSubmit={handleSubmit} className="space-y-3.5">
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="username"
+                          className="text-xs font-semibold text-slate-700"
+                        >
+                          {t("username")}
+                        </Label>
                         <Input
                           id="username"
                           name="username"
@@ -348,18 +353,24 @@ const Login = (props: LoginProps) => {
                           value={form.username}
                           onChange={handleChange}
                           className={cn(
+                            "h-10 rounded-xl text-sm",
                             errors.username &&
                               "border-red-500 focus-visible:ring-red-500",
                           )}
                         />
                         {errors.username && (
-                          <p className="text-sm text-red-500">
+                          <p className="text-xs text-red-500">
                             {t(errors.username)}
                           </p>
                         )}
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="password">{t("password")}</Label>
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="password"
+                          className="text-xs font-semibold text-slate-700"
+                        >
+                          {t("password")}
+                        </Label>
                         <PasswordInput
                           id="password"
                           name="password"
@@ -367,19 +378,20 @@ const Login = (props: LoginProps) => {
                           value={form.password}
                           onChange={handleChange}
                           className={cn(
+                            "h-10 rounded-xl text-sm",
                             errors.password &&
                               "border-red-500 focus-visible:ring-red-500",
                           )}
                         />
                         {errors.password && (
-                          <p className="text-sm text-red-500">
+                          <p className="text-xs text-red-500">
                             {t(errors.password)}
                           </p>
                         )}
                       </div>
 
                       {isCaptchaEnabled && reCaptchaSiteKey && (
-                        <div className="py-4">
+                        <div className="py-2">
                           <ReCaptcha
                             sitekey={reCaptchaSiteKey}
                             onChange={onCaptchaChange}
@@ -387,18 +399,20 @@ const Login = (props: LoginProps) => {
                         </div>
                       )}
 
-                      <Button
-                        variant="link"
-                        type="button"
-                        onClick={() => setForgotPassword(true)}
-                        className="px-0"
-                      >
-                        {t("forget_password")}
-                      </Button>
+                      <div className="flex justify-end pt-0.5">
+                        <Button
+                          variant="link"
+                          type="button"
+                          onClick={() => setForgotPassword(true)}
+                          className="h-auto p-0 text-xs font-medium text-[#0076be] hover:text-[#00a3ff]"
+                        >
+                          {t("forget_password")}
+                        </Button>
+                      </div>
 
                       <Button
                         type="submit"
-                        className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                        className="w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/30 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -431,20 +445,20 @@ const Login = (props: LoginProps) => {
                     }
                   }}
                 >
-                  <TabsList className="grid grid-cols-2 w-full h-11 p-1 bg-slate-100 rounded-xl mb-5 border border-slate-200/80">
+                  <TabsList className="grid grid-cols-2 w-full h-10 p-1 bg-slate-100 rounded-xl mb-4 border border-slate-200/80">
                     <TabsTrigger
-                      className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
+                      className="w-full h-full text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
                       value="staff"
                     >
-                      <UserCheck className="size-4 shrink-0 text-[#00a3ff]" />
+                      <UserCheck className="size-3.5 shrink-0 text-[#00a3ff]" />
                       <span className="truncate">Personal de Salud</span>
                     </TabsTrigger>
                     {!disablePatientLogin && (
                       <TabsTrigger
-                        className="w-full h-full text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
+                        className="w-full h-full text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0076be] data-[state=active]:shadow-xs transition-all select-none"
                         value="patient"
                       >
-                        <User className="size-4 shrink-0 text-[#00a3ff]" />
+                        <User className="size-3.5 shrink-0 text-[#00a3ff]" />
                         <span className="truncate">Paciente</span>
                       </TabsTrigger>
                     )}
@@ -453,9 +467,14 @@ const Login = (props: LoginProps) => {
                   {/* Staff Login */}
                   <TabsContent value="staff">
                     {!forgotPassword ? (
-                      <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="username">{t("username")}</Label>
+                      <form onSubmit={handleSubmit} className="space-y-3.5">
+                        <div className="space-y-1.5">
+                          <Label
+                            htmlFor="username"
+                            className="text-xs font-semibold text-slate-700"
+                          >
+                            {t("username")}
+                          </Label>
                           <Input
                             id="username"
                             name="username"
@@ -464,18 +483,24 @@ const Login = (props: LoginProps) => {
                             value={form.username}
                             onChange={handleChange}
                             className={cn(
+                              "h-10 rounded-xl text-sm",
                               errors.username &&
                                 "border-red-500 focus-visible:ring-red-500",
                             )}
                           />
                           {errors.username && (
-                            <p className="text-sm text-red-500">
+                            <p className="text-xs text-red-500">
                               {t(errors.username)}
                             </p>
                           )}
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="password">{t("password")}</Label>
+                        <div className="space-y-1.5">
+                          <Label
+                            htmlFor="password"
+                            className="text-xs font-semibold text-slate-700"
+                          >
+                            {t("password")}
+                          </Label>
                           <PasswordInput
                             id="password"
                             name="password"
@@ -483,19 +508,20 @@ const Login = (props: LoginProps) => {
                             value={form.password}
                             onChange={handleChange}
                             className={cn(
+                              "h-10 rounded-xl text-sm",
                               errors.password &&
                                 "border-red-500 focus-visible:ring-red-500",
                             )}
                           />
                           {errors.password && (
-                            <p className="text-sm text-red-500">
+                            <p className="text-xs text-red-500">
                               {t(errors.password)}
                             </p>
                           )}
                         </div>
 
                         {isCaptchaEnabled && reCaptchaSiteKey && (
-                          <div className="py-4">
+                          <div className="py-2">
                             <ReCaptcha
                               sitekey={reCaptchaSiteKey}
                               onChange={onCaptchaChange}
@@ -503,18 +529,20 @@ const Login = (props: LoginProps) => {
                           </div>
                         )}
 
-                        <Button
-                          variant="link"
-                          type="button"
-                          onClick={() => setForgotPassword(true)}
-                          className="px-0"
-                        >
-                          {t("forget_password")}
-                        </Button>
+                        <div className="flex justify-end pt-0.5">
+                          <Button
+                            variant="link"
+                            type="button"
+                            onClick={() => setForgotPassword(true)}
+                            className="h-auto p-0 text-xs font-medium text-[#0076be] hover:text-[#00a3ff]"
+                          >
+                            {t("forget_password")}
+                          </Button>
+                        </div>
 
                         <Button
                           type="submit"
-                          className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                          className="w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/30 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
                           disabled={isLoading}
                         >
                           {isLoading ? (
@@ -538,9 +566,14 @@ const Login = (props: LoginProps) => {
 
                   {/* Patient Login */}
                   <TabsContent value="patient">
-                    <form onSubmit={handlePatientLogin} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">{t("phone_number")}</Label>
+                    <form onSubmit={handlePatientLogin} className="space-y-3.5">
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="phone"
+                          className="text-xs font-semibold text-slate-700"
+                        >
+                          {t("phone_number")}
+                        </Label>
                         <PhoneInput
                           id="phone"
                           name="phone"
@@ -558,7 +591,7 @@ const Login = (props: LoginProps) => {
                           424).
                         </p>
                         {otpError && (
-                          <p className="text-sm text-red-500">{t(otpError)}</p>
+                          <p className="text-xs text-red-500">{t(otpError)}</p>
                         )}
                       </div>
 
@@ -605,7 +638,7 @@ const Login = (props: LoginProps) => {
 
                       <Button
                         type="submit"
-                        className="w-full h-11 sm:h-12 rounded-xl text-sm sm:text-base font-bold shadow-md shadow-[#00a3ff]/25 hover:shadow-lg hover:shadow-[#00a3ff]/35 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
+                        className="w-full h-10 rounded-xl text-sm font-semibold shadow-sm shadow-[#00a3ff]/25 hover:shadow-md hover:shadow-[#00a3ff]/30 transition-all bg-[#00a3ff] hover:bg-[#008fe6] text-white"
                         disabled={
                           isLoading ||
                           !isValidPhoneNumber(phone) ||

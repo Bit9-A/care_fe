@@ -26,8 +26,8 @@ const LanguageSelectorLogin = () => {
   );
 
   return (
-    <div className="mt-4 flex items-center justify-center">
-      <div className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full bg-white/90 md:bg-transparent backdrop-blur-md px-4 py-1.5 text-xs sm:text-sm text-slate-600 shadow-md md:shadow-none border border-white/50 md:border-transparent">
+    <div className="mt-2 flex items-center justify-center">
+      <div className="inline-flex flex-wrap items-center justify-center gap-2 rounded-full bg-white/90 md:bg-transparent backdrop-blur-md px-3.5 py-1 text-xs text-slate-600 shadow-md md:shadow-none border border-white/50 md:border-transparent">
         <span className="font-medium text-slate-500">{t("available_in")}:</span>
         <div className="inline-flex items-center gap-2.5">
           {availableLocales.map((e) => (
