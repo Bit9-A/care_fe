@@ -377,15 +377,6 @@ const Login = (props: LoginProps) => {
             className="relative flex items-center rounded-xl border overflow-hidden h-10"
           >
             <motion.div
-              initial={false}
-              animate={{
-                scaleX: focusedField === "username" ? 1 : 0,
-                opacity: focusedField === "username" ? 1 : 0,
-              }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0076be] via-[#00a3ff] to-[#38bdf8] origin-center pointer-events-none"
-            />
-            <motion.div
               animate={{
                 scale: focusedField === "username" ? 1.12 : 1,
                 color: focusedField === "username" ? "#00a3ff" : "#94a3b8",
@@ -407,7 +398,7 @@ const Login = (props: LoginProps) => {
               onKeyDown={checkCapsLock}
               onKeyUp={checkCapsLock}
               placeholder="Ej. care-doctor"
-              className="w-full h-full pr-3 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              className="w-full h-full pr-3 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 border-0 ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none shadow-none"
             />
           </motion.div>
           {errors.username && (
@@ -460,15 +451,6 @@ const Login = (props: LoginProps) => {
             className="relative flex items-center rounded-xl border overflow-hidden h-10"
           >
             <motion.div
-              initial={false}
-              animate={{
-                scaleX: focusedField === "password" ? 1 : 0,
-                opacity: focusedField === "password" ? 1 : 0,
-              }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0076be] via-[#00a3ff] to-[#38bdf8] origin-center pointer-events-none"
-            />
-            <motion.div
               animate={{
                 scale: focusedField === "password" ? 1.12 : 1,
                 color: focusedField === "password" ? "#00a3ff" : "#94a3b8",
@@ -490,7 +472,7 @@ const Login = (props: LoginProps) => {
               onKeyDown={checkCapsLock}
               onKeyUp={checkCapsLock}
               placeholder="••••••••"
-              className="w-full h-full pr-10 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              className="w-full h-full pr-10 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 border-0 ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none shadow-none"
             />
             <motion.button
               whileHover={{ scale: 1.12 }}
@@ -675,14 +657,27 @@ const Login = (props: LoginProps) => {
                         <motion.div
                           animate={{
                             scale: focusedField === "phone" ? 1.008 : 1,
+                            boxShadow:
+                              focusedField === "phone"
+                                ? "0 0 0 3px rgba(0, 163, 255, 0.14), 0 4px 12px -2px rgba(0, 163, 255, 0.15)"
+                                : "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+                            borderColor: otpError
+                              ? "#ef4444"
+                              : focusedField === "phone"
+                                ? "#00a3ff"
+                                : "#e2e8f0",
+                            backgroundColor:
+                              focusedField === "phone" ? "#ffffff" : "#f8fafc",
                           }}
-                          transition={{ duration: 0.2 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
                           onFocus={() => setFocusedField("phone")}
                           onBlur={() => setFocusedField(null)}
+                          className="relative flex items-center rounded-xl border overflow-hidden h-10"
                         >
                           <PhoneInput
                             id="phone"
                             name="phone"
+                            embedded
                             value={phone}
                             onChange={(value) => {
                               setPhone(value ?? "");

@@ -16,49 +16,37 @@ export const AuthHero = () => {
     const rect = el.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const normX = (x / rect.width - 0.5) * 2;
-    const normY = (y / rect.height - 0.5) * 2;
 
     el.style.setProperty("--hero-x", `${x}px`);
     el.style.setProperty("--hero-y", `${y}px`);
-    el.style.setProperty("--wave-shift-x", `${(normX * -14).toFixed(1)}px`);
-    el.style.setProperty("--wave-shift-y", `${(normY * -10).toFixed(1)}px`);
-  };
-
-  const handleMouseLeave = () => {
-    const el = heroRef.current;
-    if (!el) return;
-    el.style.setProperty("--wave-shift-x", "0px");
-    el.style.setProperty("--wave-shift-y", "0px");
   };
 
   return (
     <div
       ref={heroRef}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       className="login-hero group/hero hidden md:flex relative flex-auto flex-col justify-between md:order-first md:h-full md:w-[calc(50%+130px)] md:flex-none md:px-16 md:pr-[calc(4rem+130px)]"
     >
-      {/* Foco luminoso interactivo que sigue el mouse por detrás de las olas */}
+      {/* Foco luminoso sutil que sigue el mouse */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 group-hover/hero:opacity-100 transition-opacity duration-500"
         style={{
           background:
-            "radial-gradient(420px circle at var(--hero-x, 50%) var(--hero-y, 50%), rgba(56, 189, 248, 0.28), transparent 70%)",
+            "radial-gradient(360px circle at var(--hero-x, 50%) var(--hero-y, 50%), rgba(0, 163, 255, 0.14), transparent 70%)",
         }}
       />
 
-      {/* Trama de micropuntos médicos que se enciende al pasar el cursor */}
+      {/* Trama de micropuntos sutil al pasar el cursor */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover/hero:opacity-45 transition-opacity duration-300"
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover/hero:opacity-20 transition-opacity duration-300"
         style={{
           backgroundImage:
-            "radial-gradient(rgba(186, 230, 253, 0.85) 1.1px, transparent 1.1px)",
+            "radial-gradient(rgba(125, 211, 252, 0.55) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           maskImage:
-            "radial-gradient(280px circle at var(--hero-x, 50%) var(--hero-y, 50%), black 20%, transparent 100%)",
+            "radial-gradient(240px circle at var(--hero-x, 50%) var(--hero-y, 50%), black 10%, transparent 100%)",
           WebkitMaskImage:
-            "radial-gradient(280px circle at var(--hero-x, 50%) var(--hero-y, 50%), black 20%, transparent 100%)",
+            "radial-gradient(240px circle at var(--hero-x, 50%) var(--hero-y, 50%), black 10%, transparent 100%)",
         }}
       />
 

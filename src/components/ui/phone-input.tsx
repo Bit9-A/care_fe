@@ -51,14 +51,17 @@ type PhoneInputProps = Omit<
 > &
   Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
     onChange?: (value: RPNInput.Value) => void;
+    embedded?: boolean;
   };
 
 const PhoneInputContext = React.createContext<{
   country: CountryCode;
   setCountry: (country: CountryCode) => void;
+  embedded?: boolean;
 }>({
   country: careConfig.defaultCountry.code,
   setCountry: () => {},
+  embedded: false,
 });
 
 function PhoneInput({
@@ -66,6 +69,7 @@ function PhoneInput({
   onChange,
   value,
   countries = ["VE", "CO"],
+  embedded = false,
   ...props
 }: React.ComponentProps<typeof RPNInput.default> & PhoneInputProps) {
   const [country, setCountry] = React.useState<CountryCode>(
@@ -73,15 +77,18 @@ function PhoneInput({
   );
 
   return (
-    <PhoneInputContext.Provider value={{ country, setCountry }}>
+    <PhoneInputContext.Provider value={{ country, setCountry, embedded }}>
       <RPNInput.default
         className={cn(
-          "flex rounded-md focus-within:ring-1",
+          embedded
+            ? "flex w-full h-full items-center"
+            : "flex rounded-md focus-within:ring-1",
           className,
-          props.value &&
+          !embedded &&
+            (props.value &&
             !RPNInput.isValidPhoneNumber((props.value ?? "") as string)
-            ? "ring-red-500"
-            : "ring-primary-700",
+              ? "ring-red-500"
+              : "ring-primary-700"),
         )}
         countries={countries}
         flagComponent={FlagComponent}
@@ -124,7 +131,7 @@ function InputComponent({
   ...props
 }: React.ComponentProps<"input">) {
   const { t } = useTranslation();
-  const { country } = React.useContext(PhoneInputContext);
+  const { country, embedded } = React.useContext(PhoneInputContext);
   const maxNationalDigits = getMaxDigits(country);
   const maxTotalDigits = getMaxTotalDigits(country);
   const [announcement, setAnnouncement] = React.useState("");
@@ -222,7 +229,9 @@ function InputComponent({
     <>
       <Input
         className={cn(
-          "rounded-e-md rounded-s-none focus-visible:ring-0 focus-visible:outline-hidden focus-visible:border-gray-200",
+          embedded
+            ? "h-full w-full border-0 bg-transparent px-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-none ring-0 focus:ring-0 focus:border-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none rounded-none"
+            : "rounded-e-md rounded-s-none focus-visible:ring-0 focus-visible:outline-hidden focus-visible:border-gray-200",
           className,
         )}
         onBeforeInput={handleBeforeInput}
@@ -257,6 +266,7 @@ const CountrySelect = ({
   onChange,
 }: CountrySelectProps) => {
   const { t } = useTranslation();
+  const { embedded } = React.useContext(PhoneInputContext);
   const scrollAreaRef = React.useRef<HTMLDivElement>(null);
   const [searchValue, setSearchValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -269,7 +279,14 @@ const CountrySelect = ({
   const effectiveCountry = selectedCountry || careConfig.defaultCountry.code;
   if (validCountries.length <= 1) {
     return (
-      <div className="flex items-center gap-1.5 rounded-e-none rounded-s-md border border-r-0 border-gray-200 bg-slate-50 px-3 text-sm font-semibold text-slate-700 select-none">
+      <div
+        className={cn(
+          "flex items-center gap-1.5 px-3 text-sm font-semibold text-slate-700 select-none",
+          embedded
+            ? "h-full border-0 border-r border-slate-200/80 bg-transparent"
+            : "rounded-e-none rounded-s-md border border-r-0 border-gray-200 bg-slate-50",
+        )}
+      >
         <FlagComponent
           country={effectiveCountry}
           countryName={effectiveCountry}
@@ -291,8 +308,13 @@ const CountrySelect = ({
       <PopoverTrigger asChild>
         <Button
           type="button"
-          variant="outline"
-          className="flex items-center gap-1.5 rounded-e-none rounded-s-md border-r-0 border-gray-200 bg-slate-50 shadow-xs px-3 focus:z-10 h-auto text-slate-700 font-semibold"
+          variant={embedded ? "ghost" : "outline"}
+          className={cn(
+            "flex items-center gap-1.5 px-3 focus:z-10 text-slate-700 font-semibold",
+            embedded
+              ? "h-full rounded-none border-0 border-r border-slate-200/80 bg-transparent hover:bg-slate-100/60 shadow-none"
+              : "rounded-e-none rounded-s-md border-r-0 border-gray-200 bg-slate-50 shadow-xs h-auto",
+          )}
           disabled={disabled}
         >
           <FlagComponent
