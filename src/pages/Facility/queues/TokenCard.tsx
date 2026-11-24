@@ -162,7 +162,6 @@ const TokenCard = ({
               <TokenPrintAction
                 buttonClassName="text-base font-semibold text-gray-950"
                 data={{
-                  sheetId: token.id,
                   tokenNumber: renderTokenNumber(token),
                   categoryName: token.category.name,
                   patientName: token.patient?.name,

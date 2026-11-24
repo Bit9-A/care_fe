@@ -249,8 +249,6 @@ const TokenCard = ({
               <TokenPrintAction
                 buttonClassName="text-base text-gray-950 font-semibold"
                 data={{
-                  sheetId:
-                    token?.id ?? appointment?.token?.id ?? appointment.id,
                   tokenNumber: tokenOrAppointmentToken
                     ? renderTokenNumber(tokenOrAppointmentToken)
                     : "",
