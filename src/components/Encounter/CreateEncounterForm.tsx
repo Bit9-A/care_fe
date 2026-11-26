@@ -187,9 +187,11 @@ export default function CreateEncounterForm({
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>{t("initiate_encounter")}</SheetTitle>
+      <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-lg lg:max-w-2xl">
+        <SheetHeader className="space-y-1 border-b border-slate-100 px-5 py-4">
+          <SheetTitle className="font-display text-lg font-bold tracking-tight text-slate-900">
+            {t("initiate_encounter")}
+          </SheetTitle>
           <SheetDescription>
             <Trans
               i18nKey="begin_clinical_encounter"
@@ -203,9 +205,9 @@ export default function CreateEncounterForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-4 space-y-2"
+            className="flex min-h-0 flex-1 flex-col"
           >
-            <div className="space-y-5">
+            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
               <FormField
                 control={form.control}
                 name="start_date"
@@ -232,7 +234,7 @@ export default function CreateEncounterForm({
                         />
                         <Input
                           type="time"
-                          className="border-gray-400 text-sm sm:py-px shadow-sm"
+                          className="w-28 shrink-0 border-slate-200 text-sm shadow-xs"
                           value={date.toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -261,7 +263,7 @@ export default function CreateEncounterForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("type_of_encounter")}</FormLabel>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                       {careConfig.encounterClasses.map((value) => {
                         const Icon = ENCOUNTER_CLASS_ICONS[value];
                         return (
@@ -269,22 +271,24 @@ export default function CreateEncounterForm({
                             key={value}
                             type="button"
                             className={cn(
-                              "h-auto min-h-24 w-full justify-center text-lg",
+                              "h-auto w-full items-start justify-start gap-3 whitespace-normal rounded-xl border-slate-200 px-3 py-3 text-left transition-colors hover:border-[#00a3ff]/50 hover:bg-[#00a3ff]/5",
                               field.value === value &&
-                                "ring-2 ring-primary text-primary",
+                                "border-[#00a3ff] bg-[#00a3ff]/10 ring-1 ring-[#00a3ff] text-[#0076be]",
                             )}
                             variant="outline"
                             onClick={() => field.onChange(value)}
                           >
-                            <div className="flex flex-col items-center text-center">
-                              <Icon className="size-6" />
-                              <div className="text-sm font-bold">
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                              <Icon className="size-5" />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block text-[13px] font-semibold leading-tight text-slate-900 sm:text-sm">
                                 {t(`encounter_class__${value}`)}
-                              </div>
-                              <div className="whitespace-normal wrap-break-word text-center text-xs text-gray-500">
+                              </span>
+                              <span className="mt-0.5 hidden text-xs leading-snug text-slate-500 sm:block">
                                 {t(`encounter_class_description__${value}`)}
-                              </div>
-                            </div>
+                              </span>
+                            </span>
                           </Button>
                         );
                       })}
@@ -394,20 +398,22 @@ export default function CreateEncounterForm({
                 )}
               />
             </div>
-            <div className="flex justify-end mt-6 space-x-2">
+            <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-slate-100 bg-white px-5 py-3 shadow-[0_-10px_20px_-16px_rgba(15,23,42,0.35)] sm:flex-row sm:justify-end">
               <Button
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
                   form.reset();
                 }}
-                className="bg-white text-gray-800 border border-gray-300 hover:bg-gray-100"
+                variant="outline"
+                className="h-11 w-full sm:h-9 sm:w-auto"
               >
                 {t("cancel")}
                 <ShortcutBadge actionId="cancel-action" />
               </Button>
               <Button
                 type="submit"
+                className="h-11 w-full sm:h-9 sm:w-auto"
                 disabled={isPending || !form.watch("organizations").length}
               >
                 {isPending ? t("creating") : t("create_encounter")}
