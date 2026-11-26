@@ -106,6 +106,48 @@ Un “programa” es un paciente inscrito con controles periódicos y metas: PAI
 en cuestionarios y observaciones, pero necesita **inscripción, recordatorio de
 próximo control y reporte**.
 
+
+## 3.6 Fase 1 propuesta por Aronflash (geosalud visual)
+
+Lo que planteó: coordenadas, agrupación por ASIC usando **Organizaciones**,
+tipos de institución, y estadísticas básicas (especialidades, personal
+disponible y responsables de contacto). Mapas: interfaz nueva.
+
+**Verificado contra el código:**
+
+| Su supuesto | Realidad | Acción |
+| --- | --- | --- |
+| ASIC = Organización | ✅ **Correcto, y ya está soportado**: `Facility.geo_organization` es FK a `Organization`. La institución se cuelga de su ASIC sin modelo nuevo | Cargar el árbol y validar |
+| Coordenadas | ✅ `Facility.latitude` / `longitude` existen | Nada |
+| Tipos de institución | ✅ catálogo venezolano en `FACILITY_TYPES` | Agregar ASIC, Consultorio Popular y SRI |
+| Personal por institución | ✅ `FacilityOrganizationUser` + roles | Exponerlo como estadística |
+| Especialidades | ❌ **no existe** ni campo ni catálogo | Crear catálogo |
+| Responsable de contacto | ❌ no hay campo explícito; se puede derivar de roles | Definir cuál es “el responsable” |
+| Mapas | `pigeon-maps` está instalado y **sin usar**; no hay endpoint | Interfaz desde cero |
+
+> **Advertencia de modelado:** `FacilityOrganization` es la organización
+> **interna** del establecimiento (departamentos y servicios de adentro), **no**
+> la ASIC. La ASIC va en `Facility.geo_organization`. Confundirlas duplica el
+> árbol y rompe los reportes.
+
+### Tareas de la fase 1
+
+| ID | Tarea | Tamaño | Depende de |
+| --- | --- | --- | --- |
+| GE-01 | Tipos nuevos: ASIC, Consultorio Popular, SRI | S | — |
+| GE-02 | Alta masiva de ASIC como `Organization` desde CSV | M | GE-01 |
+| GE-03 | Vincular cada institución a su ASIC (`geo_organization`) con validación | S | GE-02 |
+| GE-04 | Catálogo de especialidades | S | — |
+| GE-05 | Personal por institución con su especialidad | M | GE-04 |
+| GE-06 | Responsable de contacto por institución | S | — |
+| GE-07 | Mapa de instituciones con filtros por ASIC, municipio y tipo | L | GE-03 |
+| GE-08 | Ficha de institución con estadísticas: personal, especialidades y contacto | M | GE-05, GE-06 |
+| GE-09 | Carga masiva (CSV) con validación e idempotencia para los datos que ya tiene | M | GE-01 |
+
+**Nota sobre la carga:** si Aronflash va a cargar cientos de instituciones con
+sus datos, el alta tiene que ser un comando de importación (GE-09), no formulario
+por formulario. Después la institución completa su perfil.
+
 ## 4. Tareas
 
 ### Revisión (semana 1)

@@ -63,6 +63,9 @@ columna "Por hacer" de la semana siguiente.
 > organizacional y agrega familia y territorio. El análisis completo y las
 > tareas están en [`asic-venezuela.md`](./asic-venezuela.md). Antes de
 > implementarlo hay que hacer las cinco revisiones `RV-ASIC-01..05`.
+> **Fase 1 de geosalud (Aronflash) ya definida**: mapa, ASIC como organización,
+> tipos de institución y estadísticas básicas — ver `GE-01..GE-09` en
+> [`asic-venezuela.md`](./asic-venezuela.md#36-fase-1-propuesta-por-aronflash-geosalud-visual).
 
 ---
 
