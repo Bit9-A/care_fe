@@ -1,7 +1,17 @@
 import { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 
-import CareIcon from "@/CAREUI/icons/CareIcon";
+import {
+  Boxes,
+  CalendarDays,
+  LayoutDashboard,
+  ListOrdered,
+  Receipt,
+  Settings2,
+  Stethoscope,
+  Users,
+  UsersRound,
+} from "lucide-react";
 
 import { NavigationLink, NavMain } from "@/components/ui/sidebar/nav-main";
 
@@ -13,7 +23,6 @@ import { usePermissions } from "@/context/PermissionContext";
 import useCurrentFacility from "@/pages/Facility/utils/useCurrentFacility";
 import { FacilityBareMinimum } from "@/types/facility/facility";
 import careConfig from "@careConfig";
-import { Logs } from "lucide-react";
 
 interface FacilityNavProps {
   selectedFacility: FacilityBareMinimum | null;
@@ -45,24 +54,28 @@ function generateFacilityLinks(
     {
       name: t("overview"),
       url: `${baseUrl}/overview`,
-      icon: <CareIcon icon="d-hospital" />,
+      section: t("nav_section_care"),
+      icon: <LayoutDashboard className="size-4" />,
     },
     {
       name: t("appointments"),
       url: `${baseUrl}/appointments`,
-      icon: <CareIcon icon="d-calendar" />,
+      section: t("nav_section_care"),
+      icon: <CalendarDays className="size-4" />,
       visibility: permissions.canViewAppointments,
     },
     {
       name: t("queues"),
       url: `${baseUrl}/queues`,
-      icon: <Logs />,
+      section: t("nav_section_care"),
+      icon: <ListOrdered className="size-4" />,
       visibility: permissions.canViewAppointments,
     },
     {
       name: t("patients"),
       url: `${baseUrl}/patients`,
-      icon: <CareIcon icon="d-patient" />,
+      section: t("nav_section_care"),
+      icon: <Users className="size-4" />,
       visibility:
         permissions.canWriteAppointment ||
         permissions.canListEncounters ||
@@ -92,22 +105,26 @@ function generateFacilityLinks(
     {
       name: t("services"),
       url: `${baseUrl}/services`,
-      icon: <CareIcon icon="d-microscope" />,
+      section: t("nav_section_catalogs"),
+      icon: <Stethoscope className="size-4" />,
     },
     {
       name: t("resource"),
       url: `${baseUrl}/resource`,
-      icon: <CareIcon icon="d-book-open" />,
+      section: t("nav_section_catalogs"),
+      icon: <Boxes className="size-4" />,
     },
     {
       name: t("users"),
       url: `${baseUrl}/users`,
-      icon: <CareIcon icon="d-people" />,
+      section: t("nav_section_catalogs"),
+      icon: <UsersRound className="size-4" />,
     },
     {
       name: t("billing"),
       url: `${baseUrl}/billing`,
-      icon: <CareIcon icon="d-notice-board" />,
+      section: t("nav_section_admin"),
+      icon: <Receipt className="size-4" />,
       children: [
         {
           name: t("accounts"),
@@ -130,7 +147,8 @@ function generateFacilityLinks(
     {
       name: t("settings"),
       url: `${baseUrl}/settings/general`,
-      icon: <CareIcon icon="l-setting" />,
+      section: t("nav_section_admin"),
+      icon: <Settings2 className="size-4" />,
       children: [
         {
           name: t("general"),

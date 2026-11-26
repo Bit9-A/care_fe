@@ -44,7 +44,19 @@ const useNavExpansionState = (linkName: string, link: NavigationLink) => {
   return [isOpen, setStoredState] as const;
 };
 
+/** Icon plate: gives every item the same visual rhythm instead of a bare glyph. */
+const iconPlate = (active: boolean) =>
+  cn(
+    "flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200",
+    "group-data-[collapsible=icon]:size-8",
+    active
+      ? "bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_4px_10px_-5px_rgba(0,163,255,0.9)]"
+      : "bg-slate-100 text-slate-500 group-hover:bg-slate-200/80 group-hover:text-slate-700",
+  );
+
 export interface NavigationLink {
+  /** Optional group label rendered above this link; consecutive links share it. */
+  section?: string;
   header?: string;
   headerIcon?: ReactNode;
   name: string;
@@ -113,17 +125,40 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
     [fullPath],
   );
 
-  const isSelected = (url: string) => {
-    return path === url;
-  };
+  const isSelected = (url: string) => path === url;
+  const isWithin = (url: string) =>
+    !path || path === url || path.startsWith(`${url}/`);
+
+  // Links keep their order; consecutive links with the same `section` share one label.
+  const groups = useMemo(() => {
+    const result: { section?: string; links: NavigationLink[] }[] = [];
+    links
+      .filter((link) => link.visibility !== false)
+      .forEach((link) => {
+        const last = result[result.length - 1];
+        if (last && last.section === link.section) {
+          last.links.push(link);
+        } else {
+          result.push({ section: link.section, links: [link] });
+        }
+      });
+    return result;
+  }, [links]);
 
   return (
-    <SidebarGroup>
-      <SidebarMenu>
-        {links
-          .filter((link) => link.visibility !== false)
-          .map((link) => (
+    <SidebarGroup className="gap-0 px-2 py-1">
+      <SidebarMenu className="gap-0.5">
+        {groups.map((group) =>
+          group.links.map((link, index) => (
             <Fragment key={link.name}>
+              {index === 0 && group.section && !isCollapsed && (
+                <li
+                  className="px-2 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 first:pt-1"
+                  aria-hidden="true"
+                >
+                  {group.section}
+                </li>
+              )}
               {link.children ? (
                 isCollapsed ? (
                   <PopoverMenu link={link} />
@@ -139,25 +174,25 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                   <SidebarMenuButton
                     asChild
                     tooltip={link.name}
-                    className={
-                      "text-slate-600 transition font-medium hover:bg-slate-100 hover:text-slate-900"
-                    }
+                    className="group h-10 gap-2.5 rounded-xl font-medium text-slate-600 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900"
                   >
                     <NavLink
                       href={link.url}
                       isSelected={isSelected(link.url)}
-                      activeClass="relative bg-[#00a3ff]/10 font-semibold text-[#0076be] before:absolute before:left-0 before:top-1/2 before:h-4 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-[#00a3ff] group-data-[collapsible=icon]:before:hidden"
+                      activeClass="relative bg-[#00a3ff]/10 font-semibold text-[#0076be] before:absolute before:left-0 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-[#00a3ff] group-data-[collapsible=icon]:before:hidden"
                     >
                       {link.icon ? (
-                        link.icon
+                        <span className={iconPlate(isWithin(link.url))}>
+                          {link.icon}
+                        </span>
                       ) : (
                         <Avatar
                           name={link.name}
-                          className="size-6 -m-1 rounded-sm"
+                          className="size-7 -m-1 rounded-lg"
                         />
                       )}
 
-                      <span className="group-data-[collapsible=icon]:hidden ml-1">
+                      <span className="ml-0.5 truncate group-data-[collapsible=icon]:hidden">
                         {link.name}
                       </span>
                     </NavLink>
@@ -165,7 +200,8 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                 </SidebarMenuItem>
               )}
             </Fragment>
-          ))}
+          )),
+        )}
       </SidebarMenu>
     </SidebarGroup>
   );

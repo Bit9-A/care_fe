@@ -3300,6 +3300,9 @@
  "nationality": "Nacionalidad",
  "nationality_is_required": "Se requiere la nacionalidad",
  "navigate": "Navegar",
+ "nav_section_care": "Atención",
+ "nav_section_catalogs": "Catálogos",
+ "nav_section_admin": "Gestión",
  "navigation": "Navegación",
  "nearby_facilities": "Establecimientos cercanos",
  "negative_price_for_discount_hint": "Use valores negativos para descuentos a nivel de factura",
@@ -6955,5 +6958,7 @@
  "structured_q__files": "Archivos",
  "structured_q__time_of_death": "Hora de defunción",
  "structured_q__charge_item": "Cargo",
- "structured_q__appointment": "Cita"
+ "structured_q__appointment": "Cita",
+ "sus_login_hero_subtitle": "Ingrese con el usuario y la contraseña asignados por su unidad de salud.",
+ "sus_tachira": "Sistema Unificado de Salud del Táchira"
 }
