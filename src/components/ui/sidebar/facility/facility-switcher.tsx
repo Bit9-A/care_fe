@@ -49,15 +49,15 @@ export function FacilitySwitcher({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-white"
+              className="border border-transparent data-[state=open]:border-slate-200 data-[state=open]:bg-white data-[state=open]:shadow-sm hover:border-slate-200 hover:bg-white hover:shadow-sm"
               tooltip={selectedFacility?.name}
               aria-label={t("select_facility")}
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
+              <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_6px_16px_-8px_rgba(0,163,255,0.9)]">
                 <Hospital className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
+                <span className="truncate font-display font-semibold text-slate-900">
                   {selectedFacility?.name || t("select_facility")}
                 </span>
               </div>

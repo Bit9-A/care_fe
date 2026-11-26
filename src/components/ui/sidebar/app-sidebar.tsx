@@ -123,7 +123,7 @@ export function AppSidebar({
       {...props}
       className="group-data-[side=left]:border-r-0"
     >
-      <SidebarHeader>
+      <SidebarHeader className="gap-2 border-b border-slate-100/80 px-2 pb-3 pt-3">
         {responsibilityId && (
           <ResponsibilitySwitcher selectedResponsibilityId={responsibilityId} />
         )}
@@ -154,7 +154,7 @@ export function AppSidebar({
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-white mt-2"
                 >
                   <Link href="/">
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
+                    <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_6px_16px_-8px_rgba(0,163,255,0.9)]">
                       <DashboardIcon className="size-4" />
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight text-gray-900">
@@ -190,7 +190,7 @@ export function AppSidebar({
           adminSidebar) && <PinPageDialog />}
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-slate-100/80 px-2 py-2">
         {patientSidebar ? (
           <PatientNavUser />
         ) : (

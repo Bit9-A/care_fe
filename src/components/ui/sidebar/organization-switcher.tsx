@@ -48,7 +48,7 @@ export function OrganizationSwitcher({
                   : t("select_organization")
               }
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
+              <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_6px_16px_-8px_rgba(0,163,255,0.9)]">
                 <Globe className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">

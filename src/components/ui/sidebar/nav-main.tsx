@@ -140,13 +140,13 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                     asChild
                     tooltip={link.name}
                     className={
-                      "text-gray-600 transition font-normal hover:bg-gray-200 hover:text-green-700"
+                      "text-slate-600 transition font-medium hover:bg-slate-100 hover:text-slate-900"
                     }
                   >
                     <NavLink
                       href={link.url}
                       isSelected={isSelected(link.url)}
-                      activeClass="bg-white text-green-700 shadow-sm"
+                      activeClass="relative bg-[#00a3ff]/10 font-semibold text-[#0076be] before:absolute before:left-0 before:top-1/2 before:h-4 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-[#00a3ff] group-data-[collapsible=icon]:before:hidden"
                     >
                       {link.icon ? (
                         link.icon
@@ -195,7 +195,7 @@ function CollapsibleNavItem({
         <CollapsibleTrigger asChild>
           <SidebarMenuButton
             tooltip={link.name}
-            className="cursor-pointer hover:bg-gray-200 hover:text-green-700"
+            className="cursor-pointer font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=open]:bg-slate-50"
           >
             {link.icon ? (
               link.icon
@@ -226,7 +226,7 @@ function CollapsibleNavItem({
                     <SidebarMenuSubButton
                       asChild
                       className={
-                        "text-gray-600 transition font-normal hover:bg-gray-200 hover:text-green-700"
+                        "relative text-slate-600 transition font-medium hover:bg-slate-100 hover:text-slate-900"
                       }
                     >
                       <NavLink
@@ -237,9 +237,9 @@ function CollapsibleNavItem({
                           subItem.url
                             .split("/")
                             .every((part) => fullPathMap[part]) &&
-                            "bg-white text-green-700 shadow",
+                            "bg-[#00a3ff]/10 font-medium text-[#0076be]",
                         )}
-                        exactActiveClass="bg-white text-green-700 shadow"
+                        exactActiveClass="bg-[#00a3ff]/10 font-medium text-[#0076be]"
                       >
                         {subItem.name}
                       </NavLink>
@@ -268,8 +268,8 @@ function NavItem({
     <NavLink
       href={item.url}
       isSelected={selected}
-      className="w-full rounded-md px-2 py-1.5 text-sm outline-none transition-colors hover:bg-gray-100 focus:bg-gray-100"
-      activeClass="bg-gray-100 text-green-700"
+      className="w-full rounded-lg px-2 py-1.5 text-sm outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
+      activeClass="bg-[#00a3ff]/10 font-medium text-[#0076be]"
       onClick={() => setOpen(false)}
     >
       {item.name}
@@ -286,9 +286,9 @@ function PopoverMenu({ link }: { link: NavigationLink }) {
         <SidebarMenuButton
           tooltip={link.name}
           className={cn(
-            "cursor-pointer hover:bg-gray-200 hover:text-green-700",
+            "cursor-pointer font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900",
             {
-              "bg-white text-green-700 shadow": isChildActive(link),
+              "bg-[#00a3ff]/10 font-medium text-[#0076be]": isChildActive(link),
             },
           )}
         >
