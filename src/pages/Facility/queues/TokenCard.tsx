@@ -50,7 +50,7 @@ const TokenCard = ({
       )}
     >
       {showlogo && (
-        <div className="absolute inset-0 opacity-[0.1] pointer-events-none bg-[url('/images/care_logo_gray.svg')] bg-center bg-no-repeat bg-[length:40%_auto] lg:bg-[length:60%_auto]" />
+        <div className="absolute inset-0 opacity-[0.1] pointer-events-none bg-[url('/images/logo-spns-gray.png')] bg-center bg-no-repeat bg-[length:40%_auto] lg:bg-[length:60%_auto]" />
       )}
 
       <div className="relative z-10">

@@ -225,7 +225,7 @@ export function MultiQRCodePrintSheet({
                           size={qrCodeSize}
                           className="bg-white"
                           imageSettings={{
-                            src: "/images/care_logo_mark.svg",
+                            src: "/images/logo-spns-mark.png",
                             height: logoSize,
                             width: logoSize,
                             excavate: true,
