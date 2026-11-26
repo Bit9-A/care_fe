@@ -2,7 +2,7 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { addDays, differenceInDays } from "date-fns";
 import { TFunction } from "i18next";
-import { FilterIcon, InfoIcon } from "lucide-react";
+import { CalendarOff, CalendarPlus, FilterIcon } from "lucide-react";
 import { Link, navigate } from "raviger";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -50,6 +50,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import BookAppointmentSheet from "@/pages/Appointments/BookAppointment/BookAppointmentSheet";
 
 import Loading from "@/components/Common/Loading";
 import Page from "@/components/Common/Page";
@@ -109,6 +110,16 @@ import { PractitionerSelector } from "./components/PractitionerSelector";
 type AppointmentStatusGroup = {
   label: string;
   statuses: AppointmentStatus[];
+};
+
+/** Colour of the column dot, so the board reads without relying on the title. */
+const statusDotClass = (statuses: AppointmentStatus[]) => {
+  if (statuses.includes(AppointmentStatus.BOOKED)) return "bg-sky-500";
+  if (statuses.includes(AppointmentStatus.CHECKED_IN)) return "bg-amber-500";
+  if (statuses.includes(AppointmentStatus.IN_CONSULTATION))
+    return "bg-violet-500";
+  if (statuses.includes(AppointmentStatus.FULFILLED)) return "bg-emerald-500";
+  return "bg-rose-500";
 };
 
 const getStatusGroups = (t: TFunction): AppointmentStatusGroup[] => {
@@ -356,11 +367,11 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
         </Tabs>
       }
     >
-      <div className="mt-4 py-4 flex flex-col lg:flex-row gap-4 justify-between border-t border-gray-200">
+      <div className="mt-4 flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_10px_-6px_rgba(3,37,76,0.15)] lg:flex-row lg:items-end lg:justify-between">
         <div className="flex w-full min-w-0 flex-wrap items-start gap-4 lg:w-auto">
           {practitionerFilterEnabled && (
             <div className="mt-1 w-full sm:w-auto sm:min-w-60">
-              <Label className="mb-2 text-black">
+              <Label className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
                 {t("practitioner", { count: 2 })}
               </Label>
               <PractitionerSelector
@@ -378,7 +389,9 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
 
           {/* Tags Filter */}
           <div className="w-full min-w-0 sm:w-auto">
-            <Label className="mt-1 text-black">{t("filter_by_tags")}</Label>
+            <Label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+              {t("filter_by_tags")}
+            </Label>
             <MultiFilter
               selectedFilters={selectedFilters}
               onFilterChange={handleFilterChange}
@@ -394,33 +407,58 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <div className="flex items-center justify-between gap-2">
-            <Label className="text-sm font-medium">{t("auto_refresh")}</Label>
-            <Switch
-              checked={shouldAutoRefresh}
-              onCheckedChange={(checked) =>
-                updateQuery({
-                  autoRefresh: checked ? "true" : "false",
-                })
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <label className="flex h-9 cursor-pointer items-center gap-2.5 rounded-lg border border-slate-200 px-3 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50">
+                  {t("auto_refresh")}
+                  <Switch
+                    checked={shouldAutoRefresh}
+                    onCheckedChange={(checked) =>
+                      updateQuery({
+                        autoRefresh: checked ? "true" : "false",
+                      })
+                    }
+                  />
+                </label>
+              </TooltipTrigger>
+              <TooltipContent>
+                {t("auto_refresh_tooltip", {
+                  interval:
+                    careConfig.appointmentAndQueueRefreshInterval / 1000,
+                })}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {qParams.patient ? (
+            <BookAppointmentSheet
+              patientId={qParams.patient}
+              facilityId={facilityId}
+              trigger={
+                <Button className="h-9 gap-2">
+                  <CalendarPlus className="size-4" />
+                  {t("book_appointment")}
+                </Button>
               }
             />
+          ) : (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="cursor-help hidden md:block">
-                    <InfoIcon className="size-4 text-gray-500" />
-                  </span>
+                  <Button
+                    className="h-9 w-full gap-2 sm:w-auto"
+                    onClick={() => toast.info(t("booking_requires_patient"))}
+                  >
+                    <CalendarPlus className="size-4" />
+                    {t("book_appointment")}
+                  </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  {t("auto_refresh_tooltip", {
-                    interval:
-                      careConfig.appointmentAndQueueRefreshInterval / 1000,
-                  })}
-                </TooltipContent>
+                <TooltipContent>{t("booking_requires_patient")}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          )}
           {activeTab === "list" && (
             <Button
               variant="outline"
@@ -597,13 +635,20 @@ function AppointmentColumn(props: {
   }, [inView, hasNextPage, fetchNextPage]);
 
   return (
-    <div className="bg-gray-100 py-4 rounded-lg w-80 overflow-y-hidden">
-      <div className="flex flex-row justify-between px-3 gap-2 mb-3">
-        <div className="flex items-center gap-2">
-          <h2 className="font-semibold capitalize text-base px-1">
+    <div className="w-80 overflow-y-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_10px_-6px_rgba(3,37,76,0.15)]">
+      <div className="flex flex-row items-center justify-between gap-2 border-b border-slate-100 px-3 py-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <span
+            className={cn(
+              "size-2 shrink-0 rounded-full",
+              statusDotClass(props.statusGroup.statuses),
+            )}
+            aria-hidden="true"
+          />
+          <h2 className="truncate font-display text-sm font-semibold capitalize text-slate-800">
             {props.statusGroup.label}
           </h2>
-          <span className="bg-gray-200 px-2 py-1 rounded-md text-xs font-medium">
+          <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
             {appointmentsData?.pages[0]?.count == null ? (
               "..."
             ) : appointmentsData?.pages[0]?.count === appointments.length ? (
@@ -625,7 +670,13 @@ function AppointmentColumn(props: {
         {props.statusGroup.statuses.length > 1 && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8 shrink-0 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+                aria-label={t("filter_statuses")}
+                title={t("filter_statuses")}
+              >
                 <FilterIcon className="size-4" />
               </Button>
             </PopoverTrigger>
@@ -679,8 +730,9 @@ function AppointmentColumn(props: {
         )}
       </div>
       {appointments.length === 0 ? (
-        <div className="flex justify-center items-center h-[calc(100vh-18rem)]">
-          <p className="text-gray-500">{t("no_appointments")}</p>
+        <div className="flex h-[calc(100vh-18rem)] flex-col items-center justify-center gap-2 px-6 text-center">
+          <CalendarOff className="size-8 text-slate-300" aria-hidden="true" />
+          <p className="text-sm text-slate-400">{t("no_appointments")}</p>
         </div>
       ) : (
         <ScrollArea>

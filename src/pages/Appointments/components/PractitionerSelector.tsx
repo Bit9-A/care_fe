@@ -6,13 +6,12 @@ import {
   ChevronRight,
   Loader2,
   Search,
+  UserRoundPlus,
   X,
   XIcon,
 } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -254,17 +253,42 @@ export const PractitionerSelector = ({
 
   const triggerButton = multiple ? (
     <Button
-      variant="secondary"
+      variant="outline"
       role="combobox"
-      className="size-8! rounded-full"
+      className="h-9 min-w-56 justify-start gap-2 rounded-lg px-3"
     >
-      {selected && selected.length > MULTI_SELECT_SHOW_LIMIT ? (
-        <span className="text-xs text-gray-500">
-          +{selected.length - MULTI_SELECT_SHOW_LIMIT}
-        </span>
+      {selected && selected.length > 0 ? (
+        <>
+          <span className="flex -space-x-2">
+            {selected.slice(0, 3).map((user) => (
+              <ScheduleResourceIcon
+                key={user.id}
+                resource={{
+                  resource_type: SchedulableResourceType.Practitioner,
+                  resource: user,
+                }}
+                className="size-5 rounded-full ring-2 ring-white"
+              />
+            ))}
+          </span>
+          <span className="truncate text-sm">
+            {selected.length === 1
+              ? formatScheduleResourceName({
+                  resource_type: SchedulableResourceType.Practitioner,
+                  resource: selected[0],
+                })
+              : t("practitioners_selected", { count: selected.length })}
+          </span>
+        </>
       ) : (
-        <CareIcon icon="l-plus" className="size-4" />
+        <>
+          <UserRoundPlus className="size-4 text-gray-400" />
+          <span className="text-sm text-gray-400">
+            {t("select_practitioners")}
+          </span>
+        </>
       )}
+      <CaretDownIcon className="ml-auto" />
     </Button>
   ) : (
     <Button
