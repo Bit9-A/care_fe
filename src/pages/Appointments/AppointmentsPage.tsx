@@ -31,7 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -39,7 +39,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSidebar } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -207,7 +206,6 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
   useShortcutSubContext();
 
   const [activeTab, setActiveTab] = useView("appointments", "board");
-  const { open: isSidebarOpen } = useSidebar();
   const { facility, facilityId, isFacilityLoading } = useCurrentFacility();
   const selectedTagIds = qParams.tags?.split(",") ?? [];
   const tagConfigsQuery = useTagConfigs({ ids: selectedTagIds, facilityId });
@@ -367,10 +365,10 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
         </Tabs>
       }
     >
-      <div className="mt-4 flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_10px_-6px_rgba(3,37,76,0.15)] lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex w-full min-w-0 flex-wrap items-start gap-4 lg:w-auto">
+      <div className="mt-4 flex min-w-0 flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_10px_-6px_rgba(3,37,76,0.15)] lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex w-full min-w-0 flex-wrap items-start gap-4 lg:w-auto lg:flex-1">
           {practitionerFilterEnabled && (
-            <div className="mt-1 w-full sm:w-auto sm:min-w-60">
+            <div className="mt-1 w-full min-w-0 sm:w-auto sm:min-w-48">
               <Label className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
                 {t("practitioner", { count: 2 })}
               </Label>
@@ -407,7 +405,7 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+        <div className="flex min-w-0 flex-col flex-wrap gap-3 sm:flex-row sm:items-center">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -483,7 +481,7 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
               updateQuery({ patient: patientId, patient_name: patientName })
             }
             placeholder={t("search_patients")}
-            className="w-full sm:w-auto"
+            className="w-full min-w-0 sm:w-auto"
             patientId={qParams.patient}
             patientName={qParams.patient_name}
             align="end"
@@ -492,15 +490,8 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
       </div>
 
       {activeTab === "board" ? (
-        <ScrollArea
-          className={cn(
-            "transition-all duration-200",
-            isSidebarOpen
-              ? "ease-out md:w-[calc(100vw-21.5rem)]"
-              : "ease-in md:w-[calc(100vw-8rem)]",
-          )}
-        >
-          <div className="flex w-max space-x-4">
+        <div className="min-w-0 pb-2 xl:overflow-x-auto xl:[contain:inline-size]">
+          <div className="flex flex-col gap-4 xl:w-max xl:flex-row">
             {getStatusGroups(t).map((statusGroup) => (
               <AppointmentColumn
                 key={statusGroup.label}
@@ -518,8 +509,7 @@ export default function AppointmentsPage({ resourceType, resourceId }: Props) {
               />
             ))}
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
       ) : (
         <AppointmentRow
           updateQuery={updateQuery}
@@ -635,7 +625,7 @@ function AppointmentColumn(props: {
   }, [inView, hasNextPage, fetchNextPage]);
 
   return (
-    <div className="w-80 overflow-y-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_10px_-6px_rgba(3,37,76,0.15)]">
+    <div className="w-full overflow-y-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_10px_-6px_rgba(3,37,76,0.15)] xl:w-80 xl:shrink-0">
       <div className="flex flex-row items-center justify-between gap-2 border-b border-slate-100 px-3 py-2.5">
         <div className="flex min-w-0 items-center gap-2">
           <span
@@ -730,13 +720,13 @@ function AppointmentColumn(props: {
         )}
       </div>
       {appointments.length === 0 ? (
-        <div className="flex h-[calc(100vh-18rem)] flex-col items-center justify-center gap-2 px-6 text-center">
+        <div className="flex h-40 flex-col items-center justify-center gap-2 px-6 text-center xl:h-[calc(100vh-18rem)]">
           <CalendarOff className="size-8 text-slate-300" aria-hidden="true" />
           <p className="text-sm text-slate-400">{t("no_appointments")}</p>
         </div>
       ) : (
         <ScrollArea>
-          <ul className="space-y-3 px-3 pb-4 pt-1 h-[calc(100vh-18rem)]">
+          <ul className="max-h-[60vh] space-y-3 px-3 pb-4 pt-1 xl:h-[calc(100vh-18rem)] xl:max-h-none">
             {appointments.map((appointment, index) => (
               <li
                 key={appointment.id}
