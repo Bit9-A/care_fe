@@ -212,13 +212,13 @@ export default function AppointmentDetail(props: Props) {
           <BackButton variant="ghost">
             <ChevronLeft />
           </BackButton>
-          <h4 className="font-semibold text-gray-800">
+          <h1 className="font-display text-xl font-bold tracking-tight text-slate-900">
             {t("appointment_details")}
-          </h4>
+          </h1>
         </div>
         {showSuccess && (
           <div className="mb-4 flex flex-col gap-2">
-            <Alert className="bg-green-50 border-green-400 items-center">
+            <Alert className="items-center rounded-2xl border-emerald-200 bg-emerald-50/70">
               <CheckCircle2Icon className="h-8 w-8 text-green-600" />
               <AlertTitle className="text-green-800 flex items-center gap-2 justify-between">
                 {t("appointment_created_success")}!
@@ -309,7 +309,9 @@ export default function AppointmentDetail(props: Props) {
           <div className="mt-6 pl-0 md:pl-4 flex-1">
             {appointment.token?.number ? (
               <>
-                <h3 className="text-base font-semibold">{t("token")}</h3>
+                <h3 className="mb-2 font-display text-base font-semibold text-slate-900">
+                  {t("token")}
+                </h3>
                 <div id="single-print">
                   <TokenCard
                     appointment={appointment}
@@ -322,14 +324,18 @@ export default function AppointmentDetail(props: Props) {
               !AppointmentFinalStatuses.includes(appointment.status) &&
               canWriteToken && (
                 <>
-                  <h3 className="text-base font-semibold">{t("token")}</h3>
-                  <div className="bg-gray-100 border border-gray-200 rounded flex flex-col items-center justify-center text-center">
-                    <ReceiptText className="size-8 text-gray-500 mt-4" />
+                  <h3 className="mb-2 font-display text-base font-semibold text-slate-900">
+                    {t("token")}
+                  </h3>
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-4 text-center">
+                    <span className="mt-5 flex size-11 items-center justify-center rounded-xl bg-white text-slate-400 shadow-xs">
+                      <ReceiptText className="size-5" />
+                    </span>
                     <div className="mt-2">
-                      <h6 className="text-gray-900 text-sm font-semibold">
+                      <h6 className="font-display text-sm font-semibold text-slate-900">
                         {t("token_not_generated")}
                       </h6>
-                      <p className="text-gray-900 text-sm">
+                      <p className="text-sm text-slate-500">
                         {t("token_not_generated_description")}
                       </p>
                     </div>
@@ -363,9 +369,9 @@ export default function AppointmentDetail(props: Props) {
               )
             )}
             {appointment.associated_encounter?.id && (
-              <Card className="bg-white shadow-sm rounded-md p-1 mt-2">
-                <CardHeader className="p-2 bg-gray-50">
-                  <CardTitle className="flex items-center gap-2 text-lg">
+              <Card className="mt-2 rounded-2xl border border-slate-200/80 bg-white p-1 shadow-[0_2px_12px_-6px_rgba(3,37,76,0.18)]">
+                <CardHeader className="border-b border-slate-100 p-3">
+                  <CardTitle className="flex items-center gap-2 font-display text-base text-slate-900">
                     <AvatarIcon className="size-5 text-primary" />
                     {t("encounter")}
                   </CardTitle>
@@ -462,10 +468,10 @@ export default function AppointmentDetail(props: Props) {
               </Card>
             )}
             <div>
-              <h3 className="text-base font-semibold mt-4">
+              <h3 className="mb-2 mt-4 font-display text-base font-semibold text-slate-900">
                 {t("quick_actions")}
               </h3>
-              <div className="grid gap-1 grid-cols-1 md:grid-cols-2 mt-1">
+              <div className="mt-1 grid grid-cols-1 gap-1.5">
                 {!AppointmentFinalStatuses.includes(appointment.status) && (
                   <>
                     {/* Start Consultation - For booked and checked in appointments */}
@@ -474,6 +480,7 @@ export default function AppointmentDetail(props: Props) {
                       (appointment.associated_encounter?.id ? (
                         // When encounter exists: set status to in_consultation and redirect
                         <QuickAction
+                          layout="horizontal"
                           icon={<PlusSquare className="text-primary-500" />}
                           title={t("start_consultation")}
                           actionId="start-consultation"
@@ -498,6 +505,7 @@ export default function AppointmentDetail(props: Props) {
                           defaultStatus={EncounterStatus.IN_PROGRESS}
                           trigger={
                             <QuickAction
+                              layout="horizontal"
                               icon={<PlusSquare className="text-primary-500" />}
                               title={t("start_consultation")}
                               actionId="start-consultation"
@@ -521,6 +529,7 @@ export default function AppointmentDetail(props: Props) {
                         disableRedirectOnSuccess={true}
                         trigger={
                           <QuickAction
+                            layout="horizontal"
                             icon={
                               <SquareActivity className="text-orange-500" />
                             }
@@ -539,6 +548,7 @@ export default function AppointmentDetail(props: Props) {
                 )}
                 {!CancelledAppointmentStatuses.includes(appointment.status) && (
                   <QuickAction
+                    layout="horizontal"
                     icon={<PrinterIcon className="size-4" />}
                     title={t("print_appointment")}
                     actionId="print-appointment"
@@ -547,6 +557,7 @@ export default function AppointmentDetail(props: Props) {
                   />
                 )}
                 <QuickAction
+                  layout="horizontal"
                   icon={<Wallet className="size-4" />}
                   title={t("accounts")}
                   actionId="goto-account"
@@ -584,9 +595,9 @@ const AppointmentDetailsContent = ({
         disableCreateChargeItems
       />
       <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-        <Card className="bg-white shadow-sm rounded-md p-1">
-          <CardHeader className="p-2 bg-gray-50">
-            <CardTitle className="flex justify-between">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-1 shadow-[0_2px_12px_-6px_rgba(3,37,76,0.18)]">
+          <CardHeader className="border-b border-slate-100 p-3">
+            <CardTitle className="flex items-center justify-between font-display text-base text-slate-900">
               <span className="mr-3 inline-block mb-2">
                 {t("schedule_information")}
               </span>
@@ -671,8 +682,8 @@ const AppointmentDetailsContent = ({
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm rounded-md p-1">
-          <CardHeader className="p-2 bg-gray-50">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-1 shadow-[0_2px_12px_-6px_rgba(3,37,76,0.18)]">
+          <CardHeader className="border-b border-slate-100 p-3">
             <CardTitle>{t("patient_information")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 p-2">
@@ -725,8 +736,8 @@ const AppointmentDetailsContent = ({
         </Card>
       </div>
 
-      <Card className="bg-white shadow-sm rounded-md p-1">
-        <CardHeader className="p-2 bg-gray-50">
+      <Card className="rounded-2xl border border-slate-200/80 bg-white p-1 shadow-[0_2px_12px_-6px_rgba(3,37,76,0.18)]">
+        <CardHeader className="border-b border-slate-100 p-3">
           <CardTitle>
             {t(`schedulable_resource__${appointment.resource_type}`)}
           </CardTitle>
@@ -749,8 +760,8 @@ const AppointmentDetailsContent = ({
           </div>
         </CardContent>
       </Card>
-      <Card className="bg-white shadow-sm rounded-md p-1">
-        <CardHeader className="p-2 bg-gray-50">
+      <Card className="rounded-2xl border border-slate-200/80 bg-white p-1 shadow-[0_2px_12px_-6px_rgba(3,37,76,0.18)]">
+        <CardHeader className="border-b border-slate-100 p-3">
           <CardTitle>{t("note")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 p-2">

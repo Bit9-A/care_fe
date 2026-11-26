@@ -78,10 +78,13 @@ export function QuickAction({
   basePath,
   onClick,
   hidden,
+  layout = "vertical",
   ...props
 }: {
   icon: React.ReactNode;
   title: string;
+  /** `horizontal` is for narrow containers where stacking the icon looks cramped. */
+  layout?: "vertical" | "horizontal";
   actionId?: string;
   href?: string;
   basePath?: string;
@@ -89,7 +92,8 @@ export function QuickAction({
   hidden?: boolean;
 } & React.ComponentProps<"button">) {
   const className = cn(
-    "flex-1 flex flex-row md:flex-col gap-1.25 p-1 pb-2 rounded-lg shadow bg-white",
+    "group flex flex-1 flex-row items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3 text-left shadow-[0_1px_3px_rgba(15,23,42,0.05)] transition-all duration-150 hover:-translate-y-0.5 hover:border-[#00a3ff]/40 hover:shadow-[0_12px_26px_-16px_rgba(0,163,255,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a3ff]/50",
+    layout === "vertical" && "md:flex-col md:gap-2 md:p-4 md:text-center",
     hidden && "hidden",
   );
 
@@ -119,14 +123,16 @@ const QuickActionContent = ({
 }) => {
   return (
     <>
-      <div className="relative flex md:py-3 py-0 rounded-t-md rounded-b-lg md:bg-gray-100 bg-white">
+      <div className="relative flex items-center justify-center">
         {actionId && <ShortcutBadge actionId={actionId} position="top-right" />}
-        <div className="rounded-xl bg-white md:shadow shadow-none mx-auto items-center flex p-2">
+        <div className="flex items-center rounded-xl bg-slate-50 p-2.5 transition-colors group-hover:bg-[#00a3ff]/10 md:p-3">
           {icon}
         </div>
       </div>
-      <div className="flex items-center gap-1 justify-center">
-        <span className="text-sm font-semibold">{title}</span>
+      <div className="flex items-center justify-center">
+        <span className="text-sm font-semibold leading-tight text-slate-700 group-hover:text-slate-900">
+          {title}
+        </span>
       </div>
     </>
   );
