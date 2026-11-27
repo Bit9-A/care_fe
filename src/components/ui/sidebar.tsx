@@ -35,6 +35,16 @@ const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3.5rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+/** Matches Tailwind's `lg`, the width from which the rail has room to stay open. */
+const SIDEBAR_DESKTOP_QUERY = "(min-width: 64rem)";
+
+const readCookie = (name: string) => {
+  if (typeof document === "undefined") return undefined;
+  const entry = document.cookie
+    .split("; ")
+    .find((item) => item.startsWith(`${name}=`));
+  return entry?.split("=")[1];
+};
 
 type SidebarContextType = {
   state: "expanded" | "collapsed";
@@ -73,9 +83,18 @@ function SidebarProvider({
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen);
+  // Internal state of the sidebar. openProp/setOpenProp allow external control.
+  //
+  // The cookie is only written when the person toggles the rail, so its mere
+  // presence means "explicit choice" and wins over the viewport. Without one,
+  // the rail starts collapsed below lg, where 256px of navigation would eat a
+  // third of the screen.
+  const [_open, _setOpen] = React.useState(() => {
+    const saved = readCookie(SIDEBAR_COOKIE_NAME);
+    if (saved === "true" || saved === "false") return saved === "true";
+    if (typeof window === "undefined") return defaultOpen;
+    return window.matchMedia(SIDEBAR_DESKTOP_QUERY).matches;
+  });
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
@@ -91,6 +110,19 @@ function SidebarProvider({
     },
     [setOpenProp, open],
   );
+
+  React.useEffect(() => {
+    if (openProp !== undefined) return;
+    const query = window.matchMedia(SIDEBAR_DESKTOP_QUERY);
+    const apply = () => {
+      const saved = readCookie(SIDEBAR_COOKIE_NAME);
+      if (saved === "true" || saved === "false") return;
+      _setOpen(query.matches);
+    };
+    apply();
+    query.addEventListener("change", apply);
+    return () => query.removeEventListener("change", apply);
+  }, [openProp]);
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
@@ -195,7 +227,10 @@ function Sidebar({
           <VisuallyHidden>
             <SheetTitle>{t("sidebar")}</SheetTitle>
           </VisuallyHidden>
-          <div id="app-sidebar" className="flex flex-col w-full h-full">
+          <div
+            id="app-sidebar"
+            className="flex h-full w-full flex-col [&_[data-sidebar=menu-button]]:h-11"
+          >
             {children}
           </div>
         </SheetContent>

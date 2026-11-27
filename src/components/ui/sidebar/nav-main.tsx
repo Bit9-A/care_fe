@@ -178,6 +178,7 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                   >
                     <NavLink
                       href={link.url}
+                      aria-label={link.name}
                       isSelected={isSelected(link.url)}
                       activeClass="relative bg-[#00a3ff]/10 font-semibold text-[#0076be] before:absolute before:left-0 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-[#00a3ff] group-data-[collapsible=icon]:before:hidden"
                     >
@@ -231,6 +232,7 @@ function CollapsibleNavItem({
         <CollapsibleTrigger asChild>
           <SidebarMenuButton
             tooltip={link.name}
+            aria-label={link.name}
             className="cursor-pointer font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=open]:bg-slate-50"
           >
             {link.icon ? (
