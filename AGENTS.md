@@ -108,3 +108,16 @@ npx tsc --noEmit
 # 3. Run related tests (requires backend + build)
 npx playwright test tests/path/to/related/
 ```
+
+---
+
+## Local additions (this deployment)
+
+This checkout is a local deployment of CARE, not upstream. Local facts:
+
+- **Skills pack (OpenCode):** `core react-next web-frontend`. Re-activate with
+  `skills-pack on core react-next web-frontend` from this directory.
+  `.opencode/skills/` is machine-local (absolute symlinks) and gitignored.
+- Dev server: `portless` preferred; `npm run dev` serves on **port 4000**.
+- Changes to shared UI (`src/components/ui/`) diverge from `ohcnetwork/care_fe`
+  (`develop`). Keep them additive and local; do not restyle core primitives.

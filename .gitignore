@@ -80,3 +80,6 @@ memory.md
 MEMORY.md
 .agent/
 .agents/
+
+# OpenCode skill packs: absolute symlinks, machine-local
+.opencode/skills/
