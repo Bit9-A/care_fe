@@ -11,7 +11,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
@@ -214,8 +213,6 @@ export function AppSidebar({
           />
         )}
       </SidebarFooter>
-
-      <SidebarRail />
     </Sidebar>
   );
 }

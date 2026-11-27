@@ -146,14 +146,14 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
   }, [links]);
 
   return (
-    <SidebarGroup className="gap-0 px-2 py-1">
+    <SidebarGroup className="gap-0 px-2 py-2">
       <SidebarMenu className="gap-0.5 group-data-[collapsible=icon]:gap-2">
         {groups.map((group) =>
           group.links.map((link, index) => (
             <Fragment key={link.name}>
               {index === 0 && group.section && !isCollapsed && (
                 <li
-                  className="px-2 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 first:pt-1"
+                  className="px-2 pb-1.5 pt-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 first:pt-0"
                   aria-hidden="true"
                 >
                   {group.section}
@@ -180,7 +180,7 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
                       href={link.url}
                       aria-label={link.name}
                       isSelected={isSelected(link.url)}
-                      activeClass="relative bg-[#00a3ff]/10 font-semibold text-[#0076be] before:absolute before:left-0 before:top-1/2 before:h-5 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-[#00a3ff] group-data-[collapsible=icon]:before:hidden"
+                      activeClass="bg-[#00a3ff]/10 font-semibold text-[#0076be]"
                     >
                       {link.icon ? (
                         <span className={iconPlate(isWithin(link.url))}>
