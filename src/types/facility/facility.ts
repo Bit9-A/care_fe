@@ -209,7 +209,7 @@ export const FACILITY_TYPES: Array<FacilityType> = [
   { id: 1300, text: "Hospital Gineco-Obstétrico" },
   { id: 1400, text: "Hospital Mental" },
   { id: 1500, text: "Centro de Rehabilitación Integral (CRI)" },
-  { id: 1510, text: "Policlílico" },
+  { id: 1510, text: "Policlínico" },
   { id: 1600, text: "Hospital Militar" },
   { id: 3000, text: "Organización No Gubernamental Clínica" },
   { id: 3001, text: "Organización No Gubernamental No Clínica" },
