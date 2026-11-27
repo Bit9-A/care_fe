@@ -61,7 +61,7 @@ export function FacilitySwitcher({
                   {selectedFacility?.name || t("select_facility")}
                 </span>
               </div>
-              <CaretSortIcon className="ml-auto" />
+              <CaretSortIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

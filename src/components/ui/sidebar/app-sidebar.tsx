@@ -12,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { AdminNav } from "@/components/ui/sidebar/admin-nav";
@@ -124,49 +125,61 @@ export function AppSidebar({
       className="group-data-[side=left]:border-r-0"
     >
       <SidebarHeader className="gap-2 border-b border-slate-100/80 px-2 pb-3 pt-3">
-        {responsibilityId && (
-          <ResponsibilitySwitcher selectedResponsibilityId={responsibilityId} />
-        )}
-        {selectedOrganization && hasOrganizations && !responsibilityId && (
-          <OrganizationSwitcher
-            organizations={user?.organizations || []}
-            selectedOrganization={selectedOrganization}
-          />
-        )}
-        {facilityId && selectedFacility && hasFacilities && (
-          <FacilitySwitcher
-            facilities={user?.facilities || []}
-            selectedFacility={selectedFacility}
-          />
-        )}
-        {locationId && <LocationSwitcher />}
-        {serviceId && <ServiceSwitcher />}
-        {!locationId &&
-          !serviceId &&
-          !selectedFacility &&
-          !selectedOrganization &&
-          !responsibilityId && (
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-white mt-2"
-                >
-                  <Link href="/">
-                    <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_6px_16px_-8px_rgba(0,163,255,0.9)]">
-                      <DashboardIcon className="size-4" />
-                    </div>
-                    <div className="grid flex-1 text-left text-sm leading-tight text-gray-900">
-                      <span className="truncate font-semibold">
-                        {t("view_dashboard")}
-                      </span>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          )}
+        <div className="flex items-start gap-1.5">
+          <div className="min-w-0 flex-1 space-y-2">
+            {responsibilityId && (
+              <ResponsibilitySwitcher
+                selectedResponsibilityId={responsibilityId}
+              />
+            )}
+            {selectedOrganization && hasOrganizations && !responsibilityId && (
+              <OrganizationSwitcher
+                organizations={user?.organizations || []}
+                selectedOrganization={selectedOrganization}
+              />
+            )}
+            {facilityId && selectedFacility && hasFacilities && (
+              <FacilitySwitcher
+                facilities={user?.facilities || []}
+                selectedFacility={selectedFacility}
+              />
+            )}
+            {locationId && <LocationSwitcher />}
+            {serviceId && <ServiceSwitcher />}
+            {!locationId &&
+              !serviceId &&
+              !selectedFacility &&
+              !selectedOrganization &&
+              !responsibilityId && (
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      size="lg"
+                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-white mt-2"
+                    >
+                      <Link href="/">
+                        <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_6px_16px_-8px_rgba(0,163,255,0.9)]">
+                          <DashboardIcon className="size-4" />
+                        </div>
+                        <div className="grid flex-1 text-left text-sm leading-tight text-gray-900">
+                          <span className="truncate font-semibold">
+                            {t("view_dashboard")}
+                          </span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              )}
+          </div>
+          <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
+        </div>
+        {/* Collapsed: the labelled trigger is hidden, so the expand affordance
+            moves under the tile and stays reachable with the keyboard. */}
+        <div className="hidden justify-center pt-1 group-data-[collapsible=icon]:flex">
+          <SidebarTrigger />
+        </div>
       </SidebarHeader>
 
       <SidebarContent>

@@ -1,7 +1,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { VariantProps, cva } from "class-variance-authority";
-import { PanelLeftClose, PanelRightClose } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import useKeyboardShortcut from "use-keyboard-shortcut";
@@ -33,7 +33,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
-const SIDEBAR_WIDTH_ICON = "3rem";
+const SIDEBAR_WIDTH_ICON = "3.5rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 type SidebarContextType = {
@@ -195,7 +195,9 @@ function Sidebar({
           <VisuallyHidden>
             <SheetTitle>{t("sidebar")}</SheetTitle>
           </VisuallyHidden>
-          <div className="flex flex-col w-full h-full">{children}</div>
+          <div id="app-sidebar" className="flex flex-col w-full h-full">
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -236,6 +238,7 @@ function Sidebar({
         {...props}
       >
         <div
+          id="app-sidebar"
           data-sidebar="sidebar"
           className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm"
         >
@@ -252,44 +255,41 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar, open } = useSidebar();
-  const { isMobile } = useSidebar();
+  const { toggleSidebar, open, openMobile, isMobile } = useSidebar();
+  const { t } = useTranslation();
+  const expanded = isMobile ? openMobile : open;
+
   return (
     <Button
       data-sidebar="trigger"
-      variant="link"
+      variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
+      className={cn(
+        "size-9 shrink-0 rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-[#00a3ff]/50",
+        className,
+      )}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
+      aria-expanded={expanded}
+      aria-controls="app-sidebar"
+      aria-label={t("toggle_sidebar")}
+      // The keyboard glyph is not copy, so it stays out of the locale files.
+      // eslint-disable-next-line i18next/no-literal-string
+      title={`${t("toggle_sidebar")} (${isAppleDevice ? "\u2318" : "Ctrl"}+B)`}
       {...props}
     >
       {isMobile ? (
-        <svg
-          className="size-8"
-          stroke="currentColor"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M4 6h16M4 12h16M4 18h7"
-          />
-        </svg>
-      ) : open ? (
-        <PanelLeftClose size={36} />
+        <Menu className="size-5" />
+      ) : expanded ? (
+        <PanelLeftClose className="size-5" />
       ) : (
-        <PanelRightClose size={36} />
+        <PanelLeftOpen className="size-5" />
       )}
     </Button>
   );
 }
-
-SidebarTrigger.displayName = "SidebarTrigger";
 
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   const { toggleSidebar } = useSidebar();
@@ -491,7 +491,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 SidebarMenuItem.displayName = "SidebarMenuItem";
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-lg p-2 text-left text-[13.5px] outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2.5 overflow-hidden rounded-lg p-2 text-left text-[13.5px] outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:bg-slate-100 group-data-[collapsible=icon]:text-slate-600 group-data-[collapsible=icon]:hover:bg-slate-200 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 group-data-[collapsible=icon]:[&>svg]:size-5",
   {
     variants: {
       variant: {

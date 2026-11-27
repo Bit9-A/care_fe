@@ -58,7 +58,7 @@ export function OrganizationSwitcher({
                     : t("select_organization")}
                 </span>
               </div>
-              <CaretSortIcon className="ml-auto" />
+              <CaretSortIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

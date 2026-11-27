@@ -48,7 +48,7 @@ const useNavExpansionState = (linkName: string, link: NavigationLink) => {
 const iconPlate = (active: boolean) =>
   cn(
     "flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200",
-    "group-data-[collapsible=icon]:size-8",
+    "group-data-[collapsible=icon]:size-auto group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:shadow-none group-data-[collapsible=icon]:group-hover:bg-transparent",
     active
       ? "bg-[linear-gradient(135deg,#00a3ff,#0076be)] text-white shadow-[0_4px_10px_-5px_rgba(0,163,255,0.9)]"
       : "bg-slate-100 text-slate-500 group-hover:bg-slate-200/80 group-hover:text-slate-700",
@@ -147,7 +147,7 @@ export function NavMain({ links }: { links: NavigationLink[] }) {
 
   return (
     <SidebarGroup className="gap-0 px-2 py-1">
-      <SidebarMenu className="gap-0.5">
+      <SidebarMenu className="gap-0.5 group-data-[collapsible=icon]:gap-2">
         {groups.map((group) =>
           group.links.map((link, index) => (
             <Fragment key={link.name}>
@@ -234,14 +234,16 @@ function CollapsibleNavItem({
             className="cursor-pointer font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=open]:bg-slate-50"
           >
             {link.icon ? (
-              link.icon
+              <span className={iconPlate(isChildActive(link))}>
+                {link.icon}
+              </span>
             ) : (
               <Avatar name={link.name} className="size-6 -m-1 rounded-sm" />
             )}
-            <span className="group-data-[collapsible=icon]:hidden ml-1">
+            <span className="ml-0.5 truncate group-data-[collapsible=icon]:hidden">
               {link.name}
             </span>
-            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+            <ChevronRight className="ml-auto shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>

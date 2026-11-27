@@ -67,7 +67,7 @@ export function FacilityNavUser({
                     </span>
                     <span className="truncate text-xs">{user.username}</span>
                   </div>
-                  <CaretSortIcon className="ml-auto size-4" />
+                  <CaretSortIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </>
               )}
             </SidebarMenuButton>
@@ -173,7 +173,7 @@ export function PatientNavUser() {
                       <span className="truncate text-xs">{phoneNumber}</span>
                     )}
                   </div>
-                  <CaretSortIcon className="ml-auto size-4" />
+                  <CaretSortIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </>
               )}
               {!open && !isMobile && (
