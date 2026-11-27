@@ -126,7 +126,7 @@ export default function AdminOrganizationFormSheet({
       name: values.name.trim(),
       description: values.description?.trim() || undefined,
       org_type: values.org_type,
-      parent_id: parentOrgId,
+      parent: parentOrgId,
     };
 
     if (isEditMode) {
