@@ -100,6 +100,11 @@ export default function PrintTemplateSheet({ facility, trigger }: Props) {
       pincode: facility.pincode,
       geo_organization: facility.geo_organization.id,
       features: facility.features,
+      // Only send specialties when the read payload includes them; omitting the
+      // key preserves the current M2M, while an explicit [] would clear it.
+      ...(facility.specialties
+        ? { specialties: facility.specialties.map((specialty) => specialty.id) }
+        : {}),
       print_templates: validTemplates,
     });
   };

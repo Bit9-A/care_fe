@@ -13,6 +13,7 @@ import { FacilityPermissions } from "@/types/emr/permission/permission";
 import { PrintTemplate } from "@/types/facility/printTemplate";
 import { Organization } from "@/types/organization/organization";
 import { PatientIdentifierConfig } from "@/types/patient/patientIdentifierConfig/patientIdentifierConfig";
+import { SpecialtyRead } from "@/types/specialty/specialty";
 
 export interface FacilityBareMinimum {
   id: string;
@@ -58,6 +59,7 @@ export interface FacilityRead extends FacilityBase, FacilityPermissions {
   patient_facility_identifier_configs: PatientIdentifierConfig[];
   features: number[];
   print_templates: PrintTemplate[];
+  specialties: SpecialtyRead[];
 }
 
 export type FacilityListRead = Omit<
@@ -73,6 +75,8 @@ export interface FacilityCreate extends Omit<FacilityBase, "id"> {
   geo_organization: string;
   features: number[];
   print_templates?: PrintTemplate[];
+  // Omitted key keeps the existing M2M; an explicit [] clears it.
+  specialties?: string[];
 }
 
 export const FACILITY_FEATURE_TYPES: {

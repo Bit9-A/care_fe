@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -40,6 +40,7 @@ import {
 import facilityApi from "@/types/facility/facilityApi";
 import { Organization } from "@/types/organization/organization";
 import organizationApi from "@/types/organization/organizationApi";
+import specialtyApi from "@/types/specialty/specialtyApi";
 
 interface FacilityProps {
   organizationId?: string;
@@ -80,6 +81,7 @@ export default function FacilityForm({
       name: z.string().trim().min(1, t("name_is_required")),
       description: z.string().trim().default(""),
       features: z.array(z.number()).default([]),
+      specialties: z.array(z.string()).default([]),
       pincode: validators().pincode,
       geo_organization: z.string().min(1, t("field_required")),
       address: z.string().trim().min(1, t("address_is_required")),
@@ -119,6 +121,7 @@ export default function FacilityForm({
       name: "",
       description: "",
       features: [],
+      specialties: [],
       pincode: undefined,
       geo_organization: organizationId || "",
       address: "",
@@ -197,6 +200,42 @@ export default function FacilityForm({
     enabled: !!facilityId,
   });
 
+  const { data: specialtiesData } = useQuery({
+    queryKey: ["specialties"],
+    queryFn: query(specialtyApi.list, { queryParams: { limit: 200 } }),
+  });
+
+  const { mutateAsync: createSpecialty } = useMutation({
+    mutationFn: mutate(specialtyApi.create),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["specialties"] });
+    },
+    onError: () => {
+      toast.error(t("failed_to_create_specialty"));
+    },
+  });
+
+  const specialtyOptions = useMemo(() => {
+    const optionsById = new Map<string, { label: string; value: string }>();
+    (specialtiesData?.results ?? []).forEach((specialty) => {
+      optionsById.set(specialty.id, {
+        label: specialty.name,
+        value: specialty.id,
+      });
+    });
+    // A facility may keep a specialty that was retired from the catalog; show
+    // it so editing does not silently hide an already linked value.
+    (facilityData?.specialties ?? []).forEach((specialty) => {
+      if (!optionsById.has(specialty.id)) {
+        optionsById.set(specialty.id, {
+          label: specialty.name,
+          value: specialty.id,
+        });
+      }
+    });
+    return [...optionsById.values()];
+  }, [specialtiesData, facilityData]);
+
   const onSubmit: (data: FacilityFormValues) => void = (
     data: FacilityFormValues,
   ) => {
@@ -259,6 +298,7 @@ export default function FacilityForm({
         name: facilityData.name,
         description: facilityData.description || "",
         features: facilityData.features || [],
+        specialties: facilityData.specialties?.map((s) => s.id) ?? [],
         pincode: facilityData.pincode || undefined,
         geo_organization: facilityData.geo_organization.id,
         address: facilityData.address,
@@ -389,6 +429,34 @@ export default function FacilityForm({
                 </FormItem>
               );
             }}
+          />
+          <FormField
+            control={form.control}
+            name="specialties"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("specialties")}</FormLabel>
+                <FormControl>
+                  <MultiSelect
+                    options={specialtyOptions}
+                    value={field.value ?? []}
+                    onValueChange={(value) =>
+                      form.setValue("specialties", value, { shouldDirty: true })
+                    }
+                    placeholder={t("select_specialties")}
+                    translationBasekey="specialties"
+                    selectionSummary={t("specialties_selected", {
+                      count: field.value?.length,
+                    })}
+                    onCreate={async (label) => {
+                      const created = await createSpecialty({ name: label });
+                      return { label: created.name, value: created.id };
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
 

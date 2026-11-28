@@ -43,6 +43,7 @@ interface MultiSelectProps {
   className?: string;
   selectionSummary?: string;
   translationBasekey?: string;
+  onCreate?: (label: string) => Promise<{ label: string; value: string }>;
 }
 
 function ListContent({
@@ -53,6 +54,7 @@ function ListContent({
   setSelectedValues,
   onValueChange,
   setOpen,
+  onCreate,
 }: {
   translationBasekey?: string;
   options: {
@@ -65,8 +67,14 @@ function ListContent({
   setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>;
   onValueChange: (value: string[]) => void;
   setOpen: (open: boolean) => void;
+  onCreate?: (label: string) => Promise<{ label: string; value: string }>;
 }) {
   const { t } = useTranslation();
+  const [query, setQuery] = React.useState("");
+  const [isCreating, setIsCreating] = React.useState(false);
+  // `isCreating` is rendered state and cannot stop two clicks in the same tick
+  // or honour the guard while the popover is closing; the ref is synchronous.
+  const creatingRef = React.useRef(false);
 
   const handleToggleOption = (option: string) => {
     setSelectedValues((prevSelectedValues) =>
@@ -81,6 +89,30 @@ function ListContent({
       return options.map((o) => o.value);
     });
   };
+
+  const trimmedQuery = query.trim();
+  const hasExactMatch = options.some(
+    (option) =>
+      option.label.trim().toLowerCase() === trimmedQuery.toLowerCase(),
+  );
+  const showCreateOption =
+    !!onCreate && trimmedQuery.length > 0 && !hasExactMatch;
+
+  const handleCreateOption = async () => {
+    if (!onCreate || creatingRef.current || !trimmedQuery) return;
+    creatingRef.current = true;
+    setIsCreating(true);
+    try {
+      await onCreate(trimmedQuery);
+      setQuery("");
+    } catch {
+      // Keep the typed query so the user can retry; nothing is added.
+    } finally {
+      creatingRef.current = false;
+      setIsCreating(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <Command className="flex-1 overflow-hidden min-h-0">
@@ -93,8 +125,27 @@ function ListContent({
             }
             className="outline-hidden text-base sm:text-sm border-none ring-0 shadow-none -ml-3"
             autoFocus={!isIOSDevice}
+            value={query}
+            onValueChange={setQuery}
           />
         </div>
+        {/* Rendered outside CommandList so cmdk's filter can never hide it
+            (the raw query may not match its trimmed value) and so Enter in the
+            input keeps selecting an existing option instead of creating. */}
+        {showCreateOption && (
+          <button
+            type="button"
+            disabled={isCreating}
+            onClick={handleCreateOption}
+            className="mx-1 mb-2 flex h-10 w-[calc(100%-0.5rem)] cursor-pointer items-center gap-3 rounded-sm px-2 text-left text-sm hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50"
+          >
+            <CareIcon
+              icon={isCreating ? "l-spinner" : "l-plus"}
+              className={cn("size-4 shrink-0", isCreating && "animate-spin")}
+            />
+            <span>{t("create_option", { label: trimmedQuery })}</span>
+          </button>
+        )}
         <CommandList className="max-h-full overflow-y-auto">
           <CommandEmpty>{t("no_results_found")}</CommandEmpty>
           <CommandGroup>
@@ -206,11 +257,23 @@ export function MultiSelect({
   ref,
   selectionSummary,
   translationBasekey,
+  onCreate,
   ...props
 }: ButtonProps & MultiSelectProps) {
   const [selectedValues, setSelectedValues] = React.useState<string[]>(value);
   const [open, setOpen] = React.useState(false);
+  const [createdOptions, setCreatedOptions] = React.useState<
+    { label: string; value: string }[]
+  >([]);
   const isMobile = useBreakpoints({ default: true, sm: false });
+
+  // Mirror of the current selection so a create that resolves after the
+  // popover closed (or after a later toggle) merges into the live array
+  // instead of a stale render snapshot. Synced in an effect, never in render.
+  const selectedValuesRef = React.useRef(selectedValues);
+  React.useEffect(() => {
+    selectedValuesRef.current = selectedValues;
+  }, [selectedValues]);
 
   React.useEffect(() => {
     setSelectedValues(value);
@@ -220,6 +283,36 @@ export function MultiSelect({
   }, [open]);
 
   const { t } = useTranslation();
+
+  // Options created on the fly are not part of `options` until the catalog
+  // refetches, so merge them in to render the new selection immediately.
+  const mergedOptions = React.useMemo(() => {
+    const seen = new Set(options.map((option) => option.value));
+    return [
+      ...options,
+      ...createdOptions.filter((option) => !seen.has(option.value)),
+    ];
+  }, [options, createdOptions]);
+
+  const handleCreate = onCreate
+    ? async (label: string) => {
+        const created = await onCreate(label);
+        setCreatedOptions((prev) =>
+          prev.some((option) => option.value === created.value)
+            ? prev
+            : [...prev, created],
+        );
+        // Commit immediately: the close-time effect would otherwise commit the
+        // pre-create array if the popover closed while the POST was in flight.
+        const current = selectedValuesRef.current;
+        const nextSelected = current.includes(created.value)
+          ? current
+          : [...current, created.value];
+        setSelectedValues(nextSelected);
+        onValueChange(nextSelected);
+        return created;
+      }
+    : undefined;
 
   if (isMobile) {
     return (
@@ -262,12 +355,13 @@ export function MultiSelect({
             <div className="mt-3 pb-[env(safe-area-inset-bottom)] flex flex-col flex-1 overflow-hidden">
               <ListContent
                 translationBasekey={translationBasekey}
-                options={options}
+                options={mergedOptions}
                 value={value}
                 setSelectedValues={setSelectedValues}
                 selectedValues={selectedValues}
                 onValueChange={onValueChange}
                 setOpen={setOpen}
+                onCreate={handleCreate}
               />
             </div>
           </DrawerContent>
@@ -318,12 +412,13 @@ export function MultiSelect({
         >
           <ListContent
             translationBasekey={translationBasekey}
-            options={options}
+            options={mergedOptions}
             value={value}
             setSelectedValues={setSelectedValues}
             selectedValues={selectedValues}
             onValueChange={onValueChange}
             setOpen={setOpen}
+            onCreate={handleCreate}
           />
         </PopoverContent>
       </Popover>
