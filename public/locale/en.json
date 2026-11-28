@@ -4556,6 +4556,7 @@
   "pincode": "PIN Code",
   "pincode_autofill": "State and District auto-filled from Pincode",
   "pincode_district_auto_fill_error": "Failed to auto-fill district information",
+  "pincode_must_be_4_digits": "Pincode must be 4 digits",
   "pincode_must_be_6_digits": "Pincode must be 6 digits",
   "pincode_state_auto_fill_error": "Failed to auto-fill state and district information",
   "pinned_links": "Pinned Links",

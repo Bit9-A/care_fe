@@ -35,8 +35,8 @@ export default () => ({
     .number()
     .int()
     .positive()
-    .min(100000, t("pincode_must_be_6_digits"))
-    .max(999999, t("pincode_must_be_6_digits")),
+    .min(1000, t("pincode_must_be_4_digits"))
+    .max(9999, t("pincode_must_be_4_digits")),
 
   age: z
     .number()
