@@ -39,6 +39,7 @@ export interface FacilityPublicRead extends FacilityBase {
 }
 
 export interface FacilityRead extends FacilityBase, FacilityPermissions {
+  classification: string | null;
   read_cover_image_url?: string;
   cover_image_url?: string;
   created_date?: string;
@@ -68,6 +69,7 @@ export type FacilityListRead = Omit<
 >;
 
 export interface FacilityCreate extends Omit<FacilityBase, "id"> {
+  classification?: string | null;
   geo_organization: string;
   features: number[];
   print_templates?: PrintTemplate[];
@@ -181,6 +183,20 @@ export type FacilityType = {
   id: number;
   text: string;
 };
+
+export type ChoiceOption = { id: number; text: string };
+
+export const FACILITY_CLASSIFICATIONS: Array<ChoiceOption> = [
+  { id: 1, text: "Tipo I" },
+  { id: 2, text: "Tipo II" },
+  { id: 3, text: "Tipo III" },
+  { id: 4, text: "Tipo IV" },
+];
+
+// Must match CLASSIFIED_FACILITY_TYPES in care/care/facility/models/facility.py
+export const CLASSIFIED_FACILITY_TYPE_IDS = new Set([
+  2, 6, 804, 830, 860, 870, 900, 920, 1100, 1200, 1300, 1400, 1600,
+]);
 
 export const FACILITY_TYPES: Array<FacilityType> = [
   // Must match FACILITY_TYPES in care/care/facility/models/facility.py —

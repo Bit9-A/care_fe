@@ -31,6 +31,8 @@ import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 import validators from "@/Utils/validators";
 import {
+  CLASSIFIED_FACILITY_TYPE_IDS,
+  FACILITY_CLASSIFICATIONS,
   FACILITY_FEATURE_TYPES,
   FACILITY_TYPES,
   FacilityRead,
@@ -45,6 +47,20 @@ interface FacilityProps {
   onSubmitSuccess?: () => void;
 }
 
+function getFacilityTypeIdByText(text: string): number | undefined {
+  return FACILITY_TYPES.find((type) => type.text === text)?.id;
+}
+
+// Classification (Venezuelan Tipo I-IV) applies only to certain facility
+// types; mirrors CLASSIFIED_FACILITY_TYPES in the backend facility model.
+function isClassifiedFacilityTypeText(text: string): boolean {
+  const facilityTypeId = getFacilityTypeIdByText(text);
+  return (
+    facilityTypeId !== undefined &&
+    CLASSIFIED_FACILITY_TYPE_IDS.has(facilityTypeId)
+  );
+}
+
 export default function FacilityForm({
   organizationId,
   facilityId,
@@ -57,23 +73,41 @@ export default function FacilityForm({
     null,
   );
 
-  const facilityFormSchema = z.object({
-    facility_type: z.string().min(1, t("facility_type_required")),
-    name: z.string().trim().min(1, t("name_is_required")),
-    description: z.string().trim().default(""),
-    features: z.array(z.number()).default([]),
-    pincode: validators().pincode,
-    geo_organization: z.string().min(1, t("field_required")),
-    address: z.string().trim().min(1, t("address_is_required")),
-    phone_number: validators().phoneNumber.required,
-    latitude: validators()
-      .coordinates.latitude.transform((val) => (val ? Number(val) : undefined))
-      .optional(),
-    longitude: validators()
-      .coordinates.longitude.transform((val) => (val ? Number(val) : undefined))
-      .optional(),
-    is_public: z.boolean().default(false),
-  });
+  const facilityFormSchema = z
+    .object({
+      facility_type: z.string().min(1, t("facility_type_required")),
+      classification: z.string().optional(),
+      name: z.string().trim().min(1, t("name_is_required")),
+      description: z.string().trim().default(""),
+      features: z.array(z.number()).default([]),
+      pincode: validators().pincode,
+      geo_organization: z.string().min(1, t("field_required")),
+      address: z.string().trim().min(1, t("address_is_required")),
+      phone_number: validators().phoneNumber.required,
+      latitude: validators()
+        .coordinates.latitude.transform((val) =>
+          val ? Number(val) : undefined,
+        )
+        .optional(),
+      longitude: validators()
+        .coordinates.longitude.transform((val) =>
+          val ? Number(val) : undefined,
+        )
+        .optional(),
+      is_public: z.boolean().default(false),
+    })
+    .superRefine((values, ctx) => {
+      if (
+        isClassifiedFacilityTypeText(values.facility_type) &&
+        !values.classification
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: t("facility_classification_required"),
+          path: ["classification"],
+        });
+      }
+    });
 
   type FacilityFormValues = z.infer<typeof facilityFormSchema>;
 
@@ -81,6 +115,7 @@ export default function FacilityForm({
     resolver: zodResolver(facilityFormSchema),
     defaultValues: {
       facility_type: "",
+      classification: "",
       name: "",
       description: "",
       features: [],
@@ -93,6 +128,17 @@ export default function FacilityForm({
       is_public: true,
     },
   });
+
+  const watchedFacilityType = form.watch("facility_type");
+  const isClassifiedFacilityType =
+    isClassifiedFacilityTypeText(watchedFacilityType);
+
+  // Clear classification when the selected facility type does not carry one
+  useEffect(() => {
+    if (!isClassifiedFacilityType && form.getValues("classification")) {
+      form.setValue("classification", "", { shouldDirty: true });
+    }
+  }, [isClassifiedFacilityType, form]);
 
   const { data: org } = useQuery({
     queryKey: ["organization", organizationId],
@@ -156,6 +202,10 @@ export default function FacilityForm({
   ) => {
     const payload = {
       ...data,
+      classification:
+        isClassifiedFacilityType && data.classification
+          ? data.classification
+          : null,
       latitude: data.latitude ? String(data.latitude) : undefined,
       longitude: data.longitude ? String(data.longitude) : undefined,
       print_templates: Array.isArray(facilityData?.print_templates)
@@ -205,6 +255,7 @@ export default function FacilityForm({
       setSelectedGeoOrg(facilityData.geo_organization);
       form.reset({
         facility_type: facilityData.facility_type,
+        classification: facilityData.classification ?? "",
         name: facilityData.name,
         description: facilityData.description || "",
         features: facilityData.features || [],
@@ -253,6 +304,36 @@ export default function FacilityForm({
                 </FormItem>
               )}
             />
+
+            {isClassifiedFacilityType && (
+              <FormField
+                control={form.control}
+                name="classification"
+                render={({ field }) => (
+                  <FormItem className="max-w-full">
+                    <FormLabel aria-required>
+                      {t("facility_classification")}
+                    </FormLabel>
+                    <Autocomplete
+                      {...field}
+                      options={FACILITY_CLASSIFICATIONS.map(
+                        (classification) => ({
+                          label: classification.text,
+                          value: classification.text,
+                        }),
+                      )}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      noOptionsMessage={t("no_matches_found")}
+                      placeholder={t("select_facility_classification")}
+                      inputPlaceholder={t("search")}
+                      className="min-w-0"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
